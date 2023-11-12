@@ -476,3 +476,5 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 .idea/
+
+src/CRIApp.Api/appSettings.Development.json
