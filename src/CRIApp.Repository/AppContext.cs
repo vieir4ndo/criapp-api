@@ -1,11 +1,17 @@
 using CRIApp.Domain.Entities;
+using CRIApp.Domain.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace CRIApp.Repository;
 
 public class AppContext : DbContext
 {
+    public AppContext(DbContextOptions<AppContext> options)
+        : base(options)
+    {
+    }
     public DbSet<Answer> Answer { get; set; }
     public DbSet<AudiovisualResource> AudiovisualResource { get; set; }
     public DbSet<Award> Award { get; set; }
@@ -15,20 +21,6 @@ public class AppContext : DbContext
     public DbSet<Forum> Forum { get; set; }
     public DbSet<Question> Question { get; set; }
     public DbSet<User> User { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath($"{Directory.GetCurrentDirectory()}/CRIApp.Api")
-                .AddJsonFile("appsettings.json", false, true)
-                .AddJsonFile("appsettings.Development.json", true, true)
-                .Build();
-            var connectionString = configuration["ConnectionString:Postgres"];
-            optionsBuilder.UseNpgsql(connectionString);
-        }
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

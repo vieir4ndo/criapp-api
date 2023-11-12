@@ -3,6 +3,7 @@ using CRIApp.Api.Middlewares;
 using CRIApp.Application.Extensions;
 using CRIApp.Domain.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using AppContext = CRIApp.Repository.AppContext;
 
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // TODO: Isolate in extensions
 var jwtSettingsConfigurationSection = builder.Configuration.GetSection(JwtTokenSettings.SectionName);
 builder.Services.Configure<JwtTokenSettings>(jwtSettingsConfigurationSection);
+var connectionStrings = builder.Configuration.GetSection(ConnectionStrings.SectionName).Get<ConnectionStrings>();
 var jwtSettings = jwtSettingsConfigurationSection.Get<JwtTokenSettings>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -31,7 +33,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 
 // Add services to the container.
-builder.Services.AddDbContext<AppContext>();
+builder.Services.AddDbContext<AppContext>(
+    options => options.UseNpgsql(connectionStrings.Postgres));
+
 builder.Services.AddServices();
 builder.Services.AddRepositories();
 builder.Services.AddControllers();
