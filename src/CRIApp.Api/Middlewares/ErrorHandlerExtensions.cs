@@ -48,8 +48,9 @@ public static class ErrorHandlerExtensions
                         }
                         default:
                         {
-                            var response = new ApiResponse<object>( "Oops, there was a problem. We already notified our team and we are working to solve it.");
+                            //var response = new ApiResponse<object>( "Oops, there was a problem. We already notified our team and we are working to solve it.");
 
+                            var response = new ApiResponse<object>(exceptionHandlerPathFeature.Error.Message);
                             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                             context.Response.ContentType = "application/json";
 
