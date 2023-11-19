@@ -21,7 +21,7 @@ public class CreateUserRequest : BaseRequest
         return new CreateUserDto()
         {
             Name = Name,
-            BirthDate = DateTime.ParseExact(BirthDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None),
+            BirthDate = DateTime.ParseExact(BirthDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None).ToUniversalTime(),
             Sex = Sex,
             Email = Email,
             Password = Password,
