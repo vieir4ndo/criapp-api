@@ -52,7 +52,7 @@ public class UserService : IUserService
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var expiresIn = DateTime.Now.AddMinutes(_jwtTokenSettings.ExpiresInMinutes);
 
-        var Sectoken = new JwtSecurityToken(_jwtTokenSettings.Issuer,
+        var sectoken = new JwtSecurityToken(_jwtTokenSettings.Issuer,
             _jwtTokenSettings.Issuer,
             // TODO : Add claims
             null,
@@ -61,7 +61,7 @@ public class UserService : IUserService
 
         return new TokenDto()
         {
-            Token = new JwtSecurityTokenHandler().WriteToken(Sectoken),
+            Token = new JwtSecurityTokenHandler().WriteToken(sectoken),
             ExpiresIn = expiresIn,
             User = new UserDto(user)
         };
