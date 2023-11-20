@@ -30,5 +30,8 @@ public class ChildMapping : IEntityTypeConfiguration<Child>
         builder.HasMany(x => x.Answers)
             .WithOne(x => x.Child)
             .HasForeignKey(x => x.ChildId);
+        
+        builder.Property(x => x.IsPremature)
+            .IsRequired();
     }
 }

@@ -15,6 +15,7 @@ public class CreateUserRequest : BaseRequest
     public string Password { get; set; }
     public FamilyType? FamilyType { get; set; }
     public EducationalLevel? EducationalLevel { get; set; }
+    public int? NumberOfChildren { get; set; }
 
     public CreateUserDto ToDto()
     {
@@ -26,7 +27,8 @@ public class CreateUserRequest : BaseRequest
             Email = Email,
             Password = Password,
             FamilyType = FamilyType,
-            EducationalLevel = EducationalLevel
+            EducationalLevel = EducationalLevel,
+            NumberOfChildren = NumberOfChildren
         };
     }
 

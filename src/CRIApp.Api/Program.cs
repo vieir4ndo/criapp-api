@@ -33,8 +33,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 
 // Add services to the container.
-builder.Services.AddDbContext<AppContext>(
-    options => options.UseNpgsql(connectionStrings.Postgres));
+builder.Services.AddDbContext<AppContext>();
 
 builder.Services.AddServices();
 builder.Services.AddRepositories();
