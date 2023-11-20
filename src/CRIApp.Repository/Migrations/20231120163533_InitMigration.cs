@@ -79,7 +79,8 @@ namespace CRIApp.Repository.Migrations
                     BirthDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Sex = table.Column<int>(type: "integer", nullable: false),
                     MonthsOfBreastFeeding = table.Column<int>(type: "integer", nullable: false),
-                    PrcId = table.Column<Guid>(type: "uuid", nullable: false)
+                    PrcId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsPremature = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {

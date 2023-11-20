@@ -40,13 +40,13 @@ public class UserService : IUserService
 
         if (user is not null && user.VerifyPassword(dto.Password))
         {
-            return GenerateToken();
+            return GenerateToken(user);
         }
 
         throw new ValidationException("Username or password did not match");
     }
 
-    private TokenDto GenerateToken()
+    private TokenDto GenerateToken(User user)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtTokenSettings.Key));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -62,7 +62,8 @@ public class UserService : IUserService
         return new TokenDto()
         {
             Token = new JwtSecurityTokenHandler().WriteToken(Sectoken),
-            ExpiresIn = expiresIn
+            ExpiresIn = expiresIn,
+            User = new UserDto(user)
         };
     }
 

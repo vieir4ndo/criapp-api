@@ -10,15 +10,17 @@ public class Child : Entity
     public int MonthsOfBreastFeeding { get; private set; }
     public Guid PrcId { get; private set; }
     public User Prc { get; private set; }
+    public bool IsPremature { get; private set; }
     public List<Answer> Answers { get; private set; }
 
-    public Child(string name, DateTime birthDate, Sex sex, int monthsOfBreastFeeding, Guid prcId)
+    public Child(string name, DateTime birthDate, Sex sex, int monthsOfBreastFeeding, Guid prcId, bool isPremature)
     {
         Name = name;
         BirthDate = birthDate;
         Sex = sex;
         MonthsOfBreastFeeding = monthsOfBreastFeeding;
         PrcId = prcId;
+        IsPremature = isPremature;
         
         Name.IsNullOrEmpty("A child cannot have a null or empty name");
         BirthDate.IsDateTimeMinValue("A child has to have a valid birth date");

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CRIApp.Repository.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20231112095930_InitMigration")]
+    [Migration("20231120163533_InitMigration")]
     partial class InitMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,6 +108,9 @@ namespace CRIApp.Repository.Migrations
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsPremature")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("MonthsOfBreastFeeding")
                         .HasColumnType("integer");

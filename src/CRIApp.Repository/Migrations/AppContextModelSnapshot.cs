@@ -107,6 +107,9 @@ namespace CRIApp.Repository.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsPremature")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("MonthsOfBreastFeeding")
                         .HasColumnType("integer");
 

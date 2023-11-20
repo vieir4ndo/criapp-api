@@ -10,9 +10,10 @@ public class CreateChildDto
     public Sex Sex { get; set; }
     public int MonthsOfBreastFeeding { get; set; }
     public Guid PrcId { get; set; }
+    public bool IsPremature { get; set; }
 
     public Child ToDomainObject()
     {
-        return new Child(Name, BirthDate, Sex, MonthsOfBreastFeeding, PrcId);
+        return new Child(Name, BirthDate, Sex, MonthsOfBreastFeeding, PrcId, IsPremature);
     }
 }

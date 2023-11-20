@@ -37,7 +37,8 @@ public class User : Entity
         string email,
         string password,
         FamilyType? familyType = null,
-        EducationalLevel? educationalLevel = null
+        EducationalLevel? educationalLevel = null,
+        int? numberOfChildren = null
         )
     {
         Name = name;
@@ -47,6 +48,7 @@ public class User : Entity
         FamilyType = familyType;
         EducationalLevel = educationalLevel;
         PasswordHash = PasswordHasher.HashPassword(password);
+        NumberOfChildren = numberOfChildren;
         Activate();
         
         Name.IsNullOrEmpty("An user cannot have a null or empty name");
