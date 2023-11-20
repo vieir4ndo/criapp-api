@@ -22,7 +22,7 @@ public class CreateChildRequestValidator : AbstractValidator<CreateChildRequest>
             .IsInEnum();
 
         RuleFor(x => x.MonthsOfBreastFeeding)
-            .GreaterThan(0)
+            .GreaterThanOrEqualTo(0)
             .NotNull()
             .NotEmpty();
 
