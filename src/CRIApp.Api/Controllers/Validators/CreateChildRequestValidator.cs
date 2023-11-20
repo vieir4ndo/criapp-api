@@ -23,8 +23,7 @@ public class CreateChildRequestValidator : AbstractValidator<CreateChildRequest>
 
         RuleFor(x => x.MonthsOfBreastFeeding)
             .GreaterThanOrEqualTo(0)
-            .NotNull()
-            .NotEmpty();
+            .NotNull();
 
         RuleFor(x => x.PrcId)
             .NotNull()
