@@ -9,7 +9,7 @@ namespace CRIApp.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("question")]
-public class QuestionController : ControllerBase
+public class QuestionController : CriAppControllerBase
 {
     private readonly IQuestionService _service;
 

@@ -8,7 +8,7 @@ namespace CRIApp.Api.Controllers;
 
 [ApiController]
 [Route("user")]
-public class UserController : ControllerBase
+public class UserController : CriAppControllerBase
 {
     private readonly IUserService _service;
 

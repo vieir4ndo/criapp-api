@@ -5,4 +5,6 @@ namespace CRIApp.Application.Abstractions;
 public interface IChildService
 {
     Task Create(CreateChildDto dto);
+    
+    Task<List<ChildDto>> GetAllById(Guid prcId);
 }

@@ -9,16 +9,15 @@ public class CreateAnswerRequest : BaseRequest
     public int Value { get; set; }
     public Guid QuestionId { get; set; }
     public Guid ChildId { get; set; }
-    public Guid PrcId { get; set; }
 
-    public CreateAnswerDto ToDto()
+    public CreateAnswerDto ToDto(string prcId)
     {
         return new CreateAnswerDto()
         {
             Value = Value,
             QuestionId = QuestionId,
             ChildId = ChildId,
-            PrcId = PrcId
+            PrcId = Guid.Parse(prcId),
         };
     }
 

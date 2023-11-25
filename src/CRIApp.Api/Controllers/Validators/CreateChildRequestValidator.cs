@@ -25,10 +25,6 @@ public class CreateChildRequestValidator : AbstractValidator<CreateChildRequest>
             .GreaterThanOrEqualTo(0)
             .NotNull();
 
-        RuleFor(x => x.PrcId)
-            .NotNull()
-            .NotEmpty();
-
         RuleFor(x => x.IsPremature)
             .NotNull();
     }

@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
@@ -52,10 +53,14 @@ public class UserService : IUserService
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var expiresIn = DateTime.Now.AddMinutes(_jwtTokenSettings.ExpiresInMinutes);
 
+        var claims = new List<Claim>()
+        {
+            new("id", user.Id.ToString())
+        };
+
         var sectoken = new JwtSecurityToken(_jwtTokenSettings.Issuer,
             _jwtTokenSettings.Issuer,
-            // TODO : Add claims
-            null,
+            claims,
             expires: expiresIn,
             signingCredentials: credentials);
 

@@ -12,10 +12,9 @@ public class CreateChildRequest : BaseRequest
     public string BirthDate { get; set; }
     public Sex Sex { get; set; }
     public int MonthsOfBreastFeeding { get; set; }
-    public Guid PrcId { get; set; }
     public bool IsPremature { get; set; }
 
-    public CreateChildDto ToDto()
+    public CreateChildDto ToDto(Guid prcId)
     {
         return new CreateChildDto()
         {
@@ -23,7 +22,7 @@ public class CreateChildRequest : BaseRequest
             BirthDate = DateTime.ParseExact(BirthDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None).ToUniversalTime(),
             Sex = Sex,
             MonthsOfBreastFeeding = MonthsOfBreastFeeding,
-            PrcId = PrcId,
+            PrcId = prcId,
             IsPremature = IsPremature
         };
     }

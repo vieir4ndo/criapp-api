@@ -9,7 +9,7 @@ namespace CRIApp.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("answer")]
-public class AnswerController : ControllerBase
+    public class AnswerController : CriAppControllerBase
 {
     private readonly IAnswerService _service;
 
@@ -21,9 +21,11 @@ public class AnswerController : ControllerBase
     [HttpPost]
     public async Task<ApiResponse<object>> Create(CreateAnswerRequest request)
     {
+        var userIdClaim = User.FindFirst("id")?.Value;
+        
         request.ValidateAndThrow();
         
-        await _service.Create(request.ToDto());
+        await _service.Create(request.ToDto(userIdClaim!));
 
         return new ApiResponse<object>(true);
     }
