@@ -17,10 +17,6 @@ public class CreateAnswerRequestValidator : AbstractValidator<CreateAnswerReques
             .NotEmpty()
             .NotNull();
         
-        RuleFor(x => x.PrcId)
-            .NotEmpty()
-            .NotNull();
-        
         RuleFor(x => x.ChildId)
             .NotEmpty()
             .NotNull();

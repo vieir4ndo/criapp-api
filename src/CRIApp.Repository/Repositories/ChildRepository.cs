@@ -23,4 +23,9 @@ public class ChildRepository : IChildRepository
         await Context.Child.AddAsync(child);
         await Context.SaveChangesAsync();
     }
+
+    public async Task<List<Child>> GetAllById(Guid prcId)
+    {
+        return await Context.Child.Where(x => x.PrcId == prcId).ToListAsync();
+    }
 }

@@ -21,4 +21,15 @@ public class ChildService : IChildService
         
         await _childRepository.Create(dto.ToDomainObject());
     }
+
+    public async Task<List<ChildDto>> GetAllById(Guid prcId)
+    {
+        var children = await _childRepository.GetAllById(prcId);
+
+        var childrenDto = new List<ChildDto>();
+
+        children.ForEach(x => childrenDto.Add(new ChildDto(x)));
+
+        return childrenDto;
+    }
 }
