@@ -220,6 +220,9 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(250)");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AdminId");

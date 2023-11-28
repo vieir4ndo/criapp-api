@@ -140,6 +140,7 @@ namespace CRIApp.Repository.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Text = table.Column<string>(type: "varchar(250)", nullable: false),
                     Active = table.Column<bool>(type: "boolean", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
                     AdminId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>

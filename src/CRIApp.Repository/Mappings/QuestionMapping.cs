@@ -17,6 +17,9 @@ public class QuestionMapping : IEntityTypeConfiguration<Question>
         builder.Property(x => x.Active) 
             .IsRequired();
         
+        builder.Property(x => x.Type) 
+            .IsRequired();
+        
         builder.HasMany(x => x.Answers)
             .WithOne(x => x.Question)
             .HasForeignKey(x => x.QuestionId);
