@@ -2,6 +2,7 @@ using System.Text;
 using CRIApp.Api.Middlewares;
 using CRIApp.Application.Extensions;
 using CRIApp.Domain.Settings;
+using CRIApp.Repository.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -31,9 +32,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 //Jwt configuration ends here
 
-
 // Add services to the container.
 builder.Services.AddDbContext<AppContext>();
+
+using (var context = new AppContext())
+{
+    context.Database.EnsureCreated(); // Certificar-se de que o banco de dados existe
+
+    var adminId = UserSeeder.Execute(context);
+    QuestionSeeder.Execute(context, adminId);
+}
 
 builder.Services.AddServices();
 builder.Services.AddRepositories();
