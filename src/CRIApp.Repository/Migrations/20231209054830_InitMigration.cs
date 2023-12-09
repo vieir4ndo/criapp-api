@@ -17,7 +17,7 @@ namespace CRIApp.Repository.Migrations
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     BirthDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Sex = table.Column<int>(type: "integer", nullable: false),
-                    Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Username = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
                     Active = table.Column<bool>(type: "boolean", nullable: false),
                     NumberOfChildren = table.Column<int>(type: "integer", nullable: true),
@@ -269,9 +269,9 @@ namespace CRIApp.Repository.Migrations
                 column: "AdminId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_Email",
+                name: "IX_User_Username",
                 table: "User",
-                column: "Email",
+                column: "Username",
                 unique: true);
         }
 

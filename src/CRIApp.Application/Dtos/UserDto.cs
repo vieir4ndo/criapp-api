@@ -22,7 +22,7 @@ public class UserDto
         Name = user.Name;
         BirthDate = user.BirthDate;
         Sex = user.Sex;
-        Email = user.Email;
+        Email = user.Username;
         Active = user.Active;
         NumberOfChildren = user.NumberOfChildren;
         FamilyType = user.FamilyType;
