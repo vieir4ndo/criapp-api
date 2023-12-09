@@ -20,7 +20,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByEmail(string email)
     {
-        return await Context.User.FirstOrDefaultAsync(x => x.Email == email);
+        return await Context.User.FirstOrDefaultAsync(x => x.Username == email);
     }
 
     public async Task<User?> GetById(Guid id)
