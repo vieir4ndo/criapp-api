@@ -1,3 +1,4 @@
+using CRIApp.Api.Controllers.Requests;
 using CRIApp.Api.Controllers.Responses;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
@@ -19,9 +20,11 @@ public class QuestionController : CriAppControllerBase
     }
     
     [HttpGet]
-    public async Task<ApiResponse<QuestionDto>> GetAllQuestionsToReply()
+    public async Task<ApiResponse<QuestionDto>> GetQuestionsToReply([FromQuery]GetQuestionsToReplyRequest request)
     {
-        var data = await _service.GetAllQuestionsToReply(GetUserId());
+        request.ValidateAndThrow();
+        
+        var data = await _service.GetQuestionsToReply(GetUserId(), request.ChildId);
 
         return new ApiResponse<QuestionDto>(true, data);
     }

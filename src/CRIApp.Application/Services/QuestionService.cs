@@ -16,11 +16,13 @@ public class QuestionService : IQuestionService
         _questionRepository = questionRepository;
         _userService = userService;
     }
-    public async Task<IEnumerable<QuestionDto>> GetAllQuestionsToReply(Guid userId)
+    public async Task<IEnumerable<QuestionDto>> GetQuestionsToReply(Guid userId, Guid childId)
     {
         var user = await _userService.GetAndValidateById(userId);
+
+        var blackList = user!.Answers.Where(x => x.ChildId == childId).Select(answer => answer.QuestionId).ToList();
         
-        var questions = await _questionRepository.GetAllExcept(user!.Answers.Select(answer => answer.QuestionId).ToList());
+        var questions = await _questionRepository.GetAllExcept(blackList);
 
         return questions.Select(question => new QuestionDto(question));
     }
