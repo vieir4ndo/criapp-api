@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Helpers;
 
@@ -8,7 +9,7 @@ public class User : Entity
     public string Name { get; private set; }
     public DateTime BirthDate { get; private set; }
     public Sex Sex { get; private set; }
-    public string Email { get; private set; }
+    public string Username { get; private set; }
     public string PasswordHash { get; private set; }
     public bool Active { get; private set; }
     public int? NumberOfChildren { get; private set; }
@@ -26,15 +27,17 @@ public class User : Entity
     public void Activate() => Active = true;
     public void Deactivate() => Active = false;
     
-    
-
+    public virtual UsernameType UsernameType()
+    {
+        return new EmailAddressAttribute().IsValid(Username) ? Enums.UsernameType.Email : Enums.UsernameType.PhoneNumber;
+    }
     protected User() { }
     
     public User(
         string name,
         DateTime birthDate,
         Sex sex,
-        string email,
+        string username,
         string password,
         FamilyType? familyType = null,
         EducationalLevel? educationalLevel = null,
@@ -44,7 +47,7 @@ public class User : Entity
         Name = name;
         BirthDate = birthDate;
         Sex = sex;
-        Email = email;
+        Username = username;
         FamilyType = familyType;
         EducationalLevel = educationalLevel;
         PasswordHash = PasswordHasher.HashPassword(password);
@@ -54,7 +57,7 @@ public class User : Entity
         Name.IsNullOrEmpty("An user cannot have a null or empty name");
         BirthDate.IsDateTimeMinValue("An user has to have a valid birth date");
         Sex.IsInEnum("An user has to have a sex according to system values");
-        Email.IsValidEmail("An user has to have a valid email");
+        Username.IsValidUsername("An user has to have a valid username");
         Active.IsActive("An user has to be active to be created");
         PasswordHash.IsNullOrEmpty("An user cannot have a null or empty password hash");
     }
