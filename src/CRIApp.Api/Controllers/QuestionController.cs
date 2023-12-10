@@ -19,9 +19,9 @@ public class QuestionController : CriAppControllerBase
     }
     
     [HttpGet]
-    public async Task<ApiResponse<QuestionDto>> GetAll()
+    public async Task<ApiResponse<QuestionDto>> GetAllQuestionsToReply()
     {
-        var data = await _service.GetAll();
+        var data = await _service.GetAllQuestionsToReply(GetUserId());
 
         return new ApiResponse<QuestionDto>(true, data);
     }
