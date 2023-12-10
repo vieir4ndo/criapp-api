@@ -5,6 +5,6 @@ namespace CRIApp.Application.Abstractions;
 
 public interface IQuestionService
 {
-    Task<IEnumerable<QuestionDto>> GetAll();
+    Task<IEnumerable<QuestionDto>> GetAllQuestionsToReply(Guid userId);
     Task<Question?> GetAndValidateById(Guid id);
 }

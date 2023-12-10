@@ -27,6 +27,7 @@ public class UserRepository : IUserRepository
     {
         return await Context.User
             .Include(x => x.Children)
+            .Include(x => x.Answers)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 }
