@@ -1,8 +1,6 @@
 using CRIApp.Domain.Entities;
-using CRIApp.Domain.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 
 namespace CRIApp.Repository;
 
@@ -23,10 +21,15 @@ public class AppContext : DbContext
         if (!optionsBuilder.IsConfigured)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
-                //.SetBasePath($"{Directory.GetCurrentDirectory()}/../CRIApp.Api")
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();
+            
+            /*IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath($"{Directory.GetCurrentDirectory()}/../CRIApp.Api")
+                .AddJsonFile("appsettings.Development.json")
+                .Build();*/
+            
             var connectionString = configuration["ConnectionStrings:Postgres"];
             optionsBuilder.UseNpgsql(connectionString);
         }
