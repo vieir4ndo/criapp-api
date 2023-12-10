@@ -15,8 +15,6 @@ var jwtSettingsConfigurationSection = builder.Configuration.GetSection(JwtTokenS
 builder.Services.Configure<JwtTokenSettings>(jwtSettingsConfigurationSection);
 var connectionStrings = builder.Configuration.GetSection(ConnectionStrings.SectionName).Get<ConnectionStrings>();
 var jwtSettings = jwtSettingsConfigurationSection.Get<JwtTokenSettings>();
-var messageSettingsSection = builder.Configuration.GetSection(MessageSettings.SectionName);
-builder.Services.Configure<MessageSettings>(messageSettingsSection);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
