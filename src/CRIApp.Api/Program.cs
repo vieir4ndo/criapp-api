@@ -15,6 +15,10 @@ var jwtSettingsConfigurationSection = builder.Configuration.GetSection(JwtTokenS
 builder.Services.Configure<JwtTokenSettings>(jwtSettingsConfigurationSection);
 var connectionStrings = builder.Configuration.GetSection(ConnectionStrings.SectionName).Get<ConnectionStrings>();
 var jwtSettings = jwtSettingsConfigurationSection.Get<JwtTokenSettings>();
+var twilioSettings = builder.Configuration.GetSection(TwilioSettings.SectionName);
+builder.Services.Configure<TwilioSettings>(twilioSettings);
+var mailjetSettings = builder.Configuration.GetSection(MailjetSettings.SectionName);
+builder.Services.Configure<MailjetSettings>(mailjetSettings);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

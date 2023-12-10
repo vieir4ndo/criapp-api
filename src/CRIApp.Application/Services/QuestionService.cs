@@ -9,14 +9,18 @@ namespace CRIApp.Application.Services;
 public class QuestionService : IQuestionService
 {
     private readonly IQuestionRepository _questionRepository;
+    private readonly IUserService _userService;
 
-    public QuestionService(IQuestionRepository questionRepository)
+    public QuestionService(IQuestionRepository questionRepository, IUserService userService)
     {
         _questionRepository = questionRepository;
+        _userService = userService;
     }
-    public async Task<IEnumerable<QuestionDto>> GetAll()
+    public async Task<IEnumerable<QuestionDto>> GetAllQuestionsToReply(Guid userId)
     {
-        var questions = await _questionRepository.GetAll();
+        var user = await _userService.GetAndValidateById(userId);
+        
+        var questions = await _questionRepository.GetAllExcept(user!.Answers.Select(answer => answer.QuestionId).ToList());
 
         return questions.Select(question => new QuestionDto(question));
     }
