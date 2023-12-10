@@ -1,9 +1,7 @@
 using System.Net;
 using System.Net.Mail;
-using System.Net.Mime;
 using CRIApp.Application.Abstractions;
 using CRIApp.Domain.Entities;
-using CRIApp.Domain.Enums;
 using CRIApp.Domain.Settings;
 using Microsoft.Extensions.Options;
 using Twilio;
