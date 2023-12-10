@@ -54,9 +54,9 @@ public static class Validations
             throw new DomainException(message);
     }
     
-    public static void IsValidUsername(this string username, string message)
+    public static void IsValidEmail(this string email, string message)
     {
-        if (!new EmailAddressAttribute().IsValid(username) && !new PhoneAttribute().IsValid(username))
+        if (!new EmailAddressAttribute().IsValid(email))
             throw new DomainException(message);
     }
 

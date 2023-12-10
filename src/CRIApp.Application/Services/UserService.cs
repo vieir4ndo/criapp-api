@@ -26,7 +26,7 @@ public class UserService : IUserService
 
     public async Task Create(CreateUserDto dto)
     {
-        var userExisting = await _repository.GetByEmail(dto.Username);
+        var userExisting = await _repository.GetByEmail(dto.Email);
 
         if (userExisting is not null)
             throw new ValidationException("This email is taken");
