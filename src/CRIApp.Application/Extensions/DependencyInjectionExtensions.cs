@@ -14,7 +14,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IAnswerService, AnswerService>();
         services.AddScoped<IChildService, ChildService>();
-        services.AddScoped<IMessageUser, TwilioService>();
+        services.AddScoped<IMessage, TwilioService>();
     }
 
     public static void AddRepositories(this IServiceCollection services)
