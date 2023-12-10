@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Helpers;
 
@@ -25,8 +26,11 @@ public class User : Entity
     public List<Faq> Faqs { get; private set; } = new();
     public void Activate() => Active = true;
     public void Deactivate() => Active = false;
-    
-    
+
+    public virtual UsernameType UsernameType()
+    {
+        return new EmailAddressAttribute().IsValid(Username) ? Enums.UsernameType.Email : Enums.UsernameType.PhoneNumber;
+    }
 
     protected User() { }
     
