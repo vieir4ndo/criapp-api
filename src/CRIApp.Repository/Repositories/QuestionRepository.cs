@@ -19,6 +19,13 @@ public class QuestionRepository : IQuestionRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Question>> GetAllExcept(List<Guid> blackList)
+    {
+        return await Context.Question
+            .Where(x => !blackList.Contains(x.Id))
+            .ToListAsync();
+    }
+
     public async Task<Question?> GetById(Guid id)
     {
         return await Context.Question.FirstOrDefaultAsync(x => x.Id == id);
