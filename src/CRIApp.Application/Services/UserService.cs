@@ -5,7 +5,6 @@ using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
-using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
 using CRIApp.Domain.Settings;
 using Microsoft.Extensions.Options;
@@ -17,14 +16,14 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
     private readonly JwtTokenSettings _jwtTokenSettings;
-    private readonly IMessageUser _messageUser;
+    private readonly IMessage _message;
 
     public UserService(IUserRepository repository,
-        IOptions<JwtTokenSettings> jwtTokenSettings, IMessageUser messageUser)
+        IOptions<JwtTokenSettings> jwtTokenSettings, IMessage message)
     {
         _repository = repository;
         _jwtTokenSettings = jwtTokenSettings.Value;
-        _messageUser = messageUser;
+        _message = message;
     }
 
     public async Task Create(CreateUserDto dto)
@@ -36,7 +35,8 @@ public class UserService : IUserService
 
         var user = dto.ToDomainObject();
         await _repository.Create(user);
-        await _messageUser.NotifyAccountCreation(user);
+        
+        _message.SendSms(user.Username, "Bienvenido a CRIApp");
     }
 
     public async Task<TokenDto> Login(LoginDto dto)

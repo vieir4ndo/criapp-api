@@ -7,5 +7,4 @@ public class MessageSettings
     public string ClientSecret { get; set; }
     public string SenderPhoneNumber { get; set; }
     public string SenderEmail { get; set; }
-    public string SenderEmailName { get; set; }
 }
