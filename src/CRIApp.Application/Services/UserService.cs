@@ -16,12 +16,15 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
     private readonly JwtTokenSettings _jwtTokenSettings;
+    private readonly IMessageUser _messageUser;
 
     public UserService(IUserRepository repository,
-        IOptions<JwtTokenSettings> jwtTokenSettings)
+        IOptions<JwtTokenSettings> jwtTokenSettings,
+        IMessageUser messageUser)
     {
         _repository = repository;
         _jwtTokenSettings = jwtTokenSettings.Value;
+        _messageUser = messageUser;
     }
 
     public async Task Create(CreateUserDto dto)
@@ -33,6 +36,7 @@ public class UserService : IUserService
 
         var user = dto.ToDomainObject();
         await _repository.Create(user);
+        await _messageUser.NotifyAccountCreation(user);
     }
 
     public async Task<TokenDto> Login(LoginDto dto)
