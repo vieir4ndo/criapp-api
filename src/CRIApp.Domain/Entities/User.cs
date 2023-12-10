@@ -8,7 +8,7 @@ public class User : Entity
     public string Name { get; private set; }
     public DateTime BirthDate { get; private set; }
     public Sex Sex { get; private set; }
-    public string Username { get; private set; }
+    public string Email { get; private set; }
     public string PasswordHash { get; private set; }
     public bool Active { get; private set; }
     public int? NumberOfChildren { get; private set; }
@@ -34,7 +34,7 @@ public class User : Entity
         string name,
         DateTime birthDate,
         Sex sex,
-        string username,
+        string email,
         string password,
         FamilyType? familyType = null,
         EducationalLevel? educationalLevel = null,
@@ -44,7 +44,7 @@ public class User : Entity
         Name = name;
         BirthDate = birthDate;
         Sex = sex;
-        Username = username;
+        Email = email;
         FamilyType = familyType;
         EducationalLevel = educationalLevel;
         PasswordHash = PasswordHasher.HashPassword(password);
@@ -54,7 +54,7 @@ public class User : Entity
         Name.IsNullOrEmpty("An user cannot have a null or empty name");
         BirthDate.IsDateTimeMinValue("An user has to have a valid birth date");
         Sex.IsInEnum("An user has to have a sex according to system values");
-        Username.IsValidUsername("An user has to have a valid username");
+        Email.IsValidEmail("An user has to have a valid email");
         Active.IsActive("An user has to be active to be created");
         PasswordHash.IsNullOrEmpty("An user cannot have a null or empty password hash");
     }

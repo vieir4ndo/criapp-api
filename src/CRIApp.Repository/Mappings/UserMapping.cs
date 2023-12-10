@@ -20,11 +20,11 @@ public class AdminMapping : IEntityTypeConfiguration<User>
         builder.Property(x => x.Sex)
             .IsRequired();
 
-        builder.Property(x => x.Username)
+        builder.Property(x => x.Email)
             .IsRequired()
             .HasMaxLength(100);
 
-        builder.HasIndex(u => u.Username)
+        builder.HasIndex(u => u.Email)
             .IsUnique();
 
         builder.Property(x => x.PasswordHash)

@@ -19,12 +19,4 @@
       <ProjectReference Include="..\CRIApp.Repository\CRIApp.Repository.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Content Update="appsettings.Development.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-    </ItemGroup>
-
 </Project>

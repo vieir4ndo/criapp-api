@@ -8,7 +8,7 @@ public class CreateUserDto
     public string Name { get; set; }
     public DateTime BirthDate { get; set; }
     public Sex Sex { get; set; }
-    public string Username { get; set; }
+    public string Email { get; set; }
     public string Password { get; set; }
     public FamilyType? FamilyType { get; set; }
     public EducationalLevel? EducationalLevel { get; set; }
@@ -16,6 +16,6 @@ public class CreateUserDto
 
     public User ToDomainObject()
     {
-        return new User(Name, BirthDate, Sex, Username, Password, FamilyType, EducationalLevel, NumberOfChildren);
+        return new User(Name, BirthDate, Sex, Email, Password, FamilyType, EducationalLevel, NumberOfChildren);
     }
 }
