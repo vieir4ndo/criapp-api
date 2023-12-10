@@ -29,7 +29,7 @@ public class UserService : IUserService
         var userExisting = await _repository.GetByEmail(dto.Email);
 
         if (userExisting is not null)
-            throw new ValidationException("This email is taken");
+            throw new ValidationException("This username is taken");
 
         var user = dto.ToDomainObject();
         await _repository.Create(user);
