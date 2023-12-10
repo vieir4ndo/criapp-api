@@ -27,11 +27,12 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 
         RuleFor(x => x.Username)
             .NotEmpty()
-            .NotNull();
-        
-        RuleFor(x => x.Username)
-            .Must(IsValidUsername)
-            .When(_ => true);
+            .NotNull()
+            .DependentRules(() =>
+            {
+                RuleFor(x => x.Username)
+                    .Must(IsValidUsername);
+            });
 
         RuleFor(x => x.Password)
             .NotEmpty()

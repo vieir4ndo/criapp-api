@@ -16,14 +16,12 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
     private readonly JwtTokenSettings _jwtTokenSettings;
-    private readonly IMessage _message;
 
     public UserService(IUserRepository repository,
-        IOptions<JwtTokenSettings> jwtTokenSettings, IMessage message)
+        IOptions<JwtTokenSettings> jwtTokenSettings)
     {
         _repository = repository;
         _jwtTokenSettings = jwtTokenSettings.Value;
-        _message = message;
     }
 
     public async Task Create(CreateUserDto dto)
@@ -35,8 +33,6 @@ public class UserService : IUserService
 
         var user = dto.ToDomainObject();
         await _repository.Create(user);
-        
-        _message.SendSms(user.Username, "Bienvenido a CRIApp");
     }
 
     public async Task<TokenDto> Login(LoginDto dto)
