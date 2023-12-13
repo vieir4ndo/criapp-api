@@ -1,7 +1,7 @@
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 
-namespace CRIApp.Application.Dtos;
+namespace CRIApp.Application.Dto;
 
 public class CreateUserDto
 {

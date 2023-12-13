@@ -1,7 +1,7 @@
 using CRIApp.Api.Controllers.Requests;
 using CRIApp.Api.Controllers.Responses;
 using CRIApp.Application.Abstractions;
-using CRIApp.Application.Dtos;
+using CRIApp.Application.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

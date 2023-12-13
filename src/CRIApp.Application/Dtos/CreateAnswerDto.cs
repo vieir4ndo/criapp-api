@@ -1,6 +1,6 @@
 using CRIApp.Domain.Entities;
 
-namespace CRIApp.Application.Dtos;
+namespace CRIApp.Application.Dto;
 
 public class CreateAnswerDto
 {

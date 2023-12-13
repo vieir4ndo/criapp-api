@@ -1,6 +1,6 @@
 using CRIApp.Domain.Enums;
 
-namespace CRIApp.Application.Dtos;
+namespace CRIApp.Application.Dto;
 
 public class UpdateUserDto
 {

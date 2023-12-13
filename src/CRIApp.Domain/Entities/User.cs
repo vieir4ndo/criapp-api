@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using CRIApp.Domain.Enums;
-using CRIApp.Domain.Helpers;
+using CRIApp.Domain.Extensions;
 
 namespace CRIApp.Domain.Entities;
 
@@ -50,7 +50,7 @@ public class User : Entity
         Username = username;
         FamilyType = familyType;
         EducationalLevel = educationalLevel;
-        PasswordHash = PasswordHasher.HashPassword(password);
+        PasswordHash = HashExtensions.HashPassword(password);
         NumberOfChildren = numberOfChildren;
         Activate();
         
@@ -64,7 +64,7 @@ public class User : Entity
 
     public bool VerifyPassword(string password)
     {
-        return PasswordHasher.VerifyPassword(password, PasswordHash);
+        return HashExtensions.VerifyPassword(password, PasswordHash);
     }
 
     public void Update(string? name, DateTime? birthDate, Sex? sex, EducationalLevel? educationalLevel, FamilyType? familyType, int? numberOfChildren)

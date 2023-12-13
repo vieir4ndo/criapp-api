@@ -1,12 +1,11 @@
 using CRIApp.Api.Controllers.Requests;
 using CRIApp.Api.Controllers.Responses;
 using CRIApp.Application.Abstractions;
-using CRIApp.Application.Dtos;
+using CRIApp.Application.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRIApp.Api.Controllers;
-
 
 [ApiController]
 [Authorize]
@@ -36,5 +35,23 @@ public class ChildController : CriAppControllerBase
         var data = await _service.GetAllById(GetUserId());
 
         return new ApiResponse<List<ChildDto>>(true, data);
+    }
+    
+    [HttpPatch("{childId}")]
+    public async Task<ApiResponse<object>> Update(UpdateChildRequest request, [FromRoute] Guid childId)
+    {
+        request.ValidateAndThrow();
+        
+        await _service.Update(GetUserId(), childId, request.ToDto());
+
+        return new ApiResponse<object>(true);
+    }
+    
+    [HttpGet("{childId}")]
+    public async Task<ApiResponse<ChildDto>> Get([FromRoute] Guid childId)
+    {
+        var child = await _service.GetAndValidateById(childId, GetUserId());
+
+        return new ApiResponse<ChildDto>(true, new ChildDto(child));
     }
 }

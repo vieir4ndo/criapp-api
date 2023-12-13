@@ -1,4 +1,4 @@
-namespace CRIApp.Application.Dtos;
+namespace CRIApp.Application.Dto;
 
 public class LoginDto
 {

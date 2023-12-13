@@ -1,5 +1,5 @@
 using CRIApp.Application.Abstractions;
-using CRIApp.Application.Dtos;
+using CRIApp.Application.Dto;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Exceptions;
 
