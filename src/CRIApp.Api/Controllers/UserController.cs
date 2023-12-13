@@ -38,7 +38,7 @@ public class UserController : CriAppControllerBase
     }
 
     [HttpGet]
-    public async Task<ApiResponse<UserDto>> Consult()
+    public async Task<ApiResponse<UserDto>> Get()
     {
         var user = await _service.GetAndValidateById(GetUserId());
 
