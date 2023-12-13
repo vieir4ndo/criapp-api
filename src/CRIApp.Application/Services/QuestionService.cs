@@ -20,7 +20,7 @@ public class QuestionService : IQuestionService
     {
         var user = await _userService.GetAndValidateById(userId);
 
-        var blackList = user!.Answers.Where(x => x.ChildId == childId).Select(answer => answer.QuestionId).ToList();
+        var blackList = user.Answers.Where(x => x.ChildId == childId).Select(answer => answer.QuestionId).ToList();
         
         var questions = await _questionRepository.GetAllExcept(blackList);
 
