@@ -1,4 +1,4 @@
-using CRIApp.Application.Dtos;
+using CRIApp.Application.Dto;
 using CRIApp.Domain.Entities;
 
 namespace CRIApp.Application.Abstractions;

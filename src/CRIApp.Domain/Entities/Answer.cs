@@ -1,4 +1,6 @@
 
+using CRIApp.Domain.Extensions;
+
 namespace CRIApp.Domain.Entities;
 
 public class Answer : Entity

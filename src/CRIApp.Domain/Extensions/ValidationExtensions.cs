@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using CRIApp.Domain.Exceptions;
 
-namespace CRIApp.Domain;
+namespace CRIApp.Domain.Extensions;
 
-public static class Validations
+public static class ValidationExtensions
 {
     public static void IsNullOrEmpty(this string text, string message)
     {
@@ -64,5 +65,15 @@ public static class Validations
     {
         if (number < 0)
             throw new DomainException(message);
+    }
+
+    public static bool BeValidIso8601Date(string? date)
+    {
+        return DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _);
+    }
+    
+    public static bool IsValidUsername(string username)
+    {
+        return new EmailAddressAttribute().IsValid(username) || new PhoneAttribute().IsValid(username);
     }
 }

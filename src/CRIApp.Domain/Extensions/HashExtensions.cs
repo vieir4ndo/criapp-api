@@ -1,9 +1,9 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace CRIApp.Domain.Helpers;
+namespace CRIApp.Domain.Extensions;
 
-public static class PasswordHasher
+public static class HashExtensions
 {
     public static string HashPassword(string password)
     {

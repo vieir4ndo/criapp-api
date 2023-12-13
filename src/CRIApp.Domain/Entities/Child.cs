@@ -1,4 +1,5 @@
 using CRIApp.Domain.Enums;
+using CRIApp.Domain.Extensions;
 
 namespace CRIApp.Domain.Entities;
 
@@ -27,5 +28,14 @@ public class Child : Entity
         Sex.IsInEnum("A child has to have a sex according to system values");
         MonthsOfBreastFeeding.IsPositive("A child has to have a valid value for months of breast feeding");
         PrcId.IsEmptyGuid("A child has to have a PRC associated");
+    }
+
+    public void Update(string? name, DateTime? birthDate, Sex? sex, int? monthsOfBreastFeeding, bool? isPremature)
+    {
+        Name = name ?? Name;
+        BirthDate = birthDate ?? BirthDate;
+        Sex = sex ?? Sex;
+        MonthsOfBreastFeeding = monthsOfBreastFeeding ?? MonthsOfBreastFeeding;
+        IsPremature = isPremature ?? IsPremature;
     }
 }

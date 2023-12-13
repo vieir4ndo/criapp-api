@@ -28,4 +28,10 @@ public class ChildRepository : IChildRepository
     {
         return await Context.Child.Where(x => x.PrcId == prcId).ToListAsync();
     }
+
+    public async Task Update(Child child)
+    {
+        Context.Child.Update(child);
+        await Context.SaveChangesAsync();
+    }
 }

@@ -1,4 +1,6 @@
-namespace CRIApp.Application.Dtos;
+using CRIApp.Application.Dtos;
+
+namespace CRIApp.Application.Dto;
 
 public class TokenDto
 {

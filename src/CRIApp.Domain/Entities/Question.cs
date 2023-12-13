@@ -1,4 +1,5 @@
 using CRIApp.Domain.Enums;
+using CRIApp.Domain.Extensions;
 
 namespace CRIApp.Domain.Entities;
 
