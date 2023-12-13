@@ -30,4 +30,10 @@ public class UserRepository : IUserRepository
             .Include(x => x.Answers)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
+
+    public async Task Update(User user)
+    {
+        Context.User.Update(user);
+        await Context.SaveChangesAsync();
+    }
 }

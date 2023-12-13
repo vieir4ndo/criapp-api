@@ -41,6 +41,10 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
         RuleFor(x => x.EducationalLevel)
             .IsInEnum()
             .When(x => x != null);
+        
+        RuleFor(x => x.NumberOfChildren)
+            .GreaterThanOrEqualTo(0)
+            .When(x => x != null);
     }
 
     private static bool IsValidUsername(string username)
