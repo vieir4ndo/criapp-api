@@ -8,5 +8,6 @@ public interface IUserService
     Task Create(CreateUserDto dto);
     Task<TokenDto> Login(LoginDto dto);
     Task<User?> GetByEmail(string email);
-    Task<User?> GetAndValidateById(Guid id);
+    Task<User> GetAndValidateById(Guid id);
+    Task Update(Guid userId, UpdateUserDto dto);
 }

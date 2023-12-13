@@ -81,7 +81,7 @@ public class UserService : IUserService
         return await _repository.GetByEmail(email);
     }
 
-    public async Task<User?> GetAndValidateById(Guid id)
+    public async Task<User> GetAndValidateById(Guid id)
     {
         var user = await _repository.GetById(id);
 
@@ -89,5 +89,14 @@ public class UserService : IUserService
             throw new NotFoundException("User not found");
 
         return user;
+    }
+
+    public async Task Update(Guid userId, UpdateUserDto dto)
+    {
+        var user = await GetAndValidateById(userId);
+
+        user.Update(dto.Name, dto.BirthDate, dto.Sex, dto.EducationalLevel, dto.FamilyType, dto.NumberOfChildren);
+        
+        await _repository.Update(user);
     }
 }

@@ -66,4 +66,14 @@ public class User : Entity
     {
         return PasswordHasher.VerifyPassword(password, PasswordHash);
     }
+
+    public void Update(string? name, DateTime? birthDate, Sex? sex, EducationalLevel? educationalLevel, FamilyType? familyType, int? numberOfChildren)
+    {
+        Name = name ?? Name;
+        BirthDate = birthDate ?? BirthDate;
+        Sex = sex ?? Sex;
+        FamilyType = familyType ?? FamilyType;
+        EducationalLevel = educationalLevel ?? EducationalLevel;
+        NumberOfChildren = numberOfChildren ?? NumberOfChildren;
+    }
 }

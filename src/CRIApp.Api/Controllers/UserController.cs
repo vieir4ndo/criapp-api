@@ -16,12 +16,12 @@ public class UserController : CriAppControllerBase
     {
         _service = service;
     }
-    
+
     [HttpPost]
     public async Task<ApiResponse<object>> Create(CreateUserRequest request)
     {
         request.ValidateAndThrow();
-        
+
         await _service.Create(request.ToDto());
 
         return new ApiResponse<object>(true);
@@ -31,42 +31,48 @@ public class UserController : CriAppControllerBase
     public async Task<ApiResponse<TokenDto>> Login(LoginRequest request)
     {
         request.ValidateAndThrow();
-        
+
         var tokenDto = await _service.Login(request.ToDto());
 
         return new ApiResponse<TokenDto>(true, tokenDto);
     }
 
-    /*
     [HttpGet]
-    public IActionResult Consult()
+    public async Task<ApiResponse<UserDto>> Consult()
     {
-        throw new NotImplementedException();
-    }
+        var user = await _service.GetAndValidateById(GetUserId());
 
+        return new ApiResponse<UserDto>(true, new UserDto(user));
+    }
+    
     [HttpPatch]
-    public IActionResult Update()
+    public async Task<ApiResponse<object>> Update(UpdateUserRequest request)
     {
-        throw new NotImplementedException();
+        request.ValidateAndThrow();
+
+        await _service.Update(GetUserId(), request.ToDto());
+
+        return new ApiResponse<object>(true);
     }
 
-    [HttpDelete]
-    public IActionResult Deactivate()
-    {
-        throw new NotImplementedException();
-    }
+    /*
+[HttpDelete]
+public IActionResult Deactivate()
+{
+    throw new NotImplementedException();
+}
 
 
-    [HttpPost("forgot-password")]
-    public IActionResult ForgotPassword()
-    {
-        throw new NotImplementedException();
-    }
+[HttpPost("forgot-password")]
+public IActionResult ForgotPassword()
+{
+    throw new NotImplementedException();
+}
 
-    [HttpPost("reset-password")]
-    public IActionResult ResetPassword()
-    {
-        throw new NotImplementedException();
-    }
-    */
+[HttpPost("reset-password")]
+public IActionResult ResetPassword()
+{
+    throw new NotImplementedException();
+}
+*/
 }
