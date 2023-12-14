@@ -21,15 +21,15 @@ public class AppContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            /*IConfigurationRoot configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
-                .Build();*/
+                .Build();
             
-            IConfigurationRoot configuration = new ConfigurationBuilder()
+            /*IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath($"{Directory.GetCurrentDirectory()}/../CRIApp.Api")
                 .AddJsonFile("appsettings.Development.json")
-                .Build();
+                .Build();*/
             
             var connectionString = configuration["ConnectionStrings:Postgres"];
             optionsBuilder.UseNpgsql(connectionString);
