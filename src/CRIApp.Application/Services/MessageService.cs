@@ -33,6 +33,19 @@ public class MessageService : IMessageUser
         }
     }
 
+    public async Task NotifyForgotPassword(User user, string code)
+    {
+        var message = "Tu codigo de recuperacion es: " + code + "";
+        if (user.UsernameType() == UsernameType.PhoneNumber)
+        {
+            SendSms(user.Username, message);
+        }
+        else
+        {
+            await SendEmail(user.Username, message, message);
+        }
+    }
+
     private void SendSms(string phoneNumber, string message)
     {
         TwilioClient.Init(_twilioSettings.ClientId, _twilioSettings.ClientSecret);

@@ -18,7 +18,7 @@ public class UserRepository : IUserRepository
         await Context.SaveChangesAsync();
     }
 
-    public async Task<User?> GetByEmail(string email)
+    public async Task<User?> GetByUsername(string email)
     {
         return await Context.User.FirstOrDefaultAsync(x => x.Username == email);
     }

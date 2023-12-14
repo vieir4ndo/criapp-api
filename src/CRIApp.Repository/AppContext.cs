@@ -15,20 +15,21 @@ public class AppContext : DbContext
     public DbSet<Forum> Forum { get; set; }
     public DbSet<Question> Question { get; set; }
     public DbSet<User> User { get; set; }
+    public DbSet<UserResetPasswordCode> UserResetPasswordCode { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            IConfigurationRoot configuration = new ConfigurationBuilder()
+            /*IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
-                .Build();
+                .Build();*/
             
-            /*IConfigurationRoot configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath($"{Directory.GetCurrentDirectory()}/../CRIApp.Api")
                 .AddJsonFile("appsettings.Development.json")
-                .Build();*/
+                .Build();
             
             var connectionString = configuration["ConnectionStrings:Postgres"];
             optionsBuilder.UseNpgsql(connectionString);
