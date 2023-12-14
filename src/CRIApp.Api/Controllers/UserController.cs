@@ -55,6 +55,22 @@ public class UserController : CriAppControllerBase
 
         return new ApiResponse<object>(true);
     }
+    
+    [HttpPost("forgot-password")]
+    public async Task<ApiResponse<object>> ForgotPassword(ForgotPasswordRequest request)
+    {
+        request.ValidateAndThrow();
+        
+        await _service.ForgotPassword(request.Username);
+        
+        return new ApiResponse<object>(true);
+    }
+
+    [HttpPost("reset-password")]
+    public IActionResult ResetPassword()
+    {
+        throw new NotImplementedException();
+    }
 
     /*
 [HttpDelete]
@@ -64,16 +80,6 @@ public IActionResult Deactivate()
 }
 
 
-[HttpPost("forgot-password")]
-public IActionResult ForgotPassword()
-{
-    throw new NotImplementedException();
-}
 
-[HttpPost("reset-password")]
-public IActionResult ResetPassword()
-{
-    throw new NotImplementedException();
-}
 */
 }

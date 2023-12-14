@@ -7,6 +7,7 @@ using CRIApp.Application.Dtos;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Exceptions;
+using CRIApp.Domain.Extensions;
 using CRIApp.Domain.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -18,19 +19,22 @@ public class UserService : IUserService
     private readonly IUserRepository _repository;
     private readonly JwtTokenSettings _jwtTokenSettings;
     private readonly IMessageUser _messageUser;
+    private readonly IUserResetPasswordCodeRepository _userResetPasswordCodeRepository;
 
     public UserService(IUserRepository repository,
         IOptions<JwtTokenSettings> jwtTokenSettings,
-        IMessageUser messageUser)
+        IMessageUser messageUser,
+        IUserResetPasswordCodeRepository userResetPasswordCodeRepository)
     {
         _repository = repository;
         _jwtTokenSettings = jwtTokenSettings.Value;
         _messageUser = messageUser;
+        _userResetPasswordCodeRepository = userResetPasswordCodeRepository;
     }
 
     public async Task Create(CreateUserDto dto)
     {
-        var userExisting = await _repository.GetByEmail(dto.Username);
+        var userExisting = await _repository.GetByUsername(dto.Username);
 
         if (userExisting is not null)
             throw new ValidationException("This username is taken");
@@ -42,7 +46,7 @@ public class UserService : IUserService
 
     public async Task<TokenDto> Login(LoginDto dto)
     {
-        var user = await GetByEmail(dto.Username);
+        var user = await GetByUsername(dto.Username);
 
         if (user is not null && user.VerifyPassword(dto.Password))
         {
@@ -77,9 +81,9 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<User?> GetByEmail(string email)
+    public async Task<User?> GetByUsername(string username)
     {
-        return await _repository.GetByEmail(email);
+        return await _repository.GetByUsername(username);
     }
 
     public async Task<User> GetAndValidateById(Guid id)
@@ -99,5 +103,20 @@ public class UserService : IUserService
         user.Update(dto.Name, dto.BirthDate, dto.Sex, dto.EducationalLevel, dto.FamilyType, dto.NumberOfChildren);
         
         await _repository.Update(user);
+    }
+
+    public async Task ForgotPassword(string username)
+    {
+        var user = await GetByUsername(username);
+        
+        if (user is null)
+            throw new ValidationException("User not found");
+
+        //TODO: Extract this to settings
+        var code = RandomExtensions.GenerateRandomString(5);
+        
+        await _userResetPasswordCodeRepository.Create(new UserResetPasswordCode(user.Id, code, DateTime.Now.AddSeconds(180).ToUniversalTime()));
+        
+        await _messageUser.NotifyForgotPassword(user, code);
     }
 }

@@ -24,6 +24,7 @@ public class User : Entity
     public List<Comment> Comments { get; private set; } = new();
     public List<Forum> Forums { get; private set; } = new();
     public List<Faq> Faqs { get; private set; } = new();
+    public List<UserResetPasswordCode> UserResetPasswordCodes { get; private set; } = new();
     public void Activate() => Active = true;
     public void Deactivate() => Active = false;
     

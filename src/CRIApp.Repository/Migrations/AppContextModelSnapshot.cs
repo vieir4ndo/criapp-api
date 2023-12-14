@@ -279,6 +279,32 @@ namespace CRIApp.Repository.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("CRIApp.Domain.Entities.UserResetPasswordCode", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CodeHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserResetPasswordCode");
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.Answer", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.Child", "Child")
@@ -391,6 +417,17 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Admin");
                 });
 
+            modelBuilder.Entity("CRIApp.Domain.Entities.UserResetPasswordCode", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.User", "User")
+                        .WithMany("UserResetPasswordCodes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.Child", b =>
                 {
                     b.Navigation("Answers");
@@ -423,6 +460,8 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Forums");
 
                     b.Navigation("Questions");
+
+                    b.Navigation("UserResetPasswordCodes");
                 });
 #pragma warning restore 612, 618
         }

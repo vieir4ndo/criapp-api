@@ -23,5 +23,6 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IQuestionRepository, QuestionRepository>();
         services.AddScoped<IAnswerRepository, AnswerRepository>();
         services.AddScoped<IChildRepository, ChildRepository>();
+        services.AddScoped<IUserResetPasswordCodeRepository, UserResetPasswordCodeRepository>();
     }
 }
