@@ -22,9 +22,4 @@ public class UserResetPasswordCode : Entity
         ExpiresAt = expiresAt;
         CreatedAt = DateTime.Now.ToUniversalTime();
     }
-    
-    public bool VerifyCode(string code)
-    {
-        return ExpiresAt >= DateTime.Now.ToUniversalTime() && HashExtensions.VerifyPassword(code, CodeHash);
-    }
 }
