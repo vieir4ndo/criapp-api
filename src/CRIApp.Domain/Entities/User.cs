@@ -67,6 +67,18 @@ public class User : Entity
     {
         return HashExtensions.VerifyPassword(password, PasswordHash);
     }
+    
+    public bool VerifyResetPasswordCode(string code)
+    {
+        var lastCode = UserResetPasswordCodes.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
+
+        if (lastCode is null)
+        {
+            return false;
+        }
+        
+        return lastCode.ExpiresAt >= DateTime.Now.ToUniversalTime() && HashExtensions.VerifyPassword(code, lastCode.CodeHash);
+    }
 
     public void Update(string? name, DateTime? birthDate, Sex? sex, EducationalLevel? educationalLevel, FamilyType? familyType, int? numberOfChildren)
     {
@@ -76,5 +88,12 @@ public class User : Entity
         FamilyType = familyType ?? FamilyType;
         EducationalLevel = educationalLevel ?? EducationalLevel;
         NumberOfChildren = numberOfChildren ?? NumberOfChildren;
+    }
+    
+    public void UpdatePassword(string password)
+    {
+        PasswordHash = HashExtensions.HashPassword(password);
+        
+        PasswordHash.IsNullOrEmpty("An user cannot have a null or empty password hash");
     }
 }

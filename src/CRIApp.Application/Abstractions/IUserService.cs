@@ -1,4 +1,5 @@
 using CRIApp.Application.Dto;
+using CRIApp.Application.Dtos;
 using CRIApp.Domain.Entities;
 
 namespace CRIApp.Application.Abstractions;
@@ -11,5 +12,5 @@ public interface IUserService
     Task<User> GetAndValidateById(Guid id);
     Task Update(Guid userId, UpdateUserDto dto);
     Task ForgotPassword(string username);
-    //Task ResetPassword(ResetPasswordDto dto);
+    Task ResetPassword(ResetPasswordDto dto);
 }

@@ -67,9 +67,13 @@ public class UserController : CriAppControllerBase
     }
 
     [HttpPost("reset-password")]
-    public IActionResult ResetPassword()
+    public async Task<ApiResponse<object>> ResetPassword(ResetPasswordRequest request)
     {
-        throw new NotImplementedException();
+        request.ValidateAndThrow();
+
+        await _service.ResetPassword(request.ToDto());
+
+        return new ApiResponse<object>(true);
     }
 
     /*

@@ -119,4 +119,19 @@ public class UserService : IUserService
         
         await _messageUser.NotifyForgotPassword(user, code);
     }
+
+    public async Task ResetPassword(ResetPasswordDto dto)
+    {
+        var user = await GetByUsername(dto.Username);
+        
+        if (user is null)
+            throw new ValidationException("User not found");
+
+        if (!user.VerifyResetPasswordCode(dto.Code))
+            throw new ValidationException("Code is invalid or expired");
+        
+        user.UpdatePassword(dto.NewPassword);
+        
+        await _repository.Update(user);
+    }
 }
