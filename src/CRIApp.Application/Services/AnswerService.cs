@@ -25,7 +25,7 @@ public class AnswerService : IAnswerService
         var child = user!.Children.FirstOrDefault(x => x.Id == dto.ChildId);
 
         if (child is null)
-            throw new NotFoundException($"User {dto.PrcId} does not have a child with id {dto.ChildId}");
+            throw new NotFoundException($"Usuario {dto.PrcId} no tiene niño(a) con id {dto.ChildId}");
         
         await _repository.Create(dto.ToDomainObject());
     }

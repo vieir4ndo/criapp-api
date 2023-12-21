@@ -40,10 +40,10 @@ public class ChildService : IChildService
         var child = await _childRepository.GetById(id);
 
         if (child is null)
-            throw new NotFoundException("Child not found");
+            throw new NotFoundException("Niño(a) no encontrado");
         
         if (child.PrcId != prcId)
-            throw new ValidationException("Child does not belong to this user");
+            throw new ValidationException("Niño(a) no pertenece al usuario");
 
         return child;
     }
