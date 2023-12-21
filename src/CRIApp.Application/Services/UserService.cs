@@ -37,7 +37,7 @@ public class UserService : IUserService
         var userExisting = await _repository.GetByUsername(dto.Username);
 
         if (userExisting is not null)
-            throw new ValidationException("This username is taken");
+            throw new ValidationException("Nombre de usuario ya existe");
 
         var user = dto.ToDomainObject();
         await _repository.Create(user);
@@ -53,7 +53,7 @@ public class UserService : IUserService
             return GenerateToken(user);
         }
 
-        throw new ValidationException("Username or password did not match");
+        throw new ValidationException("Usuario o contraseña incorrecta");
     }
 
     private TokenDto GenerateToken(User user)
@@ -91,7 +91,7 @@ public class UserService : IUserService
         var user = await _repository.GetById(id);
 
         if (user is null)
-            throw new NotFoundException("User not found");
+            throw new NotFoundException("Usuario no encontrado");
 
         return user;
     }
@@ -110,7 +110,7 @@ public class UserService : IUserService
         var user = await GetByUsername(username);
         
         if (user is null)
-            throw new ValidationException("User not found");
+            throw new ValidationException("Usuario no encontrado");
 
         //TODO: Extract this to settings
         var code = RandomExtensions.GenerateRandomString(5);
@@ -125,10 +125,10 @@ public class UserService : IUserService
         var user = await GetByUsername(dto.Username);
         
         if (user is null)
-            throw new ValidationException("User not found");
+            throw new ValidationException("Usuario no encontrado");
 
         if (!user.VerifyResetPasswordCode(dto.Code))
-            throw new ValidationException("Code is invalid or expired");
+            throw new ValidationException("Codigo de recuperacion invalido o expirado");
         
         user.UpdatePassword(dto.NewPassword);
         

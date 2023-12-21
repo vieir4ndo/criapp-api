@@ -32,7 +32,7 @@ public class QuestionService : IQuestionService
         var question = await _questionRepository.GetById(id);
 
         if (question is null)
-            throw new NotFoundException("Question not found");
+            throw new NotFoundException("Pregunta no encontrada");
 
         return question;
     }
