@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using AppContext = CRIApp.Repository.AppContext;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 //Jwt configuration ends here
+
+// Set the default language for FluentValidation error messages
+ValidatorOptions.Global.LanguageManager.Enabled = true;
+ValidatorOptions.Global.LanguageManager.Culture = new System.Globalization.CultureInfo("es-ES");
 
 // Add services to the container.
 builder.Services.AddDbContext<AppContext>();
