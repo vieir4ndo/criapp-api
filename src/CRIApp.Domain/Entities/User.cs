@@ -85,8 +85,8 @@ public class User : Entity
         Name = name ?? Name;
         BirthDate = birthDate ?? BirthDate;
         Sex = sex ?? Sex;
-        FamilyType = familyType ?? FamilyType;
-        EducationalLevel = educationalLevel ?? EducationalLevel;
+        FamilyType = familyType;
+        EducationalLevel = educationalLevel;
         NumberOfChildren = numberOfChildren ?? NumberOfChildren;
     }
     
