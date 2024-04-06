@@ -16,6 +16,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IChildService, ChildService>();
         services.AddScoped<IMessageUser, MessageService>();
         services.AddScoped<IFaqService, FaqService>();
+        services.AddScoped<IAudiovisualResourceService, AudiovisualResourceService>();
     }
 
     public static void AddRepositories(this IServiceCollection services)
@@ -26,5 +27,6 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IChildRepository, ChildRepository>();
         services.AddScoped<IUserResetPasswordCodeRepository, UserResetPasswordCodeRepository>();
         services.AddScoped<IFaqRepository, FaqRepository>();
+        services.AddScoped<IAudiovisualResourceRepository, AudiovisualResourceRepository>();
     }
 }
