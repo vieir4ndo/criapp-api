@@ -1,5 +1,5 @@
 using CRIApp.Api.Controllers.Validators;
-using CRIApp.Application.Dto;
+using CRIApp.Application.Dtos;
 using FluentValidation.Results;
 
 namespace CRIApp.Api.Controllers.Requests;

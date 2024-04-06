@@ -1,7 +1,7 @@
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 
-namespace CRIApp.Application.Dto;
+namespace CRIApp.Application.Dtos;
 
 public class ChildDto
 {
