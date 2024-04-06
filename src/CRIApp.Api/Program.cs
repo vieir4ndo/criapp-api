@@ -50,6 +50,7 @@ using (var context = new AppContext())
     var adminId = UserSeeder.Execute(context);
     QuestionSeeder.Execute(context, adminId);
     FaqSeeder.Execute(context, adminId);
+    AudiovisualResourceSeeder.Execute(context, adminId);
 }
 
 builder.Services.AddServices();
