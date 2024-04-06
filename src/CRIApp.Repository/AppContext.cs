@@ -22,7 +22,7 @@ public class AppContext : DbContext
         if (!optionsBuilder.IsConfigured)
         {
             var configuration = new ConfigurationBuilder()
-                .SetBasePath($"{Directory.GetCurrentDirectory()}/../CRIApp.Api")
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();
             
