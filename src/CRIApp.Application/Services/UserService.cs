@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using CRIApp.Application.Abstractions;
-using CRIApp.Application.Dto;
 using CRIApp.Application.Dtos;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;

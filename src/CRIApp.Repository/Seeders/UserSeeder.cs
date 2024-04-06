@@ -5,17 +5,19 @@ namespace CRIApp.Repository.Seeders;
 
 public class UserSeeder
 {
-    public static Guid? Execute(AppContext context)
+    public static Guid Execute(AppContext context)
     {
+        User user;
         if (!context.User.Any())
         {
-            var user = new User("Admin", DateTime.Now.ToUniversalTime(), Sex.Male, "teste@teste.com", "teste");
+            user = new User("Admin", DateTime.Now.ToUniversalTime(), Sex.Male, "teste@teste.com", "teste");
             context.User.Add(user);
             context.SaveChanges();
 
             return user.Id;
         }
-
-        return null;
+        
+        user = context.User.FirstOrDefault(x => x.Name == "Admin");
+        return user.Id;
     }
 }

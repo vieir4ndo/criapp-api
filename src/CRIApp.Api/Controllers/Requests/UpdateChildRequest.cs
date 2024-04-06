@@ -1,6 +1,6 @@
 using System.Globalization;
 using CRIApp.Api.Controllers.Validators;
-using CRIApp.Application.Dto;
+using CRIApp.Application.Dtos;
 using CRIApp.Domain.Enums;
 using FluentValidation.Results;
 

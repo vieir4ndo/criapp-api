@@ -4,7 +4,6 @@ using CRIApp.Application.Extensions;
 using CRIApp.Domain.Settings;
 using CRIApp.Repository.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using AppContext = CRIApp.Repository.AppContext;
 using FluentValidation;
@@ -50,6 +49,7 @@ using (var context = new AppContext())
 
     var adminId = UserSeeder.Execute(context);
     QuestionSeeder.Execute(context, adminId);
+    FaqSeeder.Execute(context, adminId);
 }
 
 builder.Services.AddServices();
