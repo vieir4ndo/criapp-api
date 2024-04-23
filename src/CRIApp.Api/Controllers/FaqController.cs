@@ -20,10 +20,10 @@ public class FaqController : CriAppControllerBase
     
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ApiResponse<IList<FaqDto>>> GetAll()
+    public async Task<ApiResponse<FaqDto>> GetAll()
     {
         var data = await _service.GetAll();
 
-        return new ApiResponse<IList<FaqDto>>(true, data);
+        return new ApiResponse<FaqDto>(true, data);
     }
 }
