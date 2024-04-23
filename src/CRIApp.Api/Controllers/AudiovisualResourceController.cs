@@ -20,10 +20,10 @@ public class AudiovisualResourceController : CriAppControllerBase
     
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ApiResponse<IList<AudiovisualResourceDto>>> GetAll()
+    public async Task<ApiResponse<AudiovisualResourceDto>> GetAll()
     {
         var data = await _service.GetAll();
 
-        return new ApiResponse<IList<AudiovisualResourceDto>>(true, data);
+        return new ApiResponse<AudiovisualResourceDto>(true, data);
     }
 }
