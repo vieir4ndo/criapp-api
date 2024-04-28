@@ -64,7 +64,7 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Link")
+                    b.Property<string>("Iframe")
                         .IsRequired()
                         .HasColumnType("text");
 
