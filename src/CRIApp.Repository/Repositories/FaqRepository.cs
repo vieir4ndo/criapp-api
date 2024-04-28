@@ -15,6 +15,6 @@ public class FaqRepository : IFaqRepository
     
     public async Task<IList<Faq>> GetAll()
     {
-        return await Context.Faq.ToListAsync();
+        return await Context.Faq.OrderBy(x=>x.Id).ToListAsync();
     }
 }
