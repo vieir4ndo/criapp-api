@@ -17,7 +17,7 @@ public class AudiovisualResourceMapping : IEntityTypeConfiguration<AudiovisualRe
         builder.Property(x => x.Description)
             .IsRequired();
         
-        builder.Property(x => x.Link)
+        builder.Property(x => x.Iframe)
             .IsRequired();
         
         builder.HasOne(x => x.Admin)
