@@ -16,6 +16,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IChildService, ChildService>();
         services.AddScoped<IMessageUser, MessageService>();
         services.AddScoped<IFaqService, FaqService>();
+        services.AddScoped<IForumService, ForumService>();
         services.AddScoped<IAudiovisualResourceService, AudiovisualResourceService>();
     }
 
@@ -27,6 +28,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IChildRepository, ChildRepository>();
         services.AddScoped<IUserResetPasswordCodeRepository, UserResetPasswordCodeRepository>();
         services.AddScoped<IFaqRepository, FaqRepository>();
+        services.AddScoped<IForumRepository, ForumRepository>();
         services.AddScoped<IAudiovisualResourceRepository, AudiovisualResourceRepository>();
     }
 }
