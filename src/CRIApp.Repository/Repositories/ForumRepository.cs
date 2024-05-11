@@ -30,6 +30,7 @@ public class ForumRepository : IForumRepository
     public async Task<List<Forum>> GetAll()
     {
         return await _context.Forum
+            .Include(x=>x.Prc)
             .ToListAsync();
     }
 
