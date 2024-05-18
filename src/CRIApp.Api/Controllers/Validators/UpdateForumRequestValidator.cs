@@ -9,12 +9,10 @@ public class UpdateForumRequestValidator : AbstractValidator<UpdateForumRequest>
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .NotNull()
             .When(x => x != null);
         
         RuleFor(x => x.Description)
             .NotEmpty()
-            .NotNull()
             .When(x => x != null);
     }
 }
