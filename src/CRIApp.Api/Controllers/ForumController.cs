@@ -20,7 +20,7 @@ public class ForumController : CriAppControllerBase
     }
     
     [HttpPost]
-    public async Task<ApiResponse<object>> Create(CreateOrUpdateForumRequest request)
+    public async Task<ApiResponse<object>> Create(CreateForumRequest request)
     {
         request.ValidateAndThrow();
         
@@ -46,7 +46,7 @@ public class ForumController : CriAppControllerBase
     }
     
     [HttpPatch("{forumId}")]
-    public async Task<ApiResponse<object>> Update([FromRoute] Guid forumId, CreateOrUpdateForumRequest request)
+    public async Task<ApiResponse<object>> Update([FromRoute] Guid forumId, UpdateForumRequest request)
     {
         request.ValidateAndThrow();
         

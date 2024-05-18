@@ -2,7 +2,7 @@ using CRIApp.Domain.Entities;
 
 namespace CRIApp.Application.Dtos;
 
-public class CreateOrUpdateForumDto
+public class CreateForumDto
 {
     public string Name { get; set; }
     public string Description { get; set; }
