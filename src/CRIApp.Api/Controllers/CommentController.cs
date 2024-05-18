@@ -1,10 +1,14 @@
 using CRIApp.Api.Controllers.Requests;
 using CRIApp.Api.Controllers.Responses;
 using CRIApp.Application.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRIApp.Api.Controllers;
 
+[ApiController]
+[Authorize]
+[Route("comment")]
 public class CommentController : CriAppControllerBase
 {
     private readonly ICommentService _service;
