@@ -3,16 +3,18 @@ using FluentValidation;
 
 namespace CRIApp.Api.Controllers.Validators;
 
-public class CreateOrUpdateForumRequestValidator : AbstractValidator<CreateOrUpdateForumRequest>
+public class UpdateForumRequestValidator : AbstractValidator<UpdateForumRequest>
 {
-    public CreateOrUpdateForumRequestValidator()
+    public UpdateForumRequestValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .NotNull();
+            .NotNull()
+            .When(x => x != null);
         
         RuleFor(x => x.Description)
             .NotEmpty()
-            .NotNull();
+            .NotNull()
+            .When(x => x != null);
     }
 }

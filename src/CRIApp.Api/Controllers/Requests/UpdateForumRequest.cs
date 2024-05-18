@@ -4,18 +4,18 @@ using FluentValidation.Results;
 
 namespace CRIApp.Api.Controllers.Requests;
 
-public class CreateOrUpdateForumRequest : BaseRequest
+public class UpdateForumRequest : BaseRequest
 {
     public string Name { get; set; }
     public string Description { get; set; }
     protected override ValidationResult Validate()
     {
-        return new CreateOrUpdateForumRequestValidator().Validate(this);
+        return new UpdateForumRequestValidator().Validate(this);
     }
     
-    public CreateOrUpdateForumDto ToDto(Guid prcId)
+    public UpdateForumDto ToDto(Guid prcId)
     {
-        return new CreateOrUpdateForumDto
+        return new UpdateForumDto
         {
             Name = Name,
             Description = Description,

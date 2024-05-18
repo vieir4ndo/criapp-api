@@ -4,8 +4,8 @@ namespace CRIApp.Application.Abstractions;
 
 public interface IForumService
 {
-    Task Create(CreateOrUpdateForumDto dto);
+    Task Create(CreateForumDto dto);
     Task<ForumDto> GetById(Guid forumId);
     Task<List<ForumDto>> GetAll();
-    Task Update(Guid forumId, CreateOrUpdateForumDto dto);
+    Task Update(Guid forumId, UpdateForumDto dto);
 }

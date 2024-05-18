@@ -16,7 +16,7 @@ public class ForumService : IForumService
         _userService = userService;
     }
 
-    public async Task Create(CreateOrUpdateForumDto dto)
+    public async Task Create(CreateForumDto dto)
     {
         _ = await _userService.GetAndValidateById(dto.PrcId);
 
@@ -44,7 +44,7 @@ public class ForumService : IForumService
         return forumsDto;
     }
 
-    public async Task Update(Guid forumId, CreateOrUpdateForumDto dto)
+    public async Task Update(Guid forumId, UpdateForumDto dto)
     {
         _ = await _userService.GetAndValidateById(dto.PrcId);
         
