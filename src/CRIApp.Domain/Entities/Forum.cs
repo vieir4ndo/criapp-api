@@ -22,9 +22,12 @@ public class Forum : Entity
         PrcId.IsEmptyGuid("A forum has to have a PRC associated");
     }
     
-    public void Update(string? name, string? description)
+    public void Update(string name, string description)
     {
-        Name = name ?? Name;
-        Description = description ?? Description;
+        Name = name;
+        Description = description;
+        
+        Name.IsNullOrEmpty("A forum cannot have a null or empty name");
+        Description.IsNullOrEmpty("A forum cannot have a null or empty description");
     }
 }

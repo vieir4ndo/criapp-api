@@ -48,6 +48,8 @@ public class ForumController : CriAppControllerBase
     [HttpPatch("{forumId}")]
     public async Task<ApiResponse<object>> Update([FromRoute] Guid forumId, CreateOrUpdateForumRequest request)
     {
+        request.ValidateAndThrow();
+        
         await _service.Update(forumId, request.ToDto(GetUserId()));
 
         return new ApiResponse<object>(true);
