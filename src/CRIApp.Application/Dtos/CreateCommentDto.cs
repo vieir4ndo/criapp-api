@@ -10,6 +10,6 @@ public class CreateCommentDto
 
     public Comment ToDomainObject()
     {
-        return new Comment(Text, PrcId, ForumId);
+        return new Comment(Text, ForumId, PrcId);
     }
 }
