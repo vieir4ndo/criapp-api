@@ -54,4 +54,12 @@ public class ForumController : CriAppControllerBase
 
         return new ApiResponse<object>(true);
     }
+    
+    [HttpGet("{forumId}/comments")]
+    public async Task<ApiResponse<CommentDto>> GetCommentsById([FromRoute] Guid forumId)
+    {
+        var forum = await _service.GetById(forumId);
+    
+        return new ApiResponse<CommentDto>(true, forum.Comments);
+    }
 }
