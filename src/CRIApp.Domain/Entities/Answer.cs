@@ -15,6 +15,8 @@ public class Answer : Entity
     
     public Guid PrcId { get; private set; }
     public User Prc { get; private set; }
+    
+    public DateTime CreatedAt { get; private set; }
 
     protected Answer() {}
 
@@ -24,6 +26,7 @@ public class Answer : Entity
         QuestionId = questionId;
         ChildId = childId;
         PrcId = prcId;
+        CreatedAt = DateTime.Now;
         
         Validate();
     }

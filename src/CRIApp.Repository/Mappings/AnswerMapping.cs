@@ -12,6 +12,9 @@ public class AnswerMapping : IEntityTypeConfiguration<Answer>
 
         builder.Property(x => x.Value)
             .IsRequired();
+        
+        builder.Property(x => x.CreatedAt)
+            .IsRequired();
 
         builder.HasOne(x => x.Question)
             .WithMany(x => x.Answers)
