@@ -20,11 +20,13 @@ public class QuestionService : IQuestionService
     {
         var user = await _userService.GetAndValidateById(userId);
 
-        var blackList = user.Answers.Where(x => x.ChildId == childId).Select(answer => answer.QuestionId).ToList();
+        var answeredQuestions = user.Answers.Where(x => x.ChildId == childId).Select(answer => answer.QuestionId).ToList();
         
-        var questions = await _questionRepository.GetAllExcept(blackList);
+        var questions = await _questionRepository.GetAllExcept(answeredQuestions);
+        
+        var questionsAnsweredToday = user.Answers.Count(x => x.CreatedAt.Date == DateTime.Today);
 
-        return questions.Select(question => new QuestionDto(question));
+        return questions.Select(question => new QuestionDto(question)).Take(10 - questionsAnsweredToday);
     }
 
     public async Task<Question?> GetAndValidateById(Guid id)
