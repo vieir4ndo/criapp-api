@@ -9,7 +9,7 @@ public class CreateAnswerRequestValidator : AbstractValidator<CreateAnswerReques
     {
         RuleFor(x => x.Value)
             .GreaterThanOrEqualTo(0)
-            .LessThanOrEqualTo(6)
+            .LessThanOrEqualTo(5)
             .NotEmpty()
             .NotNull();
         
