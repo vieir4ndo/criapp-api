@@ -24,7 +24,7 @@ public class QuestionService : IQuestionService
         
         var questions = await _questionRepository.GetAllExcept(answeredQuestions);
         
-        var questionsAnsweredToday = user.Answers.Count(x => x.CreatedAt.Date == DateTime.Today);
+        var questionsAnsweredToday = user.Answers.Count(x =>  x.ChildId == childId && x.CreatedAt.Date == DateTime.Today);
 
         return questions.Select(question => new QuestionDto(question)).Take(10 - questionsAnsweredToday);
     }
