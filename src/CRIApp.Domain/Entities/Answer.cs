@@ -26,7 +26,7 @@ public class Answer : Entity
         QuestionId = questionId;
         ChildId = childId;
         PrcId = prcId;
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.Now.ToUniversalTime();
         
         Validate();
     }
