@@ -31,6 +31,9 @@ namespace CRIApp.Repository.Migrations
                     b.Property<Guid>("ChildId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("PrcId")
                         .HasColumnType("uuid");
 
