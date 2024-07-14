@@ -16,8 +16,9 @@ public class ForumRepository : IForumRepository
     {
         return await _context.Forum
             .Where(x => x.Id == id)
-            .Include(x => x.Comments)
             .Include(x =>x.Prc)
+            .Include(x => x.Comments)
+            .ThenInclude(x=>x.Prc)
             .FirstOrDefaultAsync();
     }
 
