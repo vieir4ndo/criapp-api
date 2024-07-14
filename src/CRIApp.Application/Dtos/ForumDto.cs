@@ -8,6 +8,7 @@ public class ForumDto
     public string Name { get; set; }
     public string Description { get; set; }
     public string PrcName { get; set; }
+    public string PrcId { get; set; }
     public List<CommentDto> Comments { get; set; }
 
     public ForumDto(Forum forum)
@@ -17,5 +18,6 @@ public class ForumDto
         Description = forum.Description;
         PrcName = forum.Prc.Name;
         Comments = forum.Comments.Select(x => new CommentDto(x)).ToList();
+        PrcId = forum.Prc.Id.ToString();
     }
 }
