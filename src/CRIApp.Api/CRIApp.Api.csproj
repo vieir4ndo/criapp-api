@@ -19,4 +19,9 @@
       <ProjectReference Include="..\CRIApp.Repository\CRIApp.Repository.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Hangfire.AspNetCore" Version="1.7.27" />
+        <PackageReference Include="Hangfire.Core" Version="1.7.27" />
+        <PackageReference Include="Hangfire.LiteDB" Version="0.4.1" />
+    </ItemGroup>
 </Project>
