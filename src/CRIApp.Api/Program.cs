@@ -1,12 +1,15 @@
 using System.Text;
 using CRIApp.Api.Middlewares;
 using CRIApp.Application.Extensions;
+using CRIApp.Application.Jobs;
 using CRIApp.Domain.Settings;
 using CRIApp.Repository.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using AppContext = CRIApp.Repository.AppContext;
 using FluentValidation;
+using Hangfire;
+using Hangfire.LiteDB;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,14 @@ var twilioSettings = builder.Configuration.GetSection(TwilioSettings.SectionName
 builder.Services.Configure<TwilioSettings>(twilioSettings);
 var mailjetSettings = builder.Configuration.GetSection(MailjetSettings.SectionName);
 builder.Services.Configure<MailjetSettings>(mailjetSettings);
+// HF
+builder.Services.AddHangfire(configuration =>
+{
+    configuration.UseLiteDbStorage("./hf.db");    
+});
+builder.Services.AddHangfireServer();
+// HF - End
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -65,6 +76,8 @@ var app = builder.Build();
 
 app.UseErrorHandler();
 
+app.UseHangfireDashboard();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -78,5 +91,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+var recurringJobManager = app.Services.GetService<IRecurringJobManager>();
+recurringJobManager.AddOrUpdate(
+    nameof(NotifyUsersWithLessThanTenAnswers),
+    () => new NotifyUsersWithLessThanTenAnswers().Run(),
+    Cron.Minutely);
 
 app.Run();

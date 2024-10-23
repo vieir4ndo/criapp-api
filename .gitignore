@@ -478,3 +478,4 @@ $RECYCLE.BIN/
 .idea/
 
 src/CRIApp.Api/appSettings.Development.json
+*.db
