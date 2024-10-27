@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  criapp:
+    image: criapp:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:8080"
+      - "4001:8081"
+    container_name: criapp
+    restart: unless-stopped
+#    depends_on:
+#      - postgres
+
+#  postgres:
+#    image: postgres:latest
+#    container_name: postgres
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: S3cureP@ssw0rd!2024
+#      POSTGRES_DB: criapp
+
+# volumes:
+#  postgres_data:
