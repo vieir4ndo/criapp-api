@@ -77,6 +77,7 @@ var app = builder.Build();
 app.UseErrorHandler();
 
 app.UseHangfireDashboard("/hangfire");
+app.MapHangfireDashboard();
 
 //if (app.Environment.IsDevelopment())
 //{
