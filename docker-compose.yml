@@ -7,8 +7,8 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "4000:8080"
-      - "4001:8081"
+      - "4500:8080"
+      - "4501:8081"
     container_name: criapp
     restart: unless-stopped
 #    depends_on:
