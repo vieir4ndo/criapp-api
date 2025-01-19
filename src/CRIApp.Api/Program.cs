@@ -1,15 +1,15 @@
-using System.Text;
 using CRIApp.Api.Middlewares;
 using CRIApp.Application.Extensions;
 using CRIApp.Application.Jobs;
 using CRIApp.Domain.Settings;
 using CRIApp.Repository.Seeders;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using AppContext = CRIApp.Repository.AppContext;
 using FluentValidation;
 using Hangfire;
 using Hangfire.LiteDB;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using AppContext = CRIApp.Repository.AppContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +25,7 @@ builder.Services.Configure<MailjetSettings>(mailjetSettings);
 // HF
 builder.Services.AddHangfire(configuration =>
 {
-    configuration.UseLiteDbStorage("./hf.db");    
+    configuration.UseLiteDbStorage("./hf.db");
 });
 builder.Services.AddHangfireServer();
 // HF - End
@@ -76,18 +76,16 @@ var app = builder.Build();
 
 app.UseErrorHandler();
 
-app.UseHangfireDashboard();
-
+app.UseHangfireDashboard("/hangfire");
 
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 //}
 
 //app.UseHttpsRedirection();
 
-Console.WriteLine("PASOUUUUUUUUU ");
 
 app.UseAuthentication();
 app.UseAuthorization();
