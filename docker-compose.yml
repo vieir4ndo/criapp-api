@@ -8,11 +8,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "4500:8080" # Mapeamento da porta HTTP
-      - "4501:8081" # Mapeamento da porta HTTPS
     container_name: criapp
     restart: unless-stopped
     environment:
-      - ASPNETCORE_URLS=http://+:8080;https://+:8081 # Configuração para ASP.NET Core escutar nas portas especificadas
+      - ASPNETCORE_URLS=http://+:8080 # Configuração para ASP.NET Core escutar nas portas especificadas
       - DOTNET_USE_POLLING_FILE_WATCHER=1 # Para lidar com mudanças em sistemas de arquivos montados
       - ASPNETCORE_ENVIRONMENT=Development # Ambiente de desenvolvimento para habilitar o Swagger
     networks:
