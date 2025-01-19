@@ -8,7 +8,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "4500:8080" # Mapeamento da porta HTTP
-      - "4501:8081" # Mapeamento da porta HTTPS
     container_name: criapp
     restart: unless-stopped
     environment:
