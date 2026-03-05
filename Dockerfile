@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /build
 
@@ -14,7 +14,7 @@ RUN dotnet restore CRIApp.Api.csproj
 # Publica o projeto principal em modo Release na pasta /app
 RUN dotnet publish CRIApp.Api.csproj -c Release -o /app
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
 ENV ASPNETCORE_ENVIRONMENT=Development
 

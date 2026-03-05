@@ -9,6 +9,7 @@ using Hangfire.LiteDB;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using AppContext = CRIApp.Repository.AppContext;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,7 +57,10 @@ builder.Services.AddDbContext<AppContext>();
 
 using (var context = new AppContext())
 {
-    context.Database.EnsureCreated(); // Certificar-se de que o banco de dados existe
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        context.Database.Migrate();
+    }
 
     var adminId = UserSeeder.Execute(context);
     QuestionSeeder.Execute(context, adminId);

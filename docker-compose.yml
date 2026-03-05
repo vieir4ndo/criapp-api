@@ -1,40 +1,40 @@
-version: "3.8"
-
 services:
   criapp:
     image: criapp:latest
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "4500:8080" # Mapeamento da porta HTTP
     container_name: criapp
+    ports:
+      - "4500:8080"
     restart: unless-stopped
     environment:
-      - ASPNETCORE_URLS=http://+:8080 # Configuração para ASP.NET Core escutar nas portas especificadas
-      - DOTNET_USE_POLLING_FILE_WATCHER=1 # Para lidar com mudanças em sistemas de arquivos montados
-      - ASPNETCORE_ENVIRONMENT=Development # Ambiente de desenvolvimento para habilitar o Swagger
+      ASPNETCORE_URLS: http://+:8080
+      DOTNET_USE_POLLING_FILE_WATCHER: 1
+      ASPNETCORE_ENVIRONMENT: Development
+    depends_on:
+      - postgres
     networks:
       - criapp_network
 
-  # Postgres (caso seja necessário no futuro)
-  # postgres:
-  #   image: postgres:latest
-  #   container_name: postgres
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: S3cureP@ssw0rd!2024
-  #     POSTGRES_DB: criapp
-  #   networks:
-  #     - criapp_network
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: S3cureP@ssw0rd!2024
+      POSTGRES_DB: criapp
+    networks:
+      - criapp_network
 
 networks:
   criapp_network:
     driver: bridge
 
-# volumes:
-#   postgres_data:
+volumes:
+  postgres_data:
