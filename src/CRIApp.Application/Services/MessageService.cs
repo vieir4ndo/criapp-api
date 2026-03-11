@@ -4,6 +4,7 @@ using CRIApp.Application.Abstractions;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Settings;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
@@ -14,22 +15,31 @@ public class MessageService : IMessageUser
 {
     private readonly TwilioSettings _twilioSettings;
     private readonly MailjetSettings _mailjetSettings;
-    public MessageService(IOptions<TwilioSettings> messageSettings, IOptions<MailjetSettings> mailjetSettings)
+    private readonly ILogger<MessageService> _logger;
+    public MessageService(IOptions<TwilioSettings> messageSettings, IOptions<MailjetSettings> mailjetSettings, ILogger<MessageService> logger)
     {
         _twilioSettings = messageSettings.Value;
         _mailjetSettings = mailjetSettings.Value;
+        _logger = logger;
     }
 
     public async Task NotifyAccountCreation(User user)
     {
-        var message = "Bienvenido a CRIApp";
-        if (user.UsernameType() == UsernameType.PhoneNumber)
+        try
         {
-            SendSms(user.Username, message);
+            var message = "Bienvenido a CRIApp";
+            if (user.UsernameType() == UsernameType.PhoneNumber)
+            {
+                SendSms(user.Username, message);
+            }
+            else
+            {
+                await SendEmail(user.Username, message, message);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            await SendEmail(user.Username, message, message);
+            _logger.LogError(ex, ex.Message);
         }
     }
 
