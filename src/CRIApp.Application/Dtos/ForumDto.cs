@@ -11,6 +11,8 @@ public class ForumDto
     public string PrcId { get; set; }
     public List<CommentDto> Comments { get; set; }
 
+    public ForumDto() { }
+
     public ForumDto(Forum forum)
     {
         Id = forum.Id;

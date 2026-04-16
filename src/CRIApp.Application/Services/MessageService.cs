@@ -1,24 +1,30 @@
-using System.Net;
-using System.Net.Mail;
 using CRIApp.Application.Abstractions;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Settings;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Twilio;
-using Twilio.Rest.Api.V2010.Account;
 
 namespace CRIApp.Application.Services;
 
 public class MessageService : IMessageUser
 {
+    private readonly ISmsClient _smsClient;
+    private readonly IEmailClient _emailClient;
     private readonly TwilioSettings _twilioSettings;
     private readonly MailjetSettings _mailjetSettings;
     private readonly ILogger<MessageService> _logger;
-    public MessageService(IOptions<TwilioSettings> messageSettings, IOptions<MailjetSettings> mailjetSettings, ILogger<MessageService> logger)
+
+    public MessageService(
+        ISmsClient smsClient,
+        IEmailClient emailClient,
+        IOptions<TwilioSettings> twilioSettings,
+        IOptions<MailjetSettings> mailjetSettings,
+        ILogger<MessageService> logger)
     {
-        _twilioSettings = messageSettings.Value;
+        _smsClient = smsClient;
+        _emailClient = emailClient;
+        _twilioSettings = twilioSettings.Value;
         _mailjetSettings = mailjetSettings.Value;
         _logger = logger;
     }
@@ -29,13 +35,9 @@ public class MessageService : IMessageUser
         {
             var message = "Bienvenido a CRIApp";
             if (user.UsernameType() == UsernameType.PhoneNumber)
-            {
-                SendSms(user.Username, message);
-            }
+                _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber, message);
             else
-            {
-                await SendEmail(user.Username, message, message);
-            }
+                await _emailClient.SendAsync(_mailjetSettings.SenderEmail, user.Username, message, message);
         }
         catch (Exception ex)
         {
@@ -45,39 +47,10 @@ public class MessageService : IMessageUser
 
     public async Task NotifyForgotPassword(User user, string code)
     {
-        var message = "Tu codigo de recuperacion es: " + code + "";
+        var message = "Tu codigo de recuperacion es: " + code;
         if (user.UsernameType() == UsernameType.PhoneNumber)
-        {
-            SendSms(user.Username, message);
-        }
+            _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber, message);
         else
-        {
-            await SendEmail(user.Username, message, message);
-        }
-    }
-
-    private void SendSms(string phoneNumber, string message)
-    {
-        TwilioClient.Init(_twilioSettings.ClientId, _twilioSettings.ClientSecret);
-
-        _ = MessageResource.Create(
-            body: message,
-            from: new Twilio.Types.PhoneNumber(_twilioSettings.SenderPhoneNumber),
-            to: new Twilio.Types.PhoneNumber(phoneNumber)
-        );
-    }
-
-    private async Task SendEmail(string email, string subject, string textBody)
-    {
-        var client = new SmtpClient();
-        client.Host = _mailjetSettings.Host;
-        client.Credentials = new NetworkCredential(_mailjetSettings.ApiKey, _mailjetSettings.ApiKeySecret);
-        client.Port = _mailjetSettings.Port;
-
-        var message = new MailMessage(_mailjetSettings.SenderEmail, email);
-        message.Body = textBody;
-        message.Subject = subject;
-
-        await client.SendMailAsync(message);
+            await _emailClient.SendAsync(_mailjetSettings.SenderEmail, user.Username, message, message);
     }
 }
