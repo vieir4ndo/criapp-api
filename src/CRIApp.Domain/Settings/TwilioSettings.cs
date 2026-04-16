@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace CRIApp.Domain.Settings;
 
+[ExcludeFromCodeCoverage]
 public class TwilioSettings
 {
     public static string SectionName { get; private set;  }= nameof(TwilioSettings);
