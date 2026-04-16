@@ -22,7 +22,7 @@ public class UserRepository : IUserRepository
     {
         return await Context.User
             .Include(x => x.UserResetPasswordCodes)
-            .FirstOrDefaultAsync(x => x.Username == email);
+            .FirstOrDefaultAsync(x => x.Username.ToLower() == email.ToLower());
     }
 
     public async Task<User?> GetById(Guid id)
