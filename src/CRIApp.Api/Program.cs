@@ -1,5 +1,7 @@
+using System.Text.Json;
 using CRIApp.Api.HealthChecks;
 using CRIApp.Api.Middlewares;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using CRIApp.Application.Extensions;
 using CRIApp.Application.Jobs;
 using CRIApp.Domain.Settings;
@@ -57,9 +59,9 @@ builder.Services.AddDbContext<AppContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
 builder.Services.AddHealthChecks()
-    .AddDbContextCheck<AppContext>(name: "database")
-    .AddCheck<SmtpHealthCheck>(name: "email")
-    .AddCheck<TwilioHealthCheck>(name: "sms");
+    .AddDbContextCheck<AppContext>(name: "database", tags: ["external"])
+    .AddCheck<SmtpHealthCheck>(name: "email", tags: ["external"])
+    .AddCheck<TwilioHealthCheck>(name: "sms", tags: ["external"]);
 
 builder.Services.AddServices();
 builder.Services.AddRepositories();
@@ -99,7 +101,56 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHealthChecks("/health");
+
+var jsonOptions = new JsonWriterOptions { Indented = true };
+
+app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        using var stream = new System.IO.MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream, jsonOptions))
+        {
+            writer.WriteStartObject();
+            writer.WriteString("status", report.Status.ToString());
+            writer.WriteString("duration", report.TotalDuration.ToString());
+            writer.WriteStartObject("checks");
+            foreach (var entry in report.Entries)
+            {
+                writer.WriteStartObject(entry.Key);
+                writer.WriteString("status", entry.Value.Status.ToString());
+                writer.WriteString("duration", entry.Value.Duration.ToString());
+                if (entry.Value.Description != null)
+                    writer.WriteString("description", entry.Value.Description);
+                if (entry.Value.Exception != null)
+                    writer.WriteString("error", entry.Value.Exception.Message);
+                writer.WriteEndObject();
+            }
+            writer.WriteEndObject();
+            writer.WriteEndObject();
+        }
+        await context.Response.WriteAsync(System.Text.Encoding.UTF8.GetString(stream.ToArray()));
+    }
+});
+
+app.MapHealthChecks("/health/self", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = check => !check.Tags.Contains("external"),
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        using var stream = new System.IO.MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream, jsonOptions))
+        {
+            writer.WriteStartObject();
+            writer.WriteString("status", report.Status.ToString());
+            writer.WriteString("duration", report.TotalDuration.ToString());
+            writer.WriteEndObject();
+        }
+        await context.Response.WriteAsync(System.Text.Encoding.UTF8.GetString(stream.ToArray()));
+    }
+});
 
 // var recurringJobManager = app.Services.GetService<IRecurringJobManager>();
 // recurringJobManager.AddOrUpdate(
