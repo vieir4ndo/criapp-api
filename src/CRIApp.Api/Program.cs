@@ -27,7 +27,7 @@ builder.Services.Configure<MailjetSettings>(mailjetSettings);
 // HF
 builder.Services.AddHangfire(configuration =>
 {
-    configuration.UseLiteDbStorage("./hf.db");
+    configuration.UseLiteDbStorage(Path.Combine(Path.GetTempPath(), "hf.db"));
 });
 builder.Services.AddHangfireServer();
 // HF - End
