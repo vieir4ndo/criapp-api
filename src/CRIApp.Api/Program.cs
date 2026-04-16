@@ -1,7 +1,6 @@
 using System.Text.Json;
 using CRIApp.Api.HealthChecks;
 using CRIApp.Api.Middlewares;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using CRIApp.Application.Extensions;
 using CRIApp.Application.Jobs;
 using CRIApp.Domain.Settings;
@@ -22,8 +21,11 @@ builder.Services.AddApplicationInsightsTelemetry();
 // TODO: Isolate in extensions
 var jwtSettingsConfigurationSection = builder.Configuration.GetSection(JwtTokenSettings.SectionName);
 builder.Services.Configure<JwtTokenSettings>(jwtSettingsConfigurationSection);
-var connectionStrings = builder.Configuration.GetSection(ConnectionStrings.SectionName).Get<ConnectionStrings>();
 var jwtSettings = jwtSettingsConfigurationSection.Get<JwtTokenSettings>();
+if (jwtSettings == null)
+{
+    throw new ArgumentNullException(nameof(jwtSettings) + "was not found in the configuration file.");
+}
 var twilioSettings = builder.Configuration.GetSection(TwilioSettings.SectionName);
 builder.Services.Configure<TwilioSettings>(twilioSettings);
 var mailjetSettings = builder.Configuration.GetSection(MailjetSettings.SectionName);
@@ -89,7 +91,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseErrorHandler();
 
-app.UseHangfireDashboard("/hangfire");
+app.UseHangfireDashboard();
 app.MapHangfireDashboard();
 
 //if (app.Environment.IsDevelopment())
@@ -113,7 +115,7 @@ app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks
     ResponseWriter = async (context, report) =>
     {
         context.Response.ContentType = "application/json";
-        using var stream = new System.IO.MemoryStream();
+        using var stream = new MemoryStream();
         using (var writer = new Utf8JsonWriter(stream, jsonOptions))
         {
             writer.WriteStartObject();
@@ -134,7 +136,7 @@ app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks
             writer.WriteEndObject();
             writer.WriteEndObject();
         }
-        await context.Response.WriteAsync(System.Text.Encoding.UTF8.GetString(stream.ToArray()));
+        await context.Response.WriteAsync(Encoding.UTF8.GetString(stream.ToArray()));
     }
 });
 
@@ -144,7 +146,7 @@ app.MapHealthChecks("/health/self", new Microsoft.AspNetCore.Diagnostics.HealthC
     ResponseWriter = async (context, report) =>
     {
         context.Response.ContentType = "application/json";
-        using var stream = new System.IO.MemoryStream();
+        using var stream = new MemoryStream();
         using (var writer = new Utf8JsonWriter(stream, jsonOptions))
         {
             writer.WriteStartObject();
@@ -152,14 +154,14 @@ app.MapHealthChecks("/health/self", new Microsoft.AspNetCore.Diagnostics.HealthC
             writer.WriteString("duration", report.TotalDuration.ToString());
             writer.WriteEndObject();
         }
-        await context.Response.WriteAsync(System.Text.Encoding.UTF8.GetString(stream.ToArray()));
+        await context.Response.WriteAsync(Encoding.UTF8.GetString(stream.ToArray()));
     }
 });
 
 var recurringJobManager = app.Services.GetService<IRecurringJobManager>();
 recurringJobManager!.AddOrUpdate(
     nameof(NotifyUsersWithLessThanTenAnswers),
-    () => new NotifyUsersWithLessThanTenAnswers().Run(),
-    Cron.Minutely);
+    () => new NotifyUsersWithLessThanTenAnswers(app.Services.GetService<ILogger<NotifyUsersWithLessThanTenAnswers>>()).Run(),
+    Cron.Daily);
 
 app.Run();
