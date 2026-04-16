@@ -6,6 +6,8 @@ namespace CRIApp.Repository;
 
 public class AppContext : DbContext
 {
+    public AppContext(DbContextOptions<AppContext> options) : base(options) { }
+
     public DbSet<Answer> Answer { get; set; }
     public DbSet<AudiovisualResource> AudiovisualResource { get; set; }
     public DbSet<Award> Award { get; set; }
