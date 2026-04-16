@@ -480,4 +480,3 @@ $RECYCLE.BIN/
 src/CRIApp.Api/appSettings.Development.json
 *.db
 /coverage-results
-.github
