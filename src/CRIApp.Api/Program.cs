@@ -1,3 +1,4 @@
+using CRIApp.Api.HealthChecks;
 using CRIApp.Api.Middlewares;
 using CRIApp.Application.Extensions;
 using CRIApp.Application.Jobs;
@@ -53,7 +54,13 @@ ValidatorOptions.Global.LanguageManager.Enabled = true;
 ValidatorOptions.Global.LanguageManager.Culture = new System.Globalization.CultureInfo("es-ES");
 
 // Add services to the container.
-builder.Services.AddDbContext<AppContext>();
+builder.Services.AddDbContext<AppContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
+
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<AppContext>(name: "database")
+    .AddCheck<SmtpHealthCheck>(name: "email")
+    .AddCheck<TwilioHealthCheck>(name: "sms");
 
 builder.Services.AddServices();
 builder.Services.AddRepositories();
@@ -97,6 +104,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 var recurringJobManager = app.Services.GetService<IRecurringJobManager>();
 recurringJobManager.AddOrUpdate(
