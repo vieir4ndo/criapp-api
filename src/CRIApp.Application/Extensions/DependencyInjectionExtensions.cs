@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Services;
 using CRIApp.Domain.Data;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CRIApp.Application.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class DependencyInjectionExtensions
 {
     public static void AddServices(this IServiceCollection services)
@@ -14,6 +16,8 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IAnswerService, AnswerService>();
         services.AddScoped<IChildService, ChildService>();
+        services.AddScoped<ISmsClient, TwilioSmsClient>();
+        services.AddScoped<IEmailClient, SmtpEmailClient>();
         services.AddScoped<IMessageUser, MessageService>();
         services.AddScoped<IFaqService, FaqService>();
         services.AddScoped<IForumService, ForumService>();

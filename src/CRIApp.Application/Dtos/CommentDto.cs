@@ -9,6 +9,8 @@ public class CommentDto
     public string PrcName { get; set; }
     public string PrcId { get; set; }
 
+    public CommentDto() { }
+
     public CommentDto(Comment comment)
     {
         Id = comment.Id;
