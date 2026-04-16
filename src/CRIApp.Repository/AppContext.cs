@@ -19,24 +19,20 @@ public class AppContext : DbContext
     public DbSet<User> User { get; set; }
     public DbSet<UserResetPasswordCode> UserResetPasswordCode { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+   protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.json", optional: true)
+                .AddEnvironmentVariables()
                 .Build();
-            
-            /*IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath($"{Directory.GetCurrentDirectory()}/../CRIApp.Api")
-                .AddJsonFile("appsettings.Development.json")
-                .Build();*/
-            
+
             var connectionString = configuration["ConnectionStrings:Postgres"];
             optionsBuilder.UseNpgsql(connectionString);
         }
-    }
+    }   
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
