@@ -7,8 +7,8 @@ using CRIApp.Application.Jobs;
 using CRIApp.Domain.Settings;
 using CRIApp.Repository.Seeders;
 using FluentValidation;
-// using Hangfire;
-// using Hangfire.LiteDB;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -26,12 +26,14 @@ var twilioSettings = builder.Configuration.GetSection(TwilioSettings.SectionName
 builder.Services.Configure<TwilioSettings>(twilioSettings);
 var mailjetSettings = builder.Configuration.GetSection(MailjetSettings.SectionName);
 builder.Services.Configure<MailjetSettings>(mailjetSettings);
-// HF - Disabled temporarily
-// builder.Services.AddHangfire(configuration =>
-// {
-//     configuration.UseLiteDbStorage(Path.Combine(Path.GetTempPath(), "hf.db"));
-// });
-// builder.Services.AddHangfireServer();
+// HF
+builder.Services.AddHangfire(configuration =>
+{
+    configuration.UsePostgreSqlStorage(c =>
+        c.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Postgres")));
+});
+builder.Services.AddHangfireServer();
+// HF - End
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -85,8 +87,8 @@ using (var scope = app.Services.CreateScope())
 
 app.UseErrorHandler();
 
-// app.UseHangfireDashboard("/hangfire");
-// app.MapHangfireDashboard();
+app.UseHangfireDashboard("/hangfire");
+app.MapHangfireDashboard();
 
 //if (app.Environment.IsDevelopment())
 //{
@@ -152,10 +154,10 @@ app.MapHealthChecks("/health/self", new Microsoft.AspNetCore.Diagnostics.HealthC
     }
 });
 
-// var recurringJobManager = app.Services.GetService<IRecurringJobManager>();
-// recurringJobManager.AddOrUpdate(
-//     nameof(NotifyUsersWithLessThanTenAnswers),
-//     () => new NotifyUsersWithLessThanTenAnswers().Run(),
-//     Cron.Minutely);
+var recurringJobManager = app.Services.GetService<IRecurringJobManager>();
+recurringJobManager!.AddOrUpdate(
+    nameof(NotifyUsersWithLessThanTenAnswers),
+    () => new NotifyUsersWithLessThanTenAnswers().Run(),
+    Cron.Minutely);
 
 app.Run();
