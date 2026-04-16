@@ -6,13 +6,14 @@ namespace CRIApp.Application.Jobs;
 [ExcludeFromCodeCoverage]
 public class NotifyUsersWithLessThanTenAnswers
 {
-    public NotifyUsersWithLessThanTenAnswers()
+    private readonly ILogger<NotifyUsersWithLessThanTenAnswers> _logger;
+    public NotifyUsersWithLessThanTenAnswers(ILogger<NotifyUsersWithLessThanTenAnswers> logger)
     {
-        
+        _logger = logger;
     }
 
     public void Run()
     {
-        Console.Write("Entrou no job amem");
+        _logger.LogInformation("Hello World!");
     }
 }
