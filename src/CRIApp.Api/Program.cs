@@ -17,6 +17,8 @@ using AppContext = CRIApp.Repository.AppContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddApplicationInsightsTelemetry();
+
 // TODO: Isolate in extensions
 var jwtSettingsConfigurationSection = builder.Configuration.GetSection(JwtTokenSettings.SectionName);
 builder.Services.Configure<JwtTokenSettings>(jwtSettingsConfigurationSection);

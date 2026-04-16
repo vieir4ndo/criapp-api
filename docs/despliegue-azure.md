@@ -16,7 +16,8 @@ GitHub (código fuente)
             ├── Migrations (dotnet ef → Neon PostgreSQL)
             └── Deploy (Azure App Service F1)
                         │
-                        └── Neon.tech (PostgreSQL serverless)
+                        ├── Neon.tech (PostgreSQL serverless)
+                        └── Application Insights (telemetría)
 ```
 
 ---
@@ -89,9 +90,27 @@ Esto evita errores de startup por incompatibilidad entre el esquema y el código
 
 ---
 
-### 5. Health Checks
+### 5. Application Insights (telemetría — gratuito en tier básico)
 
-Se implementaron dos endpoints de monitorización:
+**Qué es:** Servicio de monitorización y diagnóstico de aplicaciones de Azure, con recolección automática de telemetría.
+
+**Por qué se configuró:**
+- El recurso `appinsights-criapp-api` ya había sido creado automáticamente por el portal Azure al crear el App Service.
+- Proporciona sin configuración adicional: trazas de requests HTTP, excepciones, dependencias (llamadas a PostgreSQL, HTTP externas), métricas de rendimiento y logs.
+- La integración con .NET se hace con una sola línea: `builder.Services.AddApplicationInsightsTelemetry()`.
+
+**Qué monitoriza automáticamente:**
+- Requests entrantes (URL, método, código de respuesta, duración)
+- Excepciones no controladas y stack traces
+- Dependencias: queries SQL, llamadas HTTP a Twilio y Mailjet
+- Métricas del proceso: CPU, memoria, número de requests/s
+
+**Dónde ver los datos:**
+- Portal Azure → grupo de recursos `criapp` → `appinsights-criapp-api` → **Live Metrics**, **Transaction Search**, **Failures**, **Performance**
+
+---
+
+### 6. Health ChecksSe implementaron dos endpoints de monitorización:
 
 | Endpoint | Descripción |
 |---|---|
@@ -146,6 +165,7 @@ Todas las configuraciones sensibles se almacenan como Application Settings en Az
 
 | Variable | Descripción |
 |---|---|
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Connection string del recurso Application Insights |
 | `ASPNETCORE_ENVIRONMENT` | `Production` |
 | `ConnectionStrings__Postgres` | Connection string key-value de Neon |
 | `JwtTokenSettings__Key` | Clave secreta para firma de tokens JWT |
@@ -209,7 +229,7 @@ Todas las configuraciones sensibles se almacenan como Application Settings en Az
 
 ## Pendiente / Trabajo futuro
 
-- [ ] Reactivar el job recurrente de Hangfire usando `IHostedService` en lugar de LiteDB.
+- [ ] Reactivar el job recurrente de Hangfire — **resuelto**: migrado a `Hangfire.PostgreSql` usando Neon como storage.
 - [ ] Configurar dominio personalizado con SSL (requiere plan B1 o superior).
 - [ ] Revisar y rotar las credenciales de Twilio y Mailjet almacenadas en `appsettings.json` (actualmente también en el repositorio).
 - [ ] Añadir cobertura de código al informe de la pipeline.
