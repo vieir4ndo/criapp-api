@@ -1,9 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# 
+#
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{88A4EF93-DB25-4135-924C-9880C81C3CBE}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{22609E91-9E76-476E-A745-77F3C1AA58AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRIApp.Api", "src\CRIApp.Api\CRIApp.Api.csproj", "{E1CBC785-DF2E-4CA3-9DB1-6ABD6EF8F849}"
 EndProject
@@ -13,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRIApp.Domain", "src\CRIApp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRIApp.Repository", "src\CRIApp.Repository\CRIApp.Repository.csproj", "{650C5887-7FDD-4295-8485-8811E4F9C4EC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CB45EF19-9AE8-42D7-9DA3-2AE6C9B00FED}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CB45EF19-9AE8-42D7-9DA3-2AE6C9B00FED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRIApp.Domain.Tests", "test\CRIApp.Domain.Tests\CRIApp.Domain.Tests.csproj", "{DF0FFB7C-C826-40C3-B081-5C7A583385F7}"
 EndProject
