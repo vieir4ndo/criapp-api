@@ -74,10 +74,6 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppContext>();
-    if (context.Database.GetPendingMigrations().Any())
-    {
-        context.Database.Migrate();
-    }
 
     var adminId = UserSeeder.Execute(context);
     QuestionSeeder.Execute(context, adminId);
