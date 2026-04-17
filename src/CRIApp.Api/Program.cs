@@ -91,8 +91,10 @@ using (var scope = app.Services.CreateScope())
 
 app.UseErrorHandler();
 
-app.UseHangfireDashboard();
-app.MapHangfireDashboard();
+app.MapHangfireDashboard("/hangfire", new Hangfire.DashboardOptions
+{
+    Authorization = []  // sin restricción — acceso público en demo
+});
 
 //if (app.Environment.IsDevelopment())
 //{
