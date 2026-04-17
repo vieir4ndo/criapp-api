@@ -20,7 +20,7 @@ public class UserController : CriAppControllerBase
     [HttpPost]
     public async Task<ApiResponse<object>> Create(CreateUserRequest request)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
 
         await _service.Create(request.ToDto());
 
@@ -30,7 +30,7 @@ public class UserController : CriAppControllerBase
     [HttpPost("login")]
     public async Task<ApiResponse<TokenDto>> Login(LoginRequest request)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
 
         var tokenDto = await _service.Login(request.ToDto());
 
@@ -48,7 +48,7 @@ public class UserController : CriAppControllerBase
     [HttpPatch]
     public async Task<ApiResponse<object>> Update(UpdateUserRequest request)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
 
         await _service.Update(GetUserId(), request.ToDto());
 
@@ -58,7 +58,7 @@ public class UserController : CriAppControllerBase
     [HttpPost("forgot-password")]
     public async Task<ApiResponse<object>> ForgotPassword(ForgotPasswordRequest request)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
         
         await _service.ForgotPassword(request.Username);
         
@@ -68,7 +68,7 @@ public class UserController : CriAppControllerBase
     [HttpPost("reset-password")]
     public async Task<ApiResponse<object>> ResetPassword(ResetPasswordRequest request)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
 
         await _service.ResetPassword(request.ToDto());
 

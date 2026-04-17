@@ -22,7 +22,7 @@ public class ChildController : CriAppControllerBase
     [HttpPost]
     public async Task<ApiResponse<object>> Create(CreateChildRequest request)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
         
         await _service.Create(request.ToDto(GetUserId()));
 
@@ -40,7 +40,7 @@ public class ChildController : CriAppControllerBase
     [HttpPatch("{childId}")]
     public async Task<ApiResponse<object>> Update(UpdateChildRequest request, [FromRoute] Guid childId)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
         
         await _service.Update(GetUserId(), childId, request.ToDto());
 

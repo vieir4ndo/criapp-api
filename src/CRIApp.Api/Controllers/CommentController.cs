@@ -21,7 +21,7 @@ public class CommentController : CriAppControllerBase
     [HttpPost]
     public async Task<ApiResponse<object>> Create(CreateCommentRequest request)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
 
         await _service.Create(request.ToDto(GetUserId()));
         

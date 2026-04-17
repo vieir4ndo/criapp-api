@@ -22,7 +22,7 @@ public class QuestionController : CriAppControllerBase
     [HttpGet]
     public async Task<ApiResponse<QuestionDto>> GetQuestionsToReply([FromQuery]GetQuestionsToReplyRequest request)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
         
         var data = await _service.GetQuestionsToReply(GetUserId(), request.ChildId);
 

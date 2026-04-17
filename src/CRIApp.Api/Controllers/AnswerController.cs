@@ -23,7 +23,7 @@ namespace CRIApp.Api.Controllers;
     {
         var userIdClaim = User.FindFirst("id")?.Value;
         
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
         
         await _service.Create(request.ToDto(userIdClaim!));
 
