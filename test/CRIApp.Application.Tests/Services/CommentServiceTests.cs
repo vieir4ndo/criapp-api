@@ -5,6 +5,7 @@ using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
@@ -22,7 +23,7 @@ public class CommentServiceTests
         _forumServiceMock = new Mock<IForumService>();
         _userServiceMock = new Mock<IUserService>();
         _commentRepositoryMock = new Mock<ICommentRepository>();
-        _sut = new CommentService(_forumServiceMock.Object, _userServiceMock.Object, _commentRepositoryMock.Object);
+        _sut = new CommentService(_forumServiceMock.Object, _userServiceMock.Object, _commentRepositoryMock.Object, NullLogger<CommentService>.Instance);
     }
 
     private static User BuildUser()
