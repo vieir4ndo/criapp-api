@@ -1,0 +1,37 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    },
+    "ApplicationInsights": {
+      "LogLevel": {
+        "Default": "Information"
+      }
+    }
+  },
+  "ConnectionStrings": {
+    "Postgres":"Host=postgres;Port=5432;Database=criapp;Username=postgres;Password=S3cureP@ssw0rd!2024;"
+  },
+  "UserSettings": {
+    "PasswordPepper" : "secret",
+    "PasswordHashIterations" : 3
+  },
+  "JwtTokenSettings": {
+    "Key": "YourSecretKeyForAuthenticationOfApplication",
+    "Issuer": "criapp.com", 
+    "ExpiresInMinutes": 120
+  },
+  "TwilioSettings": {
+    "ClientId": "",
+    "ClientSecret": "",
+    "SenderPhoneNumber": ""
+  },
+  "MailjetSettings": {
+    "Host": "",
+    "ApiKey": "",
+    "ApiKeySecret": "",
+    "Port": 0,
+    "SenderEmail": ""
+  }
+}

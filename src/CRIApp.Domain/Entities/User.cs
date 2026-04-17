@@ -6,11 +6,11 @@ namespace CRIApp.Domain.Entities;
 
 public class User : Entity
 {
-    public string Name { get; private set; }
+    public string Name { get; private set; } = null!;
     public DateTime BirthDate { get; private set; }
     public Sex Sex { get; private set; }
-    public string Username { get; private set; }
-    public string PasswordHash { get; private set; }
+    public string Username { get; private set; } = null!;
+    public string PasswordHash { get; private set; } = null!;
     public bool Active { get; private set; }
     public int? NumberOfChildren { get; private set; }
     public FamilyType? FamilyType { get; private set; }
