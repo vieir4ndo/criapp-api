@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using CRIApp.Api.Controllers;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
@@ -9,12 +10,14 @@ namespace CRIApp.Api.Tests.Controllers;
 public class FaqControllerTests
 {
     private readonly Mock<IFaqService> _serviceMock;
+    private readonly Mock<ILogger<FaqController>> _loggerMock;
     private readonly FaqController _sut;
 
     public FaqControllerTests()
     {
         _serviceMock = new Mock<IFaqService>();
-        _sut = new FaqController(_serviceMock.Object)
+        _loggerMock = new Mock<ILogger<FaqController>>();
+        _sut = new FaqController(_serviceMock.Object, _loggerMock.Object)
         {
             ControllerContext = ControllerContextFactory.CreateAuthenticated(Guid.NewGuid())
         };

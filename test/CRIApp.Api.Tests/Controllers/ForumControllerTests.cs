@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using CRIApp.Api.Controllers;
 using CRIApp.Api.Controllers.Requests;
 using CRIApp.Application.Abstractions;
@@ -11,13 +12,15 @@ namespace CRIApp.Api.Tests.Controllers;
 public class ForumControllerTests
 {
     private readonly Mock<IForumService> _serviceMock;
+    private readonly Mock<ILogger<ForumController>> _loggerMock;
     private readonly ForumController _sut;
     private readonly Guid _userId = Guid.NewGuid();
 
     public ForumControllerTests()
     {
         _serviceMock = new Mock<IForumService>();
-        _sut = new ForumController(_serviceMock.Object)
+        _loggerMock = new Mock<ILogger<ForumController>>();
+        _sut = new ForumController(_serviceMock.Object, _loggerMock.Object)
         {
             ControllerContext = ControllerContextFactory.CreateAuthenticated(_userId)
         };

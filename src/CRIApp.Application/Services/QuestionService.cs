@@ -3,6 +3,7 @@ using CRIApp.Application.Dtos;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Application.Services;
 
@@ -10,11 +11,13 @@ public class QuestionService : IQuestionService
 {
     private readonly IQuestionRepository _questionRepository;
     private readonly IUserService _userService;
+    private readonly ILogger<QuestionService> _logger;
 
-    public QuestionService(IQuestionRepository questionRepository, IUserService userService)
+    public QuestionService(IQuestionRepository questionRepository, IUserService userService, ILogger<QuestionService> logger)
     {
         _questionRepository = questionRepository;
         _userService = userService;
+        _logger = logger;
     }
     public async Task<IEnumerable<QuestionDto>> GetQuestionsToReply(Guid userId, Guid childId)
     {
@@ -34,7 +37,10 @@ public class QuestionService : IQuestionService
         var question = await _questionRepository.GetById(id);
 
         if (question is null)
+        {
+            _logger.LogWarning("Question {QuestionId} not found", id);
             throw new NotFoundException("Pregunta no encontrada");
+        }
 
         return question;
     }

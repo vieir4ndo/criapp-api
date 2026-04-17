@@ -3,6 +3,7 @@ using CRIApp.Api.Controllers.Responses;
 using CRIApp.Application.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Api.Controllers;
 
@@ -13,7 +14,7 @@ public class CommentController : CriAppControllerBase
 {
     private readonly ICommentService _service;
 
-    public CommentController(ICommentService service)
+    public CommentController(ICommentService service, ILogger<CommentController> logger) : base(logger)
     {
         _service = service;
     }
@@ -21,7 +22,7 @@ public class CommentController : CriAppControllerBase
     [HttpPost]
     public async Task<ApiResponse<object>> Create(CreateCommentRequest request)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
 
         await _service.Create(request.ToDto(GetUserId()));
         

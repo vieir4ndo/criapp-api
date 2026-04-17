@@ -3,6 +3,7 @@ using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Api.Controllers;
 
@@ -13,7 +14,7 @@ public class AudiovisualResourceController : CriAppControllerBase
 {
     private readonly IAudiovisualResourceService _service;
 
-    public AudiovisualResourceController(IAudiovisualResourceService service)
+    public AudiovisualResourceController(IAudiovisualResourceService service, ILogger<AudiovisualResourceController> logger) : base(logger)
     {
         _service = service;
     }

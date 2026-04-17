@@ -5,6 +5,7 @@ using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
@@ -20,7 +21,7 @@ public class ChildServiceTests
     {
         _childRepositoryMock = new Mock<IChildRepository>();
         _userServiceMock = new Mock<IUserService>();
-        _sut = new ChildService(_childRepositoryMock.Object, _userServiceMock.Object);
+        _sut = new ChildService(_childRepositoryMock.Object, _userServiceMock.Object, NullLogger<ChildService>.Instance);
     }
 
     private static User BuildUser()
