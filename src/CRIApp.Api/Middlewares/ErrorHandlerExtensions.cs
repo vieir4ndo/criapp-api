@@ -10,7 +10,7 @@ namespace CRIApp.Api.Middlewares;
 [ExcludeFromCodeCoverage]
 public static class ErrorHandlerExtensions
 {
-    public static void UseErrorHandler(this IApplicationBuilder appBuilder)
+    public static void UseErrorHandler(this IApplicationBuilder appBuilder, IWebHostEnvironment  env)
     {
         appBuilder.UseExceptionHandler(builder =>
         {
@@ -48,11 +48,17 @@ public static class ErrorHandlerExtensions
                         }
                         default:
                         {
-                            //var response = new ApiResponse<object>( "Oops, there was a problem. We already notified our team and we are working to solve it.");
-
-                            var response = new ApiResponse<object>(exceptionHandlerFeature.Error.Message);
-                            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                            context.Response.ContentType = "application/json";
+                            ApiResponse<object> response;
+                            if (env.IsDevelopment() || env.IsStaging())
+                            {
+                                response = new ApiResponse<object>(exceptionHandlerFeature.Error.Message);
+                                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                context.Response.ContentType = "application/json";
+                            }
+                            else
+                            {
+                                response = new ApiResponse<object>( "Oops, there was a problem. We already notified our team and we are working to solve it.");
+                            }
 
                             await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
                             break;
