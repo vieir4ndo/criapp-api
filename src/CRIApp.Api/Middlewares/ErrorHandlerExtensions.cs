@@ -3,15 +3,19 @@ using System.Net;
 using CRIApp.Api.Controllers.Responses;
 using CRIApp.Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace CRIApp.Api.Middlewares;
 
-[ExcludeFromCodeCoverage]
 public static class ErrorHandlerExtensions
 {
     public static void UseErrorHandler(this IApplicationBuilder appBuilder, IWebHostEnvironment  env)
     {
+        var logger = appBuilder.ApplicationServices
+            .GetRequiredService<ILoggerFactory>()
+            .CreateLogger("CRIApp.Api.Middlewares.ErrorHandler");
+
         appBuilder.UseExceptionHandler(builder =>
         {
             builder.Run(async context =>
@@ -48,6 +52,12 @@ public static class ErrorHandlerExtensions
                         }
                         default:
                         {
+                            var error = exceptionHandlerPathFeature?.Error;
+                            logger.LogError(error,
+                                "Unhandled exception on {Method} {Path}",
+                                context.Request.Method,
+                                context.Request.Path);
+
                             ApiResponse<object> response;
                             if (env.IsDevelopment() || env.IsStaging())
                             {
