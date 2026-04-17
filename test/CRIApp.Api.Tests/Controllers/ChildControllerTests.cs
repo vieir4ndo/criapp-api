@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using CRIApp.Api.Controllers;
 using CRIApp.Api.Controllers.Requests;
 using CRIApp.Application.Abstractions;
@@ -13,13 +14,15 @@ namespace CRIApp.Api.Tests.Controllers;
 public class ChildControllerTests
 {
     private readonly Mock<IChildService> _serviceMock;
+    private readonly Mock<ILogger<ChildController>> _loggerMock;
     private readonly ChildController _sut;
     private readonly Guid _userId = Guid.NewGuid();
 
     public ChildControllerTests()
     {
         _serviceMock = new Mock<IChildService>();
-        _sut = new ChildController(_serviceMock.Object)
+        _loggerMock = new Mock<ILogger<ChildController>>();
+        _sut = new ChildController(_serviceMock.Object, _loggerMock.Object)
         {
             ControllerContext = ControllerContextFactory.CreateAuthenticated(_userId)
         };

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using CRIApp.Api.Controllers;
 using CRIApp.Api.Controllers.Requests;
 using CRIApp.Application.Abstractions;
@@ -12,13 +13,15 @@ namespace CRIApp.Api.Tests.Controllers;
 public class QuestionControllerTests
 {
     private readonly Mock<IQuestionService> _serviceMock;
+    private readonly Mock<ILogger<QuestionController>> _loggerMock;
     private readonly QuestionController _sut;
     private readonly Guid _userId = Guid.NewGuid();
 
     public QuestionControllerTests()
     {
         _serviceMock = new Mock<IQuestionService>();
-        _sut = new QuestionController(_serviceMock.Object)
+        _loggerMock = new Mock<ILogger<QuestionController>>();
+        _sut = new QuestionController(_serviceMock.Object, _loggerMock.Object)
         {
             ControllerContext = ControllerContextFactory.CreateAuthenticated(_userId)
         };

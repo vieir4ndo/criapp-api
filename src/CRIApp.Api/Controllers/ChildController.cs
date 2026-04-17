@@ -4,6 +4,7 @@ using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Api.Controllers;
 
@@ -14,7 +15,7 @@ public class ChildController : CriAppControllerBase
 {
     private readonly IChildService _service;
 
-    public ChildController(IChildService service)
+    public ChildController(IChildService service, ILogger<ChildController> logger) : base(logger)
     {
         _service = service;
     }

@@ -7,9 +7,12 @@ namespace CRIApp.Api.Controllers;
 
 public class CriAppControllerBase : ControllerBase
 {
-    private ILogger<CriAppControllerBase>? _logger;
-    private ILogger<CriAppControllerBase> Logger =>
-        _logger ??= HttpContext.RequestServices.GetRequiredService<ILogger<CriAppControllerBase>>();
+    private readonly ILogger _logger;
+
+    public CriAppControllerBase(ILogger logger)
+    {
+        _logger = logger;
+    }
 
     protected Guid GetUserId()
     {
@@ -26,7 +29,7 @@ public class CriAppControllerBase : ControllerBase
         }
         catch (ValidationException ex)
         {
-            Logger.LogWarning(
+            _logger.LogWarning(
                 "Validation failed on {Method} {Path}: {Errors}",
                 HttpContext.Request.Method,
                 HttpContext.Request.Path,
