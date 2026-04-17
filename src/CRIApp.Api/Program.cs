@@ -39,7 +39,6 @@ builder.Services.AddHangfire(configuration =>
 builder.Services.AddHangfireServer();
 // HF - End
 
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -90,21 +89,20 @@ using (var scope = app.Services.CreateScope())
     AudiovisualResourceSeeder.Execute(context, adminId);
 }
 
-app.UseErrorHandler();
+app.UseErrorHandler(app.Environment);
 
-app.MapHangfireDashboard("/hangfire", new Hangfire.DashboardOptions
+if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
-    Authorization = []  // sin restricción — acceso público en demo
-});
+    app.MapHangfireDashboard("/hangfire", new DashboardOptions
+    {
+        Authorization = []  // public access
+    });
+    
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-//if (app.Environment.IsDevelopment())
-//{
-app.UseSwagger();
-app.UseSwaggerUI();
-//}
-
-//app.UseHttpsRedirection();
-
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -119,7 +117,7 @@ app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks
     {
         context.Response.ContentType = "application/json";
         using var stream = new MemoryStream();
-        using (var writer = new Utf8JsonWriter(stream, jsonOptions))
+        await using (var writer = new Utf8JsonWriter(stream, jsonOptions))
         {
             writer.WriteStartObject();
             writer.WriteString("status", report.Status.ToString());
@@ -150,7 +148,7 @@ app.MapHealthChecks("/health/self", new Microsoft.AspNetCore.Diagnostics.HealthC
     {
         context.Response.ContentType = "application/json";
         using var stream = new MemoryStream();
-        using (var writer = new Utf8JsonWriter(stream, jsonOptions))
+        await using (var writer = new Utf8JsonWriter(stream, jsonOptions))
         {
             writer.WriteStartObject();
             writer.WriteString("status", report.Status.ToString());
