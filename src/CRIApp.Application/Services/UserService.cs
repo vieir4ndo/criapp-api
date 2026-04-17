@@ -8,6 +8,7 @@ using CRIApp.Domain.Entities;
 using CRIApp.Domain.Exceptions;
 using CRIApp.Domain.Extensions;
 using CRIApp.Domain.Settings;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,16 +20,19 @@ public class UserService : IUserService
     private readonly JwtTokenSettings _jwtTokenSettings;
     private readonly IMessageUser _messageUser;
     private readonly IUserResetPasswordCodeRepository _userResetPasswordCodeRepository;
+    private readonly ILogger<UserService> _logger;
 
     public UserService(IUserRepository repository,
         IOptions<JwtTokenSettings> jwtTokenSettings,
         IMessageUser messageUser,
-        IUserResetPasswordCodeRepository userResetPasswordCodeRepository)
+        IUserResetPasswordCodeRepository userResetPasswordCodeRepository,
+        ILogger<UserService> logger)
     {
         _repository = repository;
         _jwtTokenSettings = jwtTokenSettings.Value;
         _messageUser = messageUser;
         _userResetPasswordCodeRepository = userResetPasswordCodeRepository;
+        _logger = logger;
     }
 
     public async Task Create(CreateUserDto dto)
@@ -36,7 +40,10 @@ public class UserService : IUserService
         var userExisting = await _repository.GetByUsername(dto.Username);
 
         if (userExisting is not null)
+        {
+            _logger.LogWarning("Registration attempt with already existing username {Username}", dto.Username);
             throw new ValidationException("Nombre de usuario ya existe");
+        }
 
         var user = dto.ToDomainObject();
         await _repository.Create(user);
@@ -52,6 +59,7 @@ public class UserService : IUserService
             return GenerateToken(user);
         }
 
+        _logger.LogWarning("Failed login attempt for username {Username}", dto.Username);
         throw new ValidationException("Usuario o contraseña incorrecta");
     }
 
@@ -90,7 +98,10 @@ public class UserService : IUserService
         var user = await _repository.GetById(id);
 
         if (user is null)
+        {
+            _logger.LogWarning("User {UserId} not found", id);
             throw new NotFoundException("Usuario no encontrado");
+        }
 
         return user;
     }
@@ -109,13 +120,15 @@ public class UserService : IUserService
         var user = await GetByUsername(username);
         
         if (user is null)
+        {
+            _logger.LogWarning("Forgot password requested for unknown username {Username}", username);
             throw new ValidationException("Usuario no encontrado");
+        }
 
         //TODO: Extract this to settings
         var code = RandomExtensions.GenerateRandomString(5);
         
         await _userResetPasswordCodeRepository.Create(new UserResetPasswordCode(user.Id, code, DateTime.Now.AddSeconds(180).ToUniversalTime()));
-        
         await _messageUser.NotifyForgotPassword(user, code);
     }
 
@@ -124,10 +137,16 @@ public class UserService : IUserService
         var user = await GetByUsername(dto.Username);
         
         if (user is null)
+        {
+            _logger.LogWarning("Password reset attempted for unknown username {Username}", dto.Username);
             throw new ValidationException("Usuario no encontrado");
+        }
 
         if (!user.VerifyResetPasswordCode(dto.Code))
+        {
+            _logger.LogWarning("Invalid or expired reset code used for user {UserId}", user.Id);
             throw new ValidationException("Codigo de recuperacion invalido o expirado");
+        }
         
         user.UpdatePassword(dto.NewPassword);
         

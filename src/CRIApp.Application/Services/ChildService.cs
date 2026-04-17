@@ -3,6 +3,7 @@ using CRIApp.Application.Dtos;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Application.Services;
 
@@ -10,11 +11,13 @@ public class ChildService : IChildService
 {
     private readonly IChildRepository _childRepository;
     private readonly IUserService _userService;
+    private readonly ILogger<ChildService> _logger;
 
-    public ChildService(IChildRepository childRepository, IUserService userService)
+    public ChildService(IChildRepository childRepository, IUserService userService, ILogger<ChildService> logger)
     {
         _childRepository = childRepository;
         _userService = userService;
+        _logger = logger;
     }
 
     public async Task Create(CreateChildDto dto)
@@ -40,10 +43,16 @@ public class ChildService : IChildService
         var child = await _childRepository.GetById(id);
 
         if (child is null)
+        {
+            _logger.LogWarning("Child {ChildId} not found", id);
             throw new NotFoundException("Niño(a) no encontrado");
+        }
         
         if (child.PrcId != prcId)
+        {
+            _logger.LogWarning("Child {ChildId} does not belong to user {UserId}", id, prcId);
             throw new ValidationException("Niño(a) no pertenece al usuario");
+        }
 
         return child;
     }
