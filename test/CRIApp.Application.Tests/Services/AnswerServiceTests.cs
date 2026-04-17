@@ -5,6 +5,7 @@ using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
@@ -22,7 +23,7 @@ public class AnswerServiceTests
         _repositoryMock = new Mock<IAnswerRepository>();
         _questionServiceMock = new Mock<IQuestionService>();
         _userServiceMock = new Mock<IUserService>();
-        _sut = new AnswerService(_repositoryMock.Object, _questionServiceMock.Object, _userServiceMock.Object);
+        _sut = new AnswerService(_repositoryMock.Object, _questionServiceMock.Object, _userServiceMock.Object, NullLogger<AnswerService>.Instance);
     }
 
     private static Question BuildQuestion()
