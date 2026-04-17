@@ -3,6 +3,7 @@ using CRIApp.Api.Controllers.Responses;
 using CRIApp.Application.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Api.Controllers;
 
@@ -13,7 +14,7 @@ namespace CRIApp.Api.Controllers;
 {
     private readonly IAnswerService _service;
 
-    public AnswerController(IAnswerService answerService)
+    public AnswerController(IAnswerService answerService, ILogger<AnswerController> logger) : base(logger)
     {
         _service = answerService;
     }

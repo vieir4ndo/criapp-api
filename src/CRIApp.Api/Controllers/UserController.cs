@@ -3,6 +3,7 @@ using CRIApp.Api.Controllers.Responses;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Api.Controllers;
 
@@ -12,7 +13,7 @@ public class UserController : CriAppControllerBase
 {
     private readonly IUserService _service;
 
-    public UserController(IUserService service)
+    public UserController(IUserService service, ILogger<UserController> logger) : base(logger)
     {
         _service = service;
     }

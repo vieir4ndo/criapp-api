@@ -4,6 +4,7 @@ using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Api.Controllers;
 
@@ -14,7 +15,7 @@ public class QuestionController : CriAppControllerBase
 {
     private readonly IQuestionService _service;
 
-    public QuestionController(IQuestionService service)
+    public QuestionController(IQuestionService service, ILogger<QuestionController> logger) : base(logger)
     {
         _service = service;
     }
