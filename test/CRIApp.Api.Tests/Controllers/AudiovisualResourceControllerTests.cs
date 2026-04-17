@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using CRIApp.Api.Controllers;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
@@ -9,12 +10,14 @@ namespace CRIApp.Api.Tests.Controllers;
 public class AudiovisualResourceControllerTests
 {
     private readonly Mock<IAudiovisualResourceService> _serviceMock;
+    private readonly Mock<ILogger<AudiovisualResourceController>> _loggerMock;
     private readonly AudiovisualResourceController _sut;
 
     public AudiovisualResourceControllerTests()
     {
         _serviceMock = new Mock<IAudiovisualResourceService>();
-        _sut = new AudiovisualResourceController(_serviceMock.Object)
+        _loggerMock = new Mock<ILogger<AudiovisualResourceController>>();
+        _sut = new AudiovisualResourceController(_serviceMock.Object, _loggerMock.Object)
         {
             ControllerContext = ControllerContextFactory.CreateAuthenticated(Guid.NewGuid())
         };
