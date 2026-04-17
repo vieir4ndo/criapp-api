@@ -71,6 +71,7 @@ builder.Services.AddHealthChecks()
 
 builder.Services.AddServices();
 builder.Services.AddRepositories();
+builder.Services.AddTransient<NotifyUsersWithLessThanTenAnswers>();
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -160,10 +161,10 @@ app.MapHealthChecks("/health/self", new Microsoft.AspNetCore.Diagnostics.HealthC
     }
 });
 
-var recurringJobManager = app.Services.GetService<IRecurringJobManager>();
-recurringJobManager!.AddOrUpdate(
+var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
+recurringJobManager.AddOrUpdate<NotifyUsersWithLessThanTenAnswers>(
     nameof(NotifyUsersWithLessThanTenAnswers),
-    () => new NotifyUsersWithLessThanTenAnswers(app.Services.GetService<ILogger<NotifyUsersWithLessThanTenAnswers>>()).Run(),
+    x => x.Run(),
     Cron.Daily);
 
 app.Run();
