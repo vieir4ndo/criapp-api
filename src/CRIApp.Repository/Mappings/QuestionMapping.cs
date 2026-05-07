@@ -19,6 +19,12 @@ public class QuestionMapping : IEntityTypeConfiguration<Question>
         
         builder.Property(x => x.Type) 
             .IsRequired();
+
+        builder.Property(x => x.ScoringType)
+            .IsRequired();
+
+        builder.Property(x => x.ExcludedFamilyTypes)
+            .IsRequired();
         
         builder.HasMany(x => x.Answers)
             .WithOne(x => x.Question)
@@ -27,5 +33,6 @@ public class QuestionMapping : IEntityTypeConfiguration<Question>
         builder.HasOne(x => x.Admin)
             .WithMany(x => x.Questions)
             .HasForeignKey(x => x.AdminId);
+        
     }
 }
