@@ -15,7 +15,11 @@ public class RecommendationMapping: IEntityTypeConfiguration<Recommendation>
             .HasColumnType("varchar(500)");
         
         builder.HasOne(x => x.Admin)
-            .WithMany(x => x.Recommendations)
+            .WithMany(x => x.AdminRecommendations)
             .HasForeignKey(x => x.AdminId);
+
+        builder.HasMany(x => x.Users)
+            .WithMany(x => x.Recommendations)
+            .UsingEntity<Dictionary<string, object>>();
     }
 }
