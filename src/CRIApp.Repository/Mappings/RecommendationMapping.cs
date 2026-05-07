@@ -1,0 +1,21 @@
+using CRIApp.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace CRIApp.Repository.Mappings;
+
+public class RecommendationMapping: IEntityTypeConfiguration<Recommendation>
+{
+    public void Configure(EntityTypeBuilder<Recommendation> builder)
+    {
+        builder.HasKey(p => p.Id);
+
+        builder.Property(x => x.Text)
+            .IsRequired()
+            .HasColumnType("varchar(500)");
+        
+        builder.HasOne(x => x.Admin)
+            .WithMany(x => x.Recommendations)
+            .HasForeignKey(x => x.AdminId);
+    }
+}

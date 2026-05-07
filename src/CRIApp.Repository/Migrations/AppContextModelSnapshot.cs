@@ -240,6 +240,31 @@ namespace CRIApp.Repository.Migrations
                     b.ToTable("Question");
                 });
 
+            modelBuilder.Entity("CRIApp.Domain.Entities.Recommendation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AdminId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("varchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("Recommendation");
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -433,6 +458,25 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Admin");
                 });
 
+            modelBuilder.Entity("CRIApp.Domain.Entities.Recommendation", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.User", "Admin")
+                        .WithMany("Recommendations")
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CRIApp.Domain.Entities.Question", "Question")
+                        .WithMany("Recommendations")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Admin");
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.UserResetPasswordCode", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.User", "User")
@@ -457,6 +501,8 @@ namespace CRIApp.Repository.Migrations
             modelBuilder.Entity("CRIApp.Domain.Entities.Question", b =>
                 {
                     b.Navigation("Answers");
+
+                    b.Navigation("Recommendations");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.User", b =>
@@ -476,6 +522,8 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Forums");
 
                     b.Navigation("Questions");
+
+                    b.Navigation("Recommendations");
 
                     b.Navigation("UserResetPasswordCodes");
                 });
