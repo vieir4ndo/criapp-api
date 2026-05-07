@@ -111,4 +111,67 @@ public class AnswerServiceTests
 
         await Assert.ThrowsAsync<NotFoundException>(() => _sut.Create(dto));
     }
+
+    [Fact]
+    public async Task Create_ValidDto_ShouldCallUpdateScore()
+    {
+        var user = BuildUserWithChild(out var childId);
+        var questionId = Guid.NewGuid();
+        var dto = new CreateAnswerDto { Value = 3, QuestionId = questionId, ChildId = childId, PrcId = user.Id };
+
+        _questionServiceMock.Setup(s => s.GetAndValidateById(questionId)).ReturnsAsync(BuildQuestion());
+        _userServiceMock.Setup(s => s.GetAndValidateById(user.Id)).ReturnsAsync(user);
+        _repositoryMock.Setup(r => r.Create(It.IsAny<Answer>())).Returns(Task.CompletedTask);
+        _userServiceMock.Setup(s => s.UpdateScore(user)).Returns(Task.CompletedTask);
+
+        await _sut.Create(dto);
+
+        _userServiceMock.Verify(s => s.UpdateScore(user), Times.Once);
+    }
+
+    [Fact]
+    public async Task Create_RepositoryThrows_ShouldStillCallUpdateScore()
+    {
+        var user = BuildUserWithChild(out var childId);
+        var questionId = Guid.NewGuid();
+        var dto = new CreateAnswerDto { Value = 3, QuestionId = questionId, ChildId = childId, PrcId = user.Id };
+
+        _questionServiceMock.Setup(s => s.GetAndValidateById(questionId)).ReturnsAsync(BuildQuestion());
+        _userServiceMock.Setup(s => s.GetAndValidateById(user.Id)).ReturnsAsync(user);
+        _repositoryMock.Setup(r => r.Create(It.IsAny<Answer>())).ThrowsAsync(new Exception("DB error"));
+        _userServiceMock.Setup(s => s.UpdateScore(user)).Returns(Task.CompletedTask);
+
+        await Assert.ThrowsAsync<Exception>(() => _sut.Create(dto));
+
+        _userServiceMock.Verify(s => s.UpdateScore(user), Times.Once);
+    }
+
+    [Fact]
+    public async Task Create_ChildNotBelongingToUser_ShouldNotCallUpdateScore()
+    {
+        var user = new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123");
+        var questionId = Guid.NewGuid();
+        var dto = new CreateAnswerDto { Value = 3, QuestionId = questionId, ChildId = Guid.NewGuid(), PrcId = user.Id };
+
+        _questionServiceMock.Setup(s => s.GetAndValidateById(questionId)).ReturnsAsync(BuildQuestion());
+        _userServiceMock.Setup(s => s.GetAndValidateById(user.Id)).ReturnsAsync(user);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.Create(dto));
+
+        _userServiceMock.Verify(s => s.UpdateScore(It.IsAny<User>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Create_QuestionNotFound_ShouldNotCallUpdateScore()
+    {
+        var questionId = Guid.NewGuid();
+        var dto = new CreateAnswerDto { Value = 3, QuestionId = questionId, ChildId = Guid.NewGuid(), PrcId = Guid.NewGuid() };
+
+        _questionServiceMock.Setup(s => s.GetAndValidateById(questionId))
+            .ThrowsAsync(new NotFoundException("Pregunta no encontrada"));
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.Create(dto));
+
+        _userServiceMock.Verify(s => s.UpdateScore(It.IsAny<User>()), Times.Never);
+    }
 }
