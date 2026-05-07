@@ -12,6 +12,7 @@ public static class JobsExtensions
         services.AddTransient<NotifyUsersWithLessThanTenAnswersJob>();
         services.AddTransient<UpdateUsersScoreJob>();
         services.AddTransient<SaveUsersRecommendations>();
+        services.AddTransient<CalculateAndSaveAwards>();
         return services;
     }
 
@@ -28,6 +29,10 @@ public static class JobsExtensions
             Cron.Hourly);
         recurringJobManager.AddOrUpdate<SaveUsersRecommendations>(
             nameof(SaveUsersRecommendations),
+            x => x.Run(),
+            Cron.Daily);
+        recurringJobManager.AddOrUpdate<CalculateAndSaveAwards>(
+            nameof(CalculateAndSaveAwards),
             x => x.Run(),
             Cron.Daily);
         return app;
