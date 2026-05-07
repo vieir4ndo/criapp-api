@@ -15,7 +15,7 @@ public class Forum : Entity
         Name = name;
         Description = description;
         PrcId = prcId;
-        Comments = new List<Comment>();
+        Comments = [];
         
         Name.IsNullOrEmpty("A forum cannot have a null or empty name");
         Description.IsNullOrEmpty("A forum cannot have a null or empty description");

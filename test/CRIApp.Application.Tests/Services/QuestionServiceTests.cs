@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Services;
 using CRIApp.Domain.Data;
@@ -26,11 +27,13 @@ public class QuestionServiceTests
     private static Question BuildQuestion()
         => new Question("Is your child eating well?", Guid.NewGuid(), QuestionType.Agreement);
 
-    private static User BuildUserWithAnswers(Guid childId, int answersToday, int answersOtherChild = 0)
-    {
-        var user = new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123");
+    private static User BuildUser(FamilyType familyType = FamilyType.HeterosexualCouple)
+        => new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123", familyType);
 
-        var questionIdForToday = Guid.NewGuid();
+    private static User BuildUserWithAnswers(Guid childId, int answersToday, int answersOtherChild = 0, FamilyType familyType = FamilyType.HeterosexualCouple)
+    {
+        var user = new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123", familyType);
+
         for (var i = 0; i < answersToday; i++)
         {
             var answer = new Answer(3, Guid.NewGuid(), childId, user.Id);
@@ -46,17 +49,22 @@ public class QuestionServiceTests
         return user;
     }
 
+    private void SetupGetFiltered(List<Question> questions)
+        => _questionRepositoryMock
+            .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Question, bool>>>()))
+            .ReturnsAsync(questions);
+
+
     [Fact]
     public async Task GetQuestionsToReply_NoAnswersToday_ShouldReturnUpTo10()
     {
         var userId = Guid.NewGuid();
         var childId = Guid.NewGuid();
-        var user = new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123");
+        var user = BuildUser();
         var questions = Enumerable.Range(0, 15).Select(_ => BuildQuestion()).ToList();
 
         _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
-        _questionRepositoryMock.Setup(r => r.GetAllExcept(It.IsAny<List<Guid>>()))
-            .ReturnsAsync(questions);
+        SetupGetFiltered(questions);
 
         var result = await _sut.GetQuestionsToReply(userId, childId);
 
@@ -69,12 +77,10 @@ public class QuestionServiceTests
         var userId = Guid.NewGuid();
         var childId = Guid.NewGuid();
         var user = BuildUserWithAnswers(childId, answersToday: 7);
-
         var questions = Enumerable.Range(0, 10).Select(_ => BuildQuestion()).ToList();
 
         _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
-        _questionRepositoryMock.Setup(r => r.GetAllExcept(It.IsAny<List<Guid>>()))
-            .ReturnsAsync(questions);
+        SetupGetFiltered(questions);
 
         var result = await _sut.GetQuestionsToReply(userId, childId);
 
@@ -89,8 +95,7 @@ public class QuestionServiceTests
         var user = BuildUserWithAnswers(childId, answersToday: 10);
 
         _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
-        _questionRepositoryMock.Setup(r => r.GetAllExcept(It.IsAny<List<Guid>>()))
-            .ReturnsAsync(new List<Question>());
+        SetupGetFiltered(new List<Question>());
 
         var result = await _sut.GetQuestionsToReply(userId, childId);
 
@@ -103,12 +108,10 @@ public class QuestionServiceTests
         var userId = Guid.NewGuid();
         var childId = Guid.NewGuid();
         var user = BuildUserWithAnswers(childId, answersToday: 0, answersOtherChild: 10);
-
         var questions = Enumerable.Range(0, 15).Select(_ => BuildQuestion()).ToList();
 
         _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
-        _questionRepositoryMock.Setup(r => r.GetAllExcept(It.IsAny<List<Guid>>()))
-            .ReturnsAsync(questions);
+        SetupGetFiltered(questions);
 
         var result = await _sut.GetQuestionsToReply(userId, childId);
 
@@ -124,6 +127,25 @@ public class QuestionServiceTests
 
         await Assert.ThrowsAsync<NotFoundException>(() =>
             _sut.GetQuestionsToReply(userId, Guid.NewGuid()));
+    }
+
+    [Fact]
+    public async Task GetQuestionsToReply_ShouldReturnQuestionDtos()
+    {
+        var userId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var user = BuildUser();
+        var question = BuildQuestion();
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
+        SetupGetFiltered(new List<Question> { question });
+
+        var result = await _sut.GetQuestionsToReply(userId, childId);
+
+        var dto = result.Single();
+        Assert.Equal(question.Id, dto.Id);
+        Assert.Equal(question.Text, dto.Text);
+        Assert.Equal(question.Type, dto.Type);
     }
 
     [Fact]

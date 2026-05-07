@@ -17,7 +17,7 @@ namespace CRIApp.Repository.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.24")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -218,6 +218,13 @@ namespace CRIApp.Repository.Migrations
 
                     b.Property<Guid>("AdminId")
                         .HasColumnType("uuid");
+
+                    b.Property<int[]>("ExcludedFamilyTypes")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
+
+                    b.Property<int>("ScoringType")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Text")
                         .IsRequired()
