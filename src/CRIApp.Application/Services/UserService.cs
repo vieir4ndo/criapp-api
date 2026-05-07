@@ -189,4 +189,13 @@ public class UserService : IUserService
 
         return user.Recommendations.Select(r => new RecommendationDto(r)).ToList();
     }
+
+    public async Task Deactivate(Guid userId)
+    {
+        var user = await GetAndValidateById(userId);
+
+        user.Deactivate();
+
+        await _repository.Update(user);
+    }
 }

@@ -92,14 +92,11 @@ public class UserController : CriAppControllerBase
         return new ApiResponse<RecommendationDto>(true, recommendations);
     }
 
-    /*
-[HttpDelete]
-public IActionResult Deactivate()
-{
-    throw new NotImplementedException();
-}
+    [HttpDelete]
+    public async Task<ApiResponse<object>> Deactivate()
+    {
+        await _service.Deactivate(GetUserId());
 
-
-
-*/
+        return new ApiResponse<object>(true);
+    }
 }
