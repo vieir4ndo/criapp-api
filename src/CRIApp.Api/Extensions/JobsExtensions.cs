@@ -19,18 +19,22 @@ public static class JobsExtensions
     public static WebApplication UseRecurringJobs(this WebApplication app)
     {
         var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
+        recurringJobManager.RemoveIfExists(nameof(NotifyUsersWithLessThanTenAnswersJob));
         recurringJobManager.AddOrUpdate<NotifyUsersWithLessThanTenAnswersJob>(
             nameof(NotifyUsersWithLessThanTenAnswersJob),
             x => x.Run(),
             Cron.Daily);
+        recurringJobManager.RemoveIfExists(nameof(UpdateUsersScoreJob));
         recurringJobManager.AddOrUpdate<UpdateUsersScoreJob>(
             nameof(UpdateUsersScoreJob),
             x => x.Run(),
             Cron.Hourly);
+        recurringJobManager.RemoveIfExists(nameof(SaveUsersRecommendations));
         recurringJobManager.AddOrUpdate<SaveUsersRecommendations>(
             nameof(SaveUsersRecommendations),
             x => x.Run(),
             Cron.Daily);
+        recurringJobManager.RemoveIfExists(nameof(CalculateAndSaveAwards));
         recurringJobManager.AddOrUpdate<CalculateAndSaveAwards>(
             nameof(CalculateAndSaveAwards),
             x => x.Run(),
