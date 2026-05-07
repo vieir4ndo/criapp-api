@@ -2,6 +2,7 @@ using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
 using Xunit;
+using System.Reflection;
 
 namespace CRIApp.Domain.Tests.Entities;
 
@@ -9,6 +10,16 @@ public class UserTests
 {
     private static User CreateValidUser(string username = "test@example.com")
         => new User("Test User", new DateTime(1990, 1, 1), Sex.Male, username, "password123");
+
+    private static readonly Guid AdminId = Guid.NewGuid();
+
+    private static Answer BuildAnswerWithQuestion(int value, QuestionScoringType scoringType)
+    {
+        var question = new Question("Sample question?", AdminId, QuestionType.Agreement, scoringType);
+        var answer = new Answer(value, question.Id, Guid.NewGuid(), Guid.NewGuid());
+        typeof(Answer).GetProperty(nameof(Answer.Question))!.SetValue(answer, question);
+        return answer;
+    }
 
     [Fact]
     public void Create_ValidUserWithEmail_ShouldSucceed()
@@ -187,5 +198,92 @@ public class UserTests
         user.UserResetPasswordCodes.Add(code);
 
         Assert.False(user.VerifyResetPasswordCode("WRONG"));
+    }
+
+    [Fact]
+    public void UpdateScore_NoAnswers_ShouldSetScoreToZero()
+    {
+        var user = CreateValidUser();
+
+        user.UpdateScore();
+
+        Assert.Equal(0, user.Score);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public void UpdateScore_DefaultScoringWithCountableValue_ShouldIncrementScore(int value)
+    {
+        var user = CreateValidUser();
+        user.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Default));
+
+        user.UpdateScore();
+
+        Assert.Equal(1, user.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_DefaultScoringWithValue5_ShouldNotCount()
+    {
+        var user = CreateValidUser();
+        user.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
+
+        user.UpdateScore();
+
+        Assert.Equal(0, user.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_ReversedScoringWithValue5_ShouldIncrementScore()
+    {
+        var user = CreateValidUser();
+        user.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Reversed));
+
+        user.UpdateScore();
+
+        Assert.Equal(1, user.Score);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public void UpdateScore_ReversedScoringWithLowValue_ShouldNotCount(int value)
+    {
+        var user = CreateValidUser();
+        user.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Reversed));
+
+        user.UpdateScore();
+
+        Assert.Equal(0, user.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_MixedScoringTypes_ShouldCountCorrectly()
+    {
+        var user = CreateValidUser();
+        user.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        user.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
+        user.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Reversed));
+        user.Answers.Add(BuildAnswerWithQuestion(2, QuestionScoringType.Reversed));
+
+        user.UpdateScore();
+
+        Assert.Equal(2, user.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_ShouldUpdateScoreLastUpdatedAt()
+    {
+        var user = CreateValidUser();
+        var before = DateTime.Now;
+
+        user.UpdateScore();
+
+        Assert.True(user.ScoreLastUpdatedAt >= before);
     }
 }
