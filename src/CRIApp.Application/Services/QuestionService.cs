@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
 using CRIApp.Domain.Data;
@@ -23,13 +24,27 @@ public class QuestionService : IQuestionService
     {
         var user = await _userService.GetAndValidateById(userId);
 
-        var answeredQuestions = user.Answers.Where(x => x.ChildId == childId).Select(answer => answer.QuestionId).ToList();
-        
-        var questions = await _questionRepository.GetAllExcept(answeredQuestions);
-        
-        var questionsAnsweredToday = user.Answers.Count(x =>  x.ChildId == childId && x.CreatedAt.Date == DateTime.Today);
+        var answeredQuestions = user.Answers
+            .Where(x => x.ChildId == childId)
+            .Select(x => x.QuestionId)
+            .ToList();
 
-        return questions.Select(question => new QuestionDto(question)).Take(10 - questionsAnsweredToday);
+        var questionsAnsweredToday = user.Answers
+            .Count(x => x.ChildId == childId &&
+                        x.CreatedAt.Date == DateTime.Today);
+
+        var familyType = user.FamilyType!.Value;
+
+        Expression<Func<Question, bool>> filter = q =>
+            q.Active &&
+            !answeredQuestions.Contains(q.Id) && 
+            q.ExcludedFamilyTypes.All(f => f != familyType);
+
+        var questions = await _questionRepository.GetFiltered(filter);
+
+        return questions
+            .Take(10 - questionsAnsweredToday)
+            .Select(q => new QuestionDto(q));
     }
 
     public async Task<Question?> GetAndValidateById(Guid id)
