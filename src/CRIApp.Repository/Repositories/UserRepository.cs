@@ -34,6 +34,14 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<User?> GetByIdWithAwardsAndRecommendations(Guid id)
+    {
+        return await Context.User
+            .Include(x => x.Awards)
+            .Include(x => x.Recommendations)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
     public async Task Update(User user)
     {
         Context.User.Update(user);
