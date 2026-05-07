@@ -3,6 +3,7 @@ using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
+using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
 using Microsoft.Extensions.Logging;
 
@@ -14,36 +15,105 @@ public class QuestionService : IQuestionService
     private readonly IUserService _userService;
     private readonly ILogger<QuestionService> _logger;
 
-    public QuestionService(IQuestionRepository questionRepository, IUserService userService, ILogger<QuestionService> logger)
+    public QuestionService(IQuestionRepository questionRepository, IUserService userService,
+        ILogger<QuestionService> logger)
     {
         _questionRepository = questionRepository;
         _userService = userService;
         _logger = logger;
     }
+
     public async Task<IEnumerable<QuestionDto>> GetQuestionsToReply(Guid userId, Guid childId)
     {
         var user = await _userService.GetAndValidateById(userId);
 
-        var answeredQuestions = user.Answers
-            .Where(x => x.ChildId == childId)
-            .Select(x => x.QuestionId)
-            .ToList();
+        var remainingQuestions = GetRemainingQuestions(user, childId);
 
-        var questionsAnsweredToday = user.Answers
-            .Count(x => x.ChildId == childId &&
-                        x.CreatedAt.Date == DateTime.Today);
+        if (remainingQuestions <= 0)
+            return Enumerable.Empty<QuestionDto>();
 
         var familyType = user.FamilyType!.Value;
 
+        var recentQuestionIds = GetRecentlyAnsweredQuestionIds(user, childId);
+
+        var questions = await GetAvailableQuestions(familyType, recentQuestionIds);
+
+        questions = await ApplyFallbackIfNeeded(
+            questions,
+            familyType,
+            remainingQuestions);
+
+        return GetRandomQuestions(questions, remainingQuestions);
+    }
+
+    private int GetRemainingQuestions(User user, Guid childId)
+    {
+        var today = DateTime.Today;
+
+        var answeredToday = user.Answers.Count(x =>
+            x.ChildId == childId &&
+            x.CreatedAt.Date == today);
+
+        return 5 - answeredToday;
+    }
+
+    private List<Guid> GetRecentlyAnsweredQuestionIds(User user, Guid childId)
+    {
+        var today = DateTime.Today;
+
+        return user.Answers
+            .Where(x =>
+                x.ChildId == childId &&
+                x.CreatedAt >= today.AddDays(-7))
+            .Select(x => x.QuestionId)
+            .Distinct()
+            .ToList();
+    }
+
+    private async Task<List<Question>> GetAvailableQuestions(
+        FamilyType familyType,
+        List<Guid> recentQuestionIds)
+    {
         Expression<Func<Question, bool>> filter = q =>
             q.Active &&
-            !answeredQuestions.Contains(q.Id) && 
+            !recentQuestionIds.Contains(q.Id) &&
             q.ExcludedFamilyTypes.All(f => f != familyType);
 
-        var questions = await _questionRepository.GetFiltered(filter);
+        return await _questionRepository.GetFiltered(filter);
+    }
 
+    private async Task<List<Question>> ApplyFallbackIfNeeded(
+        List<Question> questions,
+        FamilyType familyType,
+        int remainingQuestions)
+    {
+        if (questions.Count >= remainingQuestions)
+            return questions;
+
+        var currentIds = questions
+            .Select(q => q.Id)
+            .ToList();
+
+        Expression<Func<Question, bool>> fallbackFilter = q =>
+            q.Active &&
+            !currentIds.Contains(q.Id) &&
+            q.ExcludedFamilyTypes.All(f => f != familyType);
+
+        var fallbackQuestions = await _questionRepository.GetFiltered(fallbackFilter);
+
+        questions.AddRange(fallbackQuestions);
+
+        return questions;
+    }
+
+    private IEnumerable<QuestionDto> GetRandomQuestions(
+        List<Question> questions,
+        int remainingQuestions)
+    {
         return questions
-            .Take(10 - questionsAnsweredToday)
+            .DistinctBy(q => q.Id)
+            .OrderBy(_ => Guid.NewGuid())
+            .Take(remainingQuestions)
             .Select(q => new QuestionDto(q));
     }
 

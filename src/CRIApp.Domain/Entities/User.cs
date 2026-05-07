@@ -19,6 +19,7 @@ public class User : Entity
     public List<Answer> Answers { get; private set; } = new();
     public List<Child> Children { get; private set; } = new();
     public List<Question> Questions { get; private set; } = new();
+    public List<Recommendation> Recommendations { get; private set; } = new();
     public List<AudiovisualResource> AudiovisualResources { get; private set; } = new();
     public List<Award> Awards { get; private set; } = new();
     public List<Comment> Comments { get; private set; } = new();
@@ -104,7 +105,7 @@ public class User : Entity
 
     public void UpdateScore()
     {
-        var newScore = 0;
+        var points = 0;
         foreach (var answer in Answers)
         {
             List<int> values = answer.Question.ScoringType switch
@@ -116,10 +117,10 @@ public class User : Entity
 
             if (values.Contains(answer.Value))
             {
-                newScore++;
+                points++;
             }
         }
-        Score = newScore;
+        Score = points / Answers.Count * 100;
         ScoreLastUpdatedAt = DateTime.Now;
     }
 }
