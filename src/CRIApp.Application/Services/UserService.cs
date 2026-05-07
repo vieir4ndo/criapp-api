@@ -163,4 +163,30 @@ public class UserService : IUserService
     {
         return await _repository.GetAll();
     }
+
+    public async Task<IList<AwardDto>> GetAwards(Guid userId)
+    {
+        var user = await _repository.GetByIdWithAwardsAndRecommendations(userId);
+
+        if (user is null)
+        {
+            _logger.LogWarning("User {UserId} not found when fetching awards", userId);
+            throw new NotFoundException("Usuario no encontrado");
+        }
+
+        return user.Awards.Select(a => new AwardDto(a)).ToList();
+    }
+
+    public async Task<IList<RecommendationDto>> GetRecommendations(Guid userId)
+    {
+        var user = await _repository.GetByIdWithAwardsAndRecommendations(userId);
+
+        if (user is null)
+        {
+            _logger.LogWarning("User {UserId} not found when fetching recommendations", userId);
+            throw new NotFoundException("Usuario no encontrado");
+        }
+
+        return user.Recommendations.Select(r => new RecommendationDto(r)).ToList();
+    }
 }

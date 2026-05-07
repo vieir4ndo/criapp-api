@@ -173,4 +173,78 @@ public class UserControllerTests
 
         await Assert.ThrowsAsync<ValidationException>(() => _sut.ResetPassword(request));
     }
+
+    [Fact]
+    public async Task GetAwards_AuthenticatedUser_ShouldReturnAwards()
+    {
+        var awards = new List<AwardDto>
+        {
+            new AwardDto(new Award(AwardType.FirstSteps, _userId)),
+            new AwardDto(new Award(AwardType.EngagedFamily, _userId))
+        };
+        _serviceMock.Setup(s => s.GetAwards(_userId)).ReturnsAsync(awards);
+
+        var result = await _sut.GetAwards();
+
+        Assert.True(result.Success);
+        Assert.Equal(2, result.Data.Count());
+        _serviceMock.Verify(s => s.GetAwards(_userId), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetAwards_UserHasNoAwards_ShouldReturnEmptyList()
+    {
+        _serviceMock.Setup(s => s.GetAwards(_userId)).ReturnsAsync(new List<AwardDto>());
+
+        var result = await _sut.GetAwards();
+
+        Assert.True(result.Success);
+        Assert.Empty(result.Data);
+    }
+
+    [Fact]
+    public async Task GetAwards_ServiceThrowsNotFoundException_ShouldPropagate()
+    {
+        _serviceMock.Setup(s => s.GetAwards(_userId)).ThrowsAsync(new NotFoundException("Usuario no encontrado"));
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetAwards());
+    }
+
+    [Fact]
+    public async Task GetRecommendations_AuthenticatedUser_ShouldReturnRecommendations()
+    {
+        var adminId = Guid.NewGuid();
+        var questionId = Guid.NewGuid();
+        var recommendations = new List<RecommendationDto>
+        {
+            new RecommendationDto(new Recommendation("Recommendation 1", adminId, questionId)),
+            new RecommendationDto(new Recommendation("Recommendation 2", adminId, questionId))
+        };
+        _serviceMock.Setup(s => s.GetRecommendations(_userId)).ReturnsAsync(recommendations);
+
+        var result = await _sut.GetRecommendations();
+
+        Assert.True(result.Success);
+        Assert.Equal(2, result.Data.Count());
+        _serviceMock.Verify(s => s.GetRecommendations(_userId), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetRecommendations_UserHasNoRecommendations_ShouldReturnEmptyList()
+    {
+        _serviceMock.Setup(s => s.GetRecommendations(_userId)).ReturnsAsync(new List<RecommendationDto>());
+
+        var result = await _sut.GetRecommendations();
+
+        Assert.True(result.Success);
+        Assert.Empty(result.Data);
+    }
+
+    [Fact]
+    public async Task GetRecommendations_ServiceThrowsNotFoundException_ShouldPropagate()
+    {
+        _serviceMock.Setup(s => s.GetRecommendations(_userId)).ThrowsAsync(new NotFoundException("Usuario no encontrado"));
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetRecommendations());
+    }
 }

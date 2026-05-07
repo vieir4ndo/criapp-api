@@ -14,4 +14,6 @@ public interface IUserService
     Task ResetPassword(ResetPasswordDto dto);
     Task UpdateScore(User user);
     Task<IList<User>> GetAllUsers();
+    Task<IList<AwardDto>> GetAwards(Guid userId);
+    Task<IList<RecommendationDto>> GetRecommendations(Guid userId);
 }

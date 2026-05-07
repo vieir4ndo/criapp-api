@@ -263,4 +263,67 @@ public class UserServiceTests
         Assert.NotNull(captured);
         Assert.Equal(user.Score, captured!.Score);
     }
+
+    [Fact]
+    public async Task GetAwards_UserNotFound_ShouldThrowNotFoundException()
+    {
+        var userId = Guid.NewGuid();
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+            .ReturnsAsync((User?)null);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetAwards(userId));
+    }
+
+    [Fact]
+    public async Task GetAwards_UserWithNoAwards_ShouldReturnEmptyList()
+    {
+        var userId = Guid.NewGuid();
+        var user = BuildUser();
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+            .ReturnsAsync(user);
+
+        var result = await _sut.GetAwards(userId);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetAwards_UserWithAwards_ShouldReturnMappedDtos()
+    {
+        var userId = Guid.NewGuid();
+        var user = BuildUser();
+        user.AddAwardIfNeeded(AwardType.FirstSteps);
+        user.AddAwardIfNeeded(AwardType.EngagedFamily);
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+            .ReturnsAsync(user);
+
+        var result = await _sut.GetAwards(userId);
+
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, a => a.Type == AwardType.FirstSteps);
+        Assert.Contains(result, a => a.Type == AwardType.EngagedFamily);
+    }
+
+    [Fact]
+    public async Task GetRecommendations_UserNotFound_ShouldThrowNotFoundException()
+    {
+        var userId = Guid.NewGuid();
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+            .ReturnsAsync((User?)null);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetRecommendations(userId));
+    }
+
+    [Fact]
+    public async Task GetRecommendations_UserWithNoRecommendations_ShouldReturnEmptyList()
+    {
+        var userId = Guid.NewGuid();
+        var user = BuildUser();
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+            .ReturnsAsync(user);
+
+        var result = await _sut.GetRecommendations(userId);
+
+        Assert.Empty(result);
+    }
 }
