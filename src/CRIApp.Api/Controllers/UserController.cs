@@ -76,14 +76,27 @@ public class UserController : CriAppControllerBase
         return new ApiResponse<object>(true);
     }
 
-    /*
-[HttpDelete]
-public IActionResult Deactivate()
-{
-    throw new NotImplementedException();
-}
+    [HttpGet("awards")]
+    public async Task<ApiResponse<AwardDto>> GetAwards()
+    {
+        var awards = await _service.GetAwards(GetUserId());
 
+        return new ApiResponse<AwardDto>(true, awards);
+    }
 
+    [HttpGet("recommendations")]
+    public async Task<ApiResponse<RecommendationDto>> GetRecommendations()
+    {
+        var recommendations = await _service.GetRecommendations(GetUserId());
 
-*/
+        return new ApiResponse<RecommendationDto>(true, recommendations);
+    }
+
+    [HttpDelete]
+    public async Task<ApiResponse<object>> Deactivate()
+    {
+        await _service.Deactivate(GetUserId());
+
+        return new ApiResponse<object>(true);
+    }
 }
