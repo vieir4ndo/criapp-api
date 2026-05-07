@@ -68,7 +68,7 @@ public class QuestionServiceTests
 
         var result = await _sut.GetQuestionsToReply(userId, childId);
 
-        Assert.Equal(10, result.Count());
+        Assert.Equal(5, result.Count());
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class QuestionServiceTests
     {
         var userId = Guid.NewGuid();
         var childId = Guid.NewGuid();
-        var user = BuildUserWithAnswers(childId, answersToday: 7);
+        var user = BuildUserWithAnswers(childId, answersToday: 3);
         var questions = Enumerable.Range(0, 10).Select(_ => BuildQuestion()).ToList();
 
         _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
@@ -84,7 +84,7 @@ public class QuestionServiceTests
 
         var result = await _sut.GetQuestionsToReply(userId, childId);
 
-        Assert.Equal(3, result.Count());
+        Assert.Equal(2, result.Count());
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public class QuestionServiceTests
 
         var result = await _sut.GetQuestionsToReply(userId, childId);
 
-        Assert.Equal(10, result.Count());
+        Assert.Equal(5, result.Count());
     }
 
     [Fact]

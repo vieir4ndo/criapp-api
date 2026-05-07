@@ -222,7 +222,7 @@ public class UserTests
 
         user.UpdateScore();
 
-        Assert.Equal(1, user.Score);
+        Assert.Equal(100, user.Score);
     }
 
     [Fact]
@@ -244,7 +244,7 @@ public class UserTests
 
         user.UpdateScore();
 
-        Assert.Equal(1, user.Score);
+        Assert.Equal(100, user.Score);
     }
 
     [Theory]
@@ -266,14 +266,14 @@ public class UserTests
     public void UpdateScore_MixedScoringTypes_ShouldCountCorrectly()
     {
         var user = CreateValidUser();
-        user.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
-        user.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
-        user.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Reversed));
-        user.Answers.Add(BuildAnswerWithQuestion(2, QuestionScoringType.Reversed));
+        user.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));   // correct
+        user.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));   // wrong
+        user.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Reversed));  // correct
+        user.Answers.Add(BuildAnswerWithQuestion(2, QuestionScoringType.Reversed));  // wrong
 
         user.UpdateScore();
 
-        Assert.Equal(2, user.Score);
+        Assert.Equal(50, user.Score);
     }
 
     [Fact]
@@ -285,5 +285,52 @@ public class UserTests
         user.UpdateScore();
 
         Assert.True(user.ScoreLastUpdatedAt >= before);
+    }
+
+    [Fact]
+    public void AddAwardIfNeeded_NewAwardType_ShouldAddAward()
+    {
+        var user = CreateValidUser();
+
+        user.AddAwardIfNeeded(AwardType.FirstSteps);
+
+        Assert.Single(user.Awards);
+        Assert.Equal(AwardType.FirstSteps, user.Awards[0].Type);
+    }
+
+    [Fact]
+    public void AddAwardIfNeeded_SameAwardTypeTwice_ShouldNotDuplicate()
+    {
+        var user = CreateValidUser();
+
+        user.AddAwardIfNeeded(AwardType.FirstSteps);
+        user.AddAwardIfNeeded(AwardType.FirstSteps);
+
+        Assert.Single(user.Awards);
+    }
+
+    [Fact]
+    public void AddAwardIfNeeded_DifferentAwardTypes_ShouldAddBoth()
+    {
+        var user = CreateValidUser();
+
+        user.AddAwardIfNeeded(AwardType.FirstSteps);
+        user.AddAwardIfNeeded(AwardType.EngagedFamily);
+
+        Assert.Equal(2, user.Awards.Count);
+    }
+
+    [Fact]
+    public void AddAwardIfNeeded_AllFiveTypes_ShouldAddAllFive()
+    {
+        var user = CreateValidUser();
+
+        user.AddAwardIfNeeded(AwardType.FirstSteps);
+        user.AddAwardIfNeeded(AwardType.EngagedFamily);
+        user.AddAwardIfNeeded(AwardType.Overcoming);
+        user.AddAwardIfNeeded(AwardType.PositiveEnvironment);
+        user.AddAwardIfNeeded(AwardType.SmallProgress);
+
+        Assert.Equal(5, user.Awards.Count);
     }
 }
