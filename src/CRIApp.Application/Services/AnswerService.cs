@@ -32,7 +32,14 @@ public class AnswerService : IAnswerService
             _logger.LogWarning("User {UserId} attempted to answer for unknown child {ChildId}", dto.PrcId, dto.ChildId);
             throw new NotFoundException($"Usuario {dto.PrcId} no tiene niño(a) con id {dto.ChildId}");
         }
-        
-        await _repository.Create(dto.ToDomainObject());
+
+        try
+        {
+            await _repository.Create(dto.ToDomainObject());
+        }
+        finally
+        {
+            await _userService.UpdateScore(user);
+        }
     }
 }
