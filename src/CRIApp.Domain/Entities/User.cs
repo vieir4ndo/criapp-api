@@ -63,7 +63,7 @@ public class User : Entity
         NumberOfChildren = numberOfChildren;
         Activate();
         Score = 0;
-        ScoreLastUpdatedAt = DateTime.Now;
+        ScoreLastUpdatedAt = DateTime.UtcNow;
         
         Name.IsNullOrEmpty("An user cannot have a null or empty name");
         BirthDate.IsDateTimeMinValue("An user has to have a valid birth date");
@@ -112,7 +112,7 @@ public class User : Entity
         if (!Answers.Any())
         {
             Score = 0;
-            ScoreLastUpdatedAt = DateTime.Now;
+            ScoreLastUpdatedAt = DateTime.UtcNow;
             return;
         }
 
@@ -132,7 +132,7 @@ public class User : Entity
             }
         }
         Score = points * 100 / Answers.Count;
-        ScoreLastUpdatedAt = DateTime.Now;
+        ScoreLastUpdatedAt = DateTime.UtcNow;
     }
 
     public void AddRecommendationsIfNeeded(IList<Recommendation> recommendations)
