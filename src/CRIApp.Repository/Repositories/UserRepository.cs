@@ -30,6 +30,15 @@ public class UserRepository : IUserRepository
         return await Context.User
             .Include(x => x.Children)
             .Include(x => x.Answers)
+            .ThenInclude(x=>x.Question)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<User?> GetByIdWithAwardsAndRecommendations(Guid id)
+    {
+        return await Context.User
+            .Include(x => x.Awards)
+            .Include(x => x.Recommendations)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -37,5 +46,16 @@ public class UserRepository : IUserRepository
     {
         Context.User.Update(user);
         await Context.SaveChangesAsync();
+    }
+
+    public async Task<IList<User>> GetAll()
+    {
+        return await Context.User
+            .Include(x => x.Awards)
+            .Include(x => x.Recommendations)
+            .Include(x => x.Answers)
+                .ThenInclude(x=>x.Question)
+                    .ThenInclude(x=>x.Recommendations)
+            .ToListAsync();
     }
 }
