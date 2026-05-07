@@ -273,6 +273,12 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Score")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ScoreLastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("Sex")
                         .HasColumnType("integer");
 
