@@ -27,10 +27,10 @@ public class QuestionServiceTests
     private static Question BuildQuestion()
         => new Question("Is your child eating well?", Guid.NewGuid(), QuestionType.Agreement);
 
-    private static User BuildUser(FamilyType familyType = FamilyType.HeterosexualCouple)
+    private static User BuildUser(FamilyType? familyType = FamilyType.HeterosexualCouple)
         => new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123", familyType);
 
-    private static User BuildUserWithAnswers(Guid childId, int answersToday, int answersOtherChild = 0, FamilyType familyType = FamilyType.HeterosexualCouple)
+    private static User BuildUserWithAnswers(Guid childId, int answersToday, int answersOtherChild = 0, FamilyType? familyType = FamilyType.HeterosexualCouple)
     {
         var user = new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123", familyType);
 
@@ -167,5 +167,36 @@ public class QuestionServiceTests
         _questionRepositoryMock.Setup(r => r.GetById(questionId)).ReturnsAsync((Question?)null);
 
         await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetAndValidateById(questionId));
+    }
+
+    [Fact]
+    public async Task GetQuestionsToReply_UserWithoutFamilyType_ShouldReturnQuestionsWithoutFamilyFilter()
+    {
+        var userId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var user = BuildUser(familyType: null);
+        var questions = Enumerable.Range(0, 10).Select(_ => BuildQuestion()).ToList();
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
+        SetupGetFiltered(questions);
+
+        var result = await _sut.GetQuestionsToReply(userId, childId);
+
+        Assert.Equal(5, result.Count());
+    }
+
+    [Fact]
+    public async Task GetQuestionsToReply_UserWithoutFamilyType_NoQuestions_ShouldReturnEmpty()
+    {
+        var userId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var user = BuildUser(familyType: null);
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
+        SetupGetFiltered(new List<Question>());
+
+        var result = await _sut.GetQuestionsToReply(userId, childId);
+
+        Assert.Empty(result);
     }
 }

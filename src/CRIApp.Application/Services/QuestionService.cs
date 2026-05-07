@@ -32,15 +32,13 @@ public class QuestionService : IQuestionService
         if (remainingQuestions <= 0)
             return Enumerable.Empty<QuestionDto>();
 
-        var familyType = user.FamilyType!.Value;
-
         var recentQuestionIds = GetRecentlyAnsweredQuestionIds(user, childId);
 
-        var questions = await GetAvailableQuestions(familyType, recentQuestionIds);
+        var questions = await GetAvailableQuestions(user.FamilyType, recentQuestionIds);
 
         questions = await ApplyFallbackIfNeeded(
             questions,
-            familyType,
+            user.FamilyType,
             remainingQuestions);
 
         return GetRandomQuestions(questions, remainingQuestions);
@@ -71,20 +69,19 @@ public class QuestionService : IQuestionService
     }
 
     private async Task<List<Question>> GetAvailableQuestions(
-        FamilyType familyType,
+        FamilyType? familyType,
         List<Guid> recentQuestionIds)
     {
-        Expression<Func<Question, bool>> filter = q =>
-            q.Active &&
-            !recentQuestionIds.Contains(q.Id) &&
-            q.ExcludedFamilyTypes.All(f => f != familyType);
+        Expression<Func<Question, bool>> filter = familyType.HasValue
+            ? q => q.Active && !recentQuestionIds.Contains(q.Id) && q.ExcludedFamilyTypes.All(f => f != familyType.Value)
+            : q => q.Active && !recentQuestionIds.Contains(q.Id);
 
         return await _questionRepository.GetFiltered(filter);
     }
 
     private async Task<List<Question>> ApplyFallbackIfNeeded(
         List<Question> questions,
-        FamilyType familyType,
+        FamilyType? familyType,
         int remainingQuestions)
     {
         if (questions.Count >= remainingQuestions)
@@ -94,10 +91,9 @@ public class QuestionService : IQuestionService
             .Select(q => q.Id)
             .ToList();
 
-        Expression<Func<Question, bool>> fallbackFilter = q =>
-            q.Active &&
-            !currentIds.Contains(q.Id) &&
-            q.ExcludedFamilyTypes.All(f => f != familyType);
+        Expression<Func<Question, bool>> fallbackFilter = familyType.HasValue
+            ? q => q.Active && !currentIds.Contains(q.Id) && q.ExcludedFamilyTypes.All(f => f != familyType.Value)
+            : q => q.Active && !currentIds.Contains(q.Id);
 
         var fallbackQuestions = await _questionRepository.GetFiltered(fallbackFilter);
 
