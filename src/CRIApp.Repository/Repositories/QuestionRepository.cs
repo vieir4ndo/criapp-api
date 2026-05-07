@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -19,15 +20,16 @@ public class QuestionRepository : IQuestionRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Question>> GetAllExcept(List<Guid> blackList)
-    {
-        return await Context.Question
-            .Where(x => !blackList.Contains(x.Id))
-            .ToListAsync();
-    }
-
     public async Task<Question?> GetById(Guid id)
     {
         return await Context.Question.FirstOrDefaultAsync(x => x.Id == id);
+    }
+    
+    public async Task<List<Question>> GetFiltered(
+        Expression<Func<Question, bool>> predicate)
+    {
+        return await Context.Question
+            .Where(predicate)
+            .ToListAsync();
     }
 }
