@@ -109,6 +109,13 @@ public class User : Entity
 
     public void UpdateScore()
     {
+        if (!Answers.Any())
+        {
+            Score = 0;
+            ScoreLastUpdatedAt = DateTime.Now;
+            return;
+        }
+
         var points = 0;
         foreach (var answer in Answers)
         {
@@ -124,7 +131,7 @@ public class User : Entity
                 points++;
             }
         }
-        Score = points / Answers.Count * 100;
+        Score = points * 100 / Answers.Count;
         ScoreLastUpdatedAt = DateTime.Now;
     }
 
