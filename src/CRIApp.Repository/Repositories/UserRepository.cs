@@ -43,8 +43,10 @@ public class UserRepository : IUserRepository
     public async Task<IList<User>> GetAll()
     {
         return await Context.User
+            .Include(x => x.Recommendations)
             .Include(x => x.Answers)
-            .ThenInclude(x=>x.Question)
+                .ThenInclude(x=>x.Question)
+                    .ThenInclude(x=>x.Recommendations)
             .ToListAsync();
     }
 }
