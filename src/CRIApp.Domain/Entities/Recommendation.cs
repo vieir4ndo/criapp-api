@@ -9,6 +9,7 @@ public class Recommendation : Entity
     public User Admin { get; private set; }
     public Question Question { get; private set; }
     public Guid QuestionId { get; private set; }
+    public List<User> Users { get; private set; }
 
     protected Recommendation()
     {

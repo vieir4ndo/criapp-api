@@ -346,6 +346,21 @@ namespace CRIApp.Repository.Migrations
                     b.ToTable("UserResetPasswordCode");
                 });
 
+            modelBuilder.Entity("RecommendationUser", b =>
+                {
+                    b.Property<Guid>("RecommendationsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("RecommendationsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("RecommendationUser");
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.Answer", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.Child", "Child")
@@ -461,7 +476,7 @@ namespace CRIApp.Repository.Migrations
             modelBuilder.Entity("CRIApp.Domain.Entities.Recommendation", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.User", "Admin")
-                        .WithMany("Recommendations")
+                        .WithMany("AdminRecommendations")
                         .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -488,6 +503,21 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("RecommendationUser", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.Recommendation", null)
+                        .WithMany()
+                        .HasForeignKey("RecommendationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CRIApp.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.Child", b =>
                 {
                     b.Navigation("Answers");
@@ -507,6 +537,8 @@ namespace CRIApp.Repository.Migrations
 
             modelBuilder.Entity("CRIApp.Domain.Entities.User", b =>
                 {
+                    b.Navigation("AdminRecommendations");
+
                     b.Navigation("Answers");
 
                     b.Navigation("AudiovisualResources");
@@ -522,8 +554,6 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Forums");
 
                     b.Navigation("Questions");
-
-                    b.Navigation("Recommendations");
 
                     b.Navigation("UserResetPasswordCodes");
                 });
