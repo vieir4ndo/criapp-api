@@ -237,4 +237,30 @@ public class UserServiceTests
 
         Assert.Null(result);
     }
+
+    [Fact]
+    public async Task UpdateScore_ShouldCallUpdateOnRepository()
+    {
+        var user = BuildUser();
+        _userRepositoryMock.Setup(r => r.Update(user)).Returns(Task.CompletedTask);
+
+        await _sut.UpdateScore(user);
+
+        _userRepositoryMock.Verify(r => r.Update(user), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateScore_ShouldUpdateUserScoreBeforePersisting()
+    {
+        var user = BuildUser();
+        User? captured = null;
+        _userRepositoryMock.Setup(r => r.Update(It.IsAny<User>()))
+            .Callback<User>(u => captured = u)
+            .Returns(Task.CompletedTask);
+
+        await _sut.UpdateScore(user);
+
+        Assert.NotNull(captured);
+        Assert.Equal(user.Score, captured!.Score);
+    }
 }

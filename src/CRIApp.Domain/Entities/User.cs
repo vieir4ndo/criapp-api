@@ -25,6 +25,9 @@ public class User : Entity
     public List<Forum> Forums { get; private set; } = new();
     public List<Faq> Faqs { get; private set; } = new();
     public List<UserResetPasswordCode> UserResetPasswordCodes { get; private set; } = new();
+    public int Score { get; private set; }
+    public DateTime ScoreLastUpdatedAt { get; private set; }
+    
     public void Activate() => Active = true;
     public void Deactivate() => Active = false;
     
@@ -54,6 +57,8 @@ public class User : Entity
         PasswordHash = HashExtensions.HashPassword(password);
         NumberOfChildren = numberOfChildren;
         Activate();
+        Score = 0;
+        ScoreLastUpdatedAt = DateTime.Now;
         
         Name.IsNullOrEmpty("An user cannot have a null or empty name");
         BirthDate.IsDateTimeMinValue("An user has to have a valid birth date");
@@ -95,5 +100,26 @@ public class User : Entity
         PasswordHash = HashExtensions.HashPassword(password);
         
         PasswordHash.IsNullOrEmpty("An user cannot have a null or empty password hash");
+    }
+
+    public void UpdateScore()
+    {
+        var newScore = 0;
+        foreach (var answer in Answers)
+        {
+            List<int> values = answer.Question.ScoringType switch
+            {
+                QuestionScoringType.Default => [1, 2, 3, 4],
+                QuestionScoringType.Reversed => [5, 6],
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            if (values.Contains(answer.Value))
+            {
+                newScore++;
+            }
+        }
+        Score = newScore;
+        ScoreLastUpdatedAt = DateTime.Now;
     }
 }

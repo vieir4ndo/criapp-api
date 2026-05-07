@@ -152,4 +152,15 @@ public class UserService : IUserService
         
         await _repository.Update(user);
     }
+
+    public async Task UpdateScore(User user)
+    {
+        user.UpdateScore();
+        await _repository.Update(user);
+    }
+    
+    public async Task<IList<User>> GetAllUsers()
+    {
+        return await _repository.GetAll();
+    }
 }
