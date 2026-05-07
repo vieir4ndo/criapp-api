@@ -138,4 +138,10 @@ public class User : Entity
             }
         }
     }
+
+    public void AddAwardIfNeeded(AwardType type)
+    {
+        if (!Awards.Any(a => a.Type == type))
+            Awards.Add(new Award(type, Id));
+    }
 }
