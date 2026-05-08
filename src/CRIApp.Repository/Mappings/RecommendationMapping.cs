@@ -15,6 +15,12 @@ public class RecommendationMapping: IEntityTypeConfiguration<Recommendation>
             .IsRequired()
             .HasColumnType("varchar(500)");
 
+        builder.Property(x => x.TextEn)
+            .HasColumnType("varchar(500)");
+
+        builder.Property(x => x.TextPt)
+            .HasColumnType("varchar(500)");
+
         builder.HasOne(x => x.Admin)
             .WithMany(x => x.AdminRecommendations)
             .HasForeignKey(x => x.AdminId);

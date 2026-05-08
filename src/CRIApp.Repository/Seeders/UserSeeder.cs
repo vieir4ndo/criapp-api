@@ -11,6 +11,7 @@ public static class UserSeeder
         if (!context.User.Any())
         {
             user = new User("Admin", DateTime.Now.ToUniversalTime(), Sex.Male, "teste@teste.com", "teste");
+            user.SetAsAdmin();
             context.User.Add(user);
             context.SaveChanges();
 

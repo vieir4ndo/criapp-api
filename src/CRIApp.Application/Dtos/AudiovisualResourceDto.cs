@@ -1,4 +1,5 @@
 using CRIApp.Domain.Entities;
+using System.Globalization;
 
 namespace CRIApp.Application.Dtos;
 
@@ -11,9 +12,20 @@ public class AudiovisualResourceDto
 
     public AudiovisualResourceDto(AudiovisualResource audiovisualResource)
     {
+        var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         Id = audiovisualResource.Id;
-        Name = audiovisualResource.Name;
-        Description = audiovisualResource.Description;
+        Name = lang switch
+        {
+            "en" => audiovisualResource.NameEn ?? audiovisualResource.Name,
+            "pt" => audiovisualResource.NamePt ?? audiovisualResource.Name,
+            _ => audiovisualResource.Name
+        };
+        Description = lang switch
+        {
+            "en" => audiovisualResource.DescriptionEn ?? audiovisualResource.Description,
+            "pt" => audiovisualResource.DescriptionPt ?? audiovisualResource.Description,
+            _ => audiovisualResource.Description
+        };
         Iframe = audiovisualResource.Iframe;
     }
 }
