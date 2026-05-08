@@ -280,7 +280,7 @@ public class UserTests
     public void UpdateScore_ShouldUpdateScoreLastUpdatedAt()
     {
         var user = CreateValidUser();
-        var before = DateTime.Now;
+        var before = DateTime.UtcNow;
 
         user.UpdateScore();
 

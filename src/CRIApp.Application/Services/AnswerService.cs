@@ -33,13 +33,6 @@ public class AnswerService : IAnswerService
             throw new NotFoundException($"Usuario {dto.PrcId} no tiene niño(a) con id {dto.ChildId}");
         }
 
-        try
-        {
-            await _repository.Create(dto.ToDomainObject());
-        }
-        finally
-        {
-            await _userService.UpdateScore(user);
-        }
+        await _repository.Create(dto.ToDomainObject());
     }
 }
