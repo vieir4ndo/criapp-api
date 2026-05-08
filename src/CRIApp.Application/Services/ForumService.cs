@@ -1,7 +1,9 @@
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Application.Resources;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Application.Services;
@@ -11,12 +13,14 @@ public class ForumService : IForumService
     private readonly IForumRepository _forumRepository;
     private readonly IUserService _userService;
     private readonly ILogger<ForumService> _logger;
+    private readonly IStringLocalizer<AppMessages> _localizer;
 
-    public ForumService(IForumRepository forumRepository, IUserService userService, ILogger<ForumService> logger)
+    public ForumService(IForumRepository forumRepository, IUserService userService, ILogger<ForumService> logger, IStringLocalizer<AppMessages> localizer)
     {
         _forumRepository = forumRepository;
         _userService = userService;
         _logger = logger;
+        _localizer = localizer;
     }
 
     public async Task Create(CreateForumDto dto)
@@ -33,7 +37,7 @@ public class ForumService : IForumService
         if (forum is null)
         {
             _logger.LogWarning("Forum {ForumId} not found", forumId);
-            throw new NotFoundException("Foro no encontrado");
+            throw new NotFoundException(_localizer["ForumNotFound"]);
         }
         
         return new ForumDto(forum);
@@ -59,13 +63,13 @@ public class ForumService : IForumService
         if (forum is null)
         {
             _logger.LogWarning("Forum {ForumId} not found on update", forumId);
-            throw new NotFoundException("Foro no encontrado");
+            throw new NotFoundException(_localizer["ForumNotFound"]);
         }
         
         if (forum.PrcId != dto.PrcId)
         {
             _logger.LogWarning("Forum {ForumId} does not belong to user {UserId}", forumId, dto.PrcId);
-            throw new ValidationException("Foro no pertenece al usuario");
+            throw new ValidationException(_localizer["ForumNotBelongsToUser"]);
         }
 
         forum.Update(dto.Name, dto.Description);

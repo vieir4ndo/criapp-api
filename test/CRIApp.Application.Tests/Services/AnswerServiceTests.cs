@@ -1,10 +1,12 @@
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Application.Resources;
 using CRIApp.Application.Services;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
@@ -16,6 +18,7 @@ public class AnswerServiceTests
     private readonly Mock<IAnswerRepository> _repositoryMock;
     private readonly Mock<IQuestionService> _questionServiceMock;
     private readonly Mock<IUserService> _userServiceMock;
+    private readonly Mock<IStringLocalizer<AppMessages>> _localizerMock;
     private readonly AnswerService _sut;
 
     public AnswerServiceTests()
@@ -23,7 +26,8 @@ public class AnswerServiceTests
         _repositoryMock = new Mock<IAnswerRepository>();
         _questionServiceMock = new Mock<IQuestionService>();
         _userServiceMock = new Mock<IUserService>();
-        _sut = new AnswerService(_repositoryMock.Object, _questionServiceMock.Object, _userServiceMock.Object, NullLogger<AnswerService>.Instance);
+        _localizerMock = new Mock<IStringLocalizer<AppMessages>>();
+        _sut = new AnswerService(_repositoryMock.Object, _questionServiceMock.Object, _userServiceMock.Object, NullLogger<AnswerService>.Instance, _localizerMock.Object);
     }
 
     private static Question BuildQuestion()
@@ -110,5 +114,34 @@ public class AnswerServiceTests
             .ThrowsAsync(new NotFoundException("Usuario no encontrado"));
 
         await Assert.ThrowsAsync<NotFoundException>(() => _sut.Create(dto));
+    }
+    
+    [Fact]
+    public async Task Create_ChildNotBelongingToUser_ShouldNotCallUpdateScore()
+    {
+        var user = new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123");
+        var questionId = Guid.NewGuid();
+        var dto = new CreateAnswerDto { Value = 3, QuestionId = questionId, ChildId = Guid.NewGuid(), PrcId = user.Id };
+
+        _questionServiceMock.Setup(s => s.GetAndValidateById(questionId)).ReturnsAsync(BuildQuestion());
+        _userServiceMock.Setup(s => s.GetAndValidateById(user.Id)).ReturnsAsync(user);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.Create(dto));
+
+        _userServiceMock.Verify(s => s.UpdateScore(It.IsAny<User>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Create_QuestionNotFound_ShouldNotCallUpdateScore()
+    {
+        var questionId = Guid.NewGuid();
+        var dto = new CreateAnswerDto { Value = 3, QuestionId = questionId, ChildId = Guid.NewGuid(), PrcId = Guid.NewGuid() };
+
+        _questionServiceMock.Setup(s => s.GetAndValidateById(questionId))
+            .ThrowsAsync(new NotFoundException("Pregunta no encontrada"));
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.Create(dto));
+
+        _userServiceMock.Verify(s => s.UpdateScore(It.IsAny<User>()), Times.Never);
     }
 }

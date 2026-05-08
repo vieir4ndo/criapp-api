@@ -3,11 +3,13 @@ using System.Security.Claims;
 using System.Text;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Application.Resources;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Exceptions;
 using CRIApp.Domain.Extensions;
 using CRIApp.Domain.Settings;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -21,18 +23,21 @@ public class UserService : IUserService
     private readonly IMessageUser _messageUser;
     private readonly IUserResetPasswordCodeRepository _userResetPasswordCodeRepository;
     private readonly ILogger<UserService> _logger;
+    private readonly IStringLocalizer<AppMessages> _localizer;
 
     public UserService(IUserRepository repository,
         IOptions<JwtTokenSettings> jwtTokenSettings,
         IMessageUser messageUser,
         IUserResetPasswordCodeRepository userResetPasswordCodeRepository,
-        ILogger<UserService> logger)
+        ILogger<UserService> logger,
+        IStringLocalizer<AppMessages> localizer)
     {
         _repository = repository;
         _jwtTokenSettings = jwtTokenSettings.Value;
         _messageUser = messageUser;
         _userResetPasswordCodeRepository = userResetPasswordCodeRepository;
         _logger = logger;
+        _localizer = localizer;
     }
 
     public async Task Create(CreateUserDto dto)
@@ -42,7 +47,7 @@ public class UserService : IUserService
         if (userExisting is not null)
         {
             _logger.LogWarning("Registration attempt with already existing username {Username}", dto.Username);
-            throw new ValidationException("Nombre de usuario ya existe");
+            throw new ValidationException(_localizer["UserAlreadyExists"]);
         }
 
         var user = dto.ToDomainObject();
@@ -60,7 +65,7 @@ public class UserService : IUserService
         }
 
         _logger.LogWarning("Failed login attempt for username {Username}", dto.Username);
-        throw new ValidationException("Usuario o contraseña incorrecta");
+        throw new ValidationException(_localizer["InvalidCredentials"]);
     }
 
     private TokenDto GenerateToken(User user)
@@ -100,7 +105,7 @@ public class UserService : IUserService
         if (user is null)
         {
             _logger.LogWarning("User {UserId} not found", id);
-            throw new NotFoundException("Usuario no encontrado");
+            throw new NotFoundException(_localizer["UserNotFound"]);
         }
 
         return user;
@@ -122,7 +127,7 @@ public class UserService : IUserService
         if (user is null)
         {
             _logger.LogWarning("Forgot password requested for unknown username {Username}", username);
-            throw new ValidationException("Usuario no encontrado");
+            throw new ValidationException(_localizer["UserNotFound"]);
         }
 
         //TODO: Extract this to settings
@@ -139,17 +144,63 @@ public class UserService : IUserService
         if (user is null)
         {
             _logger.LogWarning("Password reset attempted for unknown username {Username}", dto.Username);
-            throw new ValidationException("Usuario no encontrado");
+            throw new ValidationException(_localizer["UserNotFound"]);
         }
 
         if (!user.VerifyResetPasswordCode(dto.Code))
         {
             _logger.LogWarning("Invalid or expired reset code used for user {UserId}", user.Id);
-            throw new ValidationException("Codigo de recuperacion invalido o expirado");
+            throw new ValidationException(_localizer["InvalidResetCode"]);
         }
         
         user.UpdatePassword(dto.NewPassword);
         
+        await _repository.Update(user);
+    }
+
+    public async Task UpdateScore(User user)
+    {
+        user.UpdateScore();
+        await _repository.Update(user);
+    }
+    
+    public async Task<IList<User>> GetAllUsers()
+    {
+        return await _repository.GetAll();
+    }
+
+    public async Task<IList<AwardDto>> GetAwards(Guid userId)
+    {
+        var user = await _repository.GetByIdWithAwardsAndRecommendations(userId);
+
+        if (user is null)
+        {
+            _logger.LogWarning("User {UserId} not found when fetching awards", userId);
+            throw new NotFoundException(_localizer["UserNotFound"]);
+        }
+
+        return user.Awards.Select(a => new AwardDto(a)).ToList();
+    }
+
+    public async Task<IList<RecommendationDto>> GetRecommendations(Guid userId)
+    {
+        var user = await _repository.GetByIdWithAwardsAndRecommendations(userId);
+
+        if (user is null)
+        {
+            _logger.LogWarning("User {UserId} not found when fetching recommendations", userId);
+            throw new NotFoundException(_localizer["UserNotFound"]);
+        }
+
+        return user.Recommendations.Select(r => new RecommendationDto(r)).ToList();
+    }
+
+    public async Task Deactivate(Guid userId)
+    {
+        var user = await GetAndValidateById(userId);
+
+        user.Deactivate();
+
         await _repository.Update(user);
     }
 }

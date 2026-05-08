@@ -13,11 +13,23 @@ public class QuestionMapping : IEntityTypeConfiguration<Question>
         builder.Property(x => x.Text)
             .IsRequired()
             .HasColumnType("varchar(250)");
+
+        builder.Property(x => x.TextEn)
+            .HasColumnType("varchar(250)");
+
+        builder.Property(x => x.TextPt)
+            .HasColumnType("varchar(250)");
         
         builder.Property(x => x.Active) 
             .IsRequired();
         
         builder.Property(x => x.Type) 
+            .IsRequired();
+
+        builder.Property(x => x.ScoringType)
+            .IsRequired();
+
+        builder.Property(x => x.ExcludedFamilyTypes)
             .IsRequired();
         
         builder.HasMany(x => x.Answers)
@@ -27,5 +39,9 @@ public class QuestionMapping : IEntityTypeConfiguration<Question>
         builder.HasOne(x => x.Admin)
             .WithMany(x => x.Questions)
             .HasForeignKey(x => x.AdminId);
+        
+        builder.HasMany(x => x.Recommendations)
+            .WithOne(x => x.Question)
+            .HasForeignKey(x => x.QuestionId);
     }
 }

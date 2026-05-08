@@ -14,6 +14,7 @@ builder.Services.AddSettingsConfiguration(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddHangfireServices(builder.Configuration);
 builder.Services.AddFluentValidationLocalization();
+builder.Services.AddLocalization();
 builder.Services.AddJobServices();
 
 builder.Services.AddDbContext<AppContext>(options =>
@@ -25,8 +26,7 @@ builder.Services.AddServices();
 builder.Services.AddRepositories();
 builder.Services.AddControllers();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerWithJwt();
 
 var app = builder.Build();
 
@@ -35,12 +35,19 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<AppContext>();
 
     var adminId = UserSeeder.Execute(context);
-    QuestionSeeder.Execute(context, adminId);
+    QuestionRecommendationSeeder.Execute(context, adminId);
     FaqSeeder.Execute(context, adminId);
     AudiovisualResourceSeeder.Execute(context, adminId);
 }
 
 app.UseErrorHandler(app.Environment);
+
+app.UseRequestLocalization(options =>
+{
+    options.SetDefaultCulture("es");
+    options.AddSupportedCultures("es", "en", "pt");
+    options.AddSupportedUICultures("es", "en", "pt");
+});
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {

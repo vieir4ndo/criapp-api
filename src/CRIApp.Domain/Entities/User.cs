@@ -18,13 +18,21 @@ public class User : Entity
     public bool IsAdmin { get; private set; } = false;
     public List<Answer> Answers { get; private set; } = new();
     public List<Child> Children { get; private set; } = new();
-    public List<Question> Questions { get; private set; } = new();
-    public List<AudiovisualResource> AudiovisualResources { get; private set; } = new();
     public List<Award> Awards { get; private set; } = new();
     public List<Comment> Comments { get; private set; } = new();
     public List<Forum> Forums { get; private set; } = new();
-    public List<Faq> Faqs { get; private set; } = new();
     public List<UserResetPasswordCode> UserResetPasswordCodes { get; private set; } = new();
+    public int Score { get; private set; }
+    public DateTime ScoreLastUpdatedAt { get; private set; }
+    public List<Recommendation> Recommendations { get; private set; } = new();
+    
+    #region admin fields
+    public List<Question> Questions { get; private set; } = new();
+    public List<Recommendation> AdminRecommendations { get; private set; } = new();
+    public List<AudiovisualResource> AudiovisualResources { get; private set; } = new();
+    public List<Faq> Faqs { get; private set; } = new();
+    #endregion
+    
     public void Activate() => Active = true;
     public void Deactivate() => Active = false;
     
@@ -54,6 +62,8 @@ public class User : Entity
         PasswordHash = HashExtensions.HashPassword(password);
         NumberOfChildren = numberOfChildren;
         Activate();
+        Score = 0;
+        ScoreLastUpdatedAt = DateTime.UtcNow;
         
         Name.IsNullOrEmpty("An user cannot have a null or empty name");
         BirthDate.IsDateTimeMinValue("An user has to have a valid birth date");
@@ -95,5 +105,55 @@ public class User : Entity
         PasswordHash = HashExtensions.HashPassword(password);
         
         PasswordHash.IsNullOrEmpty("An user cannot have a null or empty password hash");
+    }
+
+    public void UpdateScore()
+    {
+        if (!Answers.Any())
+        {
+            Score = 0;
+            ScoreLastUpdatedAt = DateTime.UtcNow;
+            return;
+        }
+
+        var points = 0;
+        foreach (var answer in Answers)
+        {
+            List<int> values = answer.Question.ScoringType switch
+            {
+                QuestionScoringType.Default => [1, 2, 3, 4],
+                QuestionScoringType.Reversed => [5, 6],
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            if (values.Contains(answer.Value))
+            {
+                points++;
+            }
+        }
+        Score = points * 100 / Answers.Count;
+        ScoreLastUpdatedAt = DateTime.UtcNow;
+    }
+
+    public void AddRecommendationsIfNeeded(IList<Recommendation> recommendations)
+    {
+        foreach (var recommendation in recommendations)
+        {
+            if (!Recommendations.Contains(recommendation))
+            {
+                Recommendations.Add(recommendation);
+            }
+        }
+    }
+
+    public void AddAwardIfNeeded(AwardType type)
+    {
+        if (Awards.All(a => a.Type != type))
+            Awards.Add(new Award(type, Id));
+    }
+    
+    public void SetAsAdmin()
+    {
+        IsAdmin = true;
     }
 }

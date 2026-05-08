@@ -14,6 +14,7 @@ public class AnswerTests
     [InlineData(1)]
     [InlineData(3)]
     [InlineData(5)]
+    [InlineData(6)]
     public void Create_WithValidValue_ShouldSucceed(int value)
     {
         var answer = new Answer(value, ValidQuestionId, ValidChildId, ValidPrcId);
@@ -28,7 +29,7 @@ public class AnswerTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    [InlineData(6)]
+    [InlineData(7)]
     [InlineData(10)]
     public void Create_WithOutOfRangeValue_ShouldThrowDomainException(int value)
     {

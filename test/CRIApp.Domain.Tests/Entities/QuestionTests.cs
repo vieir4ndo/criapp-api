@@ -91,4 +91,46 @@ public class QuestionTests
 
         Assert.Equal(QuestionType.Frequency, question.Type);
     }
+
+    [Fact]
+    public void Create_WithoutScoringType_ShouldDefaultToDefault()
+    {
+        var question = CreateValidQuestion();
+
+        Assert.Equal(QuestionScoringType.Default, question.ScoringType);
+    }
+
+    [Fact]
+    public void Create_WithReversedScoringType_ShouldSetScoringTypeCorrectly()
+    {
+        var question = new Question("Does your child avoid sweets?", ValidAdminId, QuestionType.Agreement, QuestionScoringType.Reversed);
+
+        Assert.Equal(QuestionScoringType.Reversed, question.ScoringType);
+    }
+
+    [Fact]
+    public void Create_WithInvalidScoringType_ShouldThrowDomainException()
+    {
+        Assert.Throws<DomainException>(() =>
+            new Question("Valid text?", ValidAdminId, QuestionType.Agreement, (QuestionScoringType)99));
+    }
+
+    [Fact]
+    public void Create_WithoutExcludedFamilyTypes_ShouldHaveEmptyList()
+    {
+        var question = CreateValidQuestion();
+
+        Assert.NotNull(question.ExcludedFamilyTypes);
+        Assert.Empty(question.ExcludedFamilyTypes);
+    }
+
+    [Fact]
+    public void Create_WithExcludedFamilyTypes_ShouldStoreThemCorrectly()
+    {
+        var excluded = new List<FamilyType> { FamilyType.FemaleSingleParent, FamilyType.MaleSingleParent };
+
+        var question = new Question("Valid text?", ValidAdminId, QuestionType.Agreement, excludedFamilyTypes: excluded);
+
+        Assert.Equal(excluded, question.ExcludedFamilyTypes);
+    }
 }

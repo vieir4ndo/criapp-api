@@ -63,7 +63,7 @@ public class AnswerControllerTests
 
     [Theory]
     [InlineData(-1)]
-    [InlineData(6)]
+    [InlineData(7)]
     public async Task Create_ValueOutOfRange_ShouldThrowValidationException(int value)
     {
         var request = new CreateAnswerRequest { Value = value, QuestionId = Guid.NewGuid(), ChildId = Guid.NewGuid() };

@@ -12,6 +12,14 @@ public class FaqMapping : IEntityTypeConfiguration<Faq>
 
         builder.Property(x => x.Question)
             .IsRequired();
+
+        builder.Property(x => x.QuestionEn);
+
+        builder.Property(x => x.AnswerEn);
+
+        builder.Property(x => x.QuestionPt);
+
+        builder.Property(x => x.AnswerPt);
         
         builder.Property(x => x.Answer)
             .IsRequired();
