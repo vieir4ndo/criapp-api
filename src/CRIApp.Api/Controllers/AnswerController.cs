@@ -3,7 +3,6 @@ using CRIApp.Api.Controllers.Responses;
 using CRIApp.Application.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Api.Controllers;
 

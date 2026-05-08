@@ -8,18 +8,19 @@ public class RecommendationMapping: IEntityTypeConfiguration<Recommendation>
 {
     public void Configure(EntityTypeBuilder<Recommendation> builder)
     {
-        builder.HasKey(p => p.Id);
+        builder.Property(p => p.Id)
+            .UseIdentityByDefaultColumn();
 
         builder.Property(x => x.Text)
             .IsRequired()
             .HasColumnType("varchar(500)");
-        
+
         builder.HasOne(x => x.Admin)
             .WithMany(x => x.AdminRecommendations)
             .HasForeignKey(x => x.AdminId);
 
         builder.HasMany(x => x.Users)
             .WithMany(x => x.Recommendations)
-            .UsingEntity<Dictionary<string, object>>();
+            .UsingEntity<Dictionary<int, object>>();
     }
 }
