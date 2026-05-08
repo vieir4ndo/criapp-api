@@ -242,15 +242,20 @@ namespace CRIApp.Repository.Migrations
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Recommendation", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<Guid>("AdminId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("ReferenceNumber")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -346,10 +351,10 @@ namespace CRIApp.Repository.Migrations
                     b.ToTable("UserResetPasswordCode");
                 });
 
-            modelBuilder.Entity("RecommendationUser", b =>
+            modelBuilder.Entity("System.Collections.Generic.Dictionary<int, object>", b =>
                 {
-                    b.Property<Guid>("RecommendationsId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("RecommendationsId")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("UsersId")
                         .HasColumnType("uuid");
@@ -358,7 +363,7 @@ namespace CRIApp.Repository.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("RecommendationUser");
+                    b.ToTable("Dictionary<int, object>");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Answer", b =>
@@ -503,7 +508,7 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("RecommendationUser", b =>
+            modelBuilder.Entity("System.Collections.Generic.Dictionary<int, object>", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.Recommendation", null)
                         .WithMany()

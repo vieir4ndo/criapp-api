@@ -1,4 +1,3 @@
-using CRIApp.Application.Abstractions;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Enums;
 using Microsoft.Extensions.Logging;
