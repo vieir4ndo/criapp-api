@@ -102,6 +102,20 @@ public class SaveUsersRecommendationsTests
     }
 
     [Fact]
+    public async Task Run_AnswerWithGoodDefaultScore_ShouldNotCallUpdate()
+    {
+        var user = BuildUser();
+        var (answer, _, _) = BuildAnswerWithRecommendation(1, QuestionScoringType.Default);
+        user.Answers.Add(answer);
+
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
+
+        await _sut.Run();
+
+        _repositoryMock.Verify(r => r.Update(It.IsAny<User>()), Times.Never);
+    }
+
+    [Fact]
     public async Task Run_AnswerWithGoodReversedScore_ShouldNotAddRecommendation()
     {
         var user = BuildUser();
@@ -116,7 +130,7 @@ public class SaveUsersRecommendationsTests
     }
 
     [Fact]
-    public async Task Run_ShouldCallUpdateOncePerAnswer()
+    public async Task Run_ShouldCallUpdateOncePerUser()
     {
         var user = BuildUser();
         var (answer1, _, _) = BuildAnswerWithRecommendation(5, QuestionScoringType.Default);
@@ -128,7 +142,7 @@ public class SaveUsersRecommendationsTests
 
         await _sut.Run();
 
-        _repositoryMock.Verify(r => r.Update(user), Times.Exactly(2));
+        _repositoryMock.Verify(r => r.Update(user), Times.Once);
     }
 
     [Fact]

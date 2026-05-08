@@ -1,3 +1,4 @@
+using System.Net;
 using CRIApp.Application.Resources;
 using Microsoft.Extensions.Localization;
 
@@ -21,13 +22,13 @@ public class EmailTemplates
             preheader: _localizer["Email_AccountCreation_Preheader"],
             body: $"""
                 <h1 style="margin:0 0 16px;font-size:26px;font-weight:700;color:#1a1a2e;">
-                    {System.Web.HttpUtility.HtmlEncode(_localizer["Email_AccountCreation_Heading"].Value)}
+                    {WebUtility.HtmlEncode(_localizer["Email_AccountCreation_Heading"].Value)}
                 </h1>
                 <p style="margin:0 0 16px;font-size:16px;color:#555;line-height:1.6;">
-                    {System.Web.HttpUtility.HtmlEncode(_localizer["Email_AccountCreation_Body"].Value)}
+                    {WebUtility.HtmlEncode(_localizer["Email_AccountCreation_Body"].Value)}
                 </p>
                 <p style="margin:0 0 24px;font-size:16px;color:#555;line-height:1.6;">
-                    {System.Web.HttpUtility.HtmlEncode(_localizer["Email_AccountCreation_RegisteredWith"].Value)} <strong style="color:#2C64C6;">{System.Web.HttpUtility.HtmlEncode(recipientEmail)}</strong>
+                    {WebUtility.HtmlEncode(_localizer["Email_AccountCreation_RegisteredWith"].Value)} <strong style="color:#2C64C6;">{WebUtility.HtmlEncode(recipientEmail)}</strong>
                 </p>
             """);
 
@@ -37,23 +38,23 @@ public class EmailTemplates
             preheader: _localizer["Email_ForgotPassword_Preheader"],
             body: $"""
                 <h1 style="margin:0 0 16px;font-size:26px;font-weight:700;color:#1a1a2e;">
-                    {System.Web.HttpUtility.HtmlEncode(_localizer["Email_ForgotPassword_Heading"].Value)}
+                    {WebUtility.HtmlEncode(_localizer["Email_ForgotPassword_Heading"].Value)}
                 </h1>
                 <p style="margin:0 0 24px;font-size:16px;color:#555;line-height:1.6;">
-                    {System.Web.HttpUtility.HtmlEncode(_localizer["Email_ForgotPassword_Body"].Value)}
+                    {WebUtility.HtmlEncode(_localizer["Email_ForgotPassword_Body"].Value)}
                 </p>
                 <div style="margin:0 auto 32px;display:inline-block;padding:20px 40px;
                             background:linear-gradient(135deg,#2C64C6,#A966CC);
                             border-radius:12px;text-align:center;">
                     <span style="font-size:36px;font-weight:800;letter-spacing:10px;color:#FFE26A;
                                  font-family:'Courier New',monospace;">
-                        {System.Web.HttpUtility.HtmlEncode(code)}
+                        {WebUtility.HtmlEncode(code)}
                     </span>
                 </div>
                 <p style="margin:0 0 8px;font-size:14px;color:#888;line-height:1.6;">
                     {string.Format(
-                        System.Web.HttpUtility.HtmlEncode(_localizer["Email_ForgotPassword_ExpiryNote"].Value),
-                        $"<strong>{System.Web.HttpUtility.HtmlEncode(_localizer["Email_ForgotPassword_ExpiryTime"].Value)}</strong>"
+                        WebUtility.HtmlEncode(_localizer["Email_ForgotPassword_ExpiryNote"].Value),
+                        $"<strong>{WebUtility.HtmlEncode(_localizer["Email_ForgotPassword_ExpiryTime"].Value)}</strong>"
                     )}
                 </p>
             """);
@@ -65,11 +66,11 @@ public class EmailTemplates
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <title>{System.Web.HttpUtility.HtmlEncode(title)}</title>
+            <title>{WebUtility.HtmlEncode(title)}</title>
         </head>
         <body style="margin:0;padding:0;background-color:#f0f4f8;font-family:'Segoe UI',Arial,sans-serif;">
             <span style="display:none;max-height:0;overflow:hidden;">
-                {System.Web.HttpUtility.HtmlEncode(preheader)}&nbsp;
+                {WebUtility.HtmlEncode(preheader)}&nbsp;
             </span>
 
             <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
@@ -108,11 +109,11 @@ public class EmailTemplates
                             <tr>
                                 <td style="padding:28px 48px;text-align:center;">
                                     <p style="margin:0 0 8px;font-size:13px;color:#aaa;">
-                                        {System.Web.HttpUtility.HtmlEncode(_localizer["Email_Footer_AutoMessage"].Value)} <strong style="color:#2C64C6;">CRIApp</strong>.
-                                        {System.Web.HttpUtility.HtmlEncode(_localizer["Email_Footer_NoReply"].Value)}
+                                        {WebUtility.HtmlEncode(_localizer["Email_Footer_AutoMessage"].Value)} <strong style="color:#2C64C6;">CRIApp</strong>.
+                                        {WebUtility.HtmlEncode(_localizer["Email_Footer_NoReply"].Value)}
                                     </p>
                                     <p style="margin:0;font-size:12px;color:#ccc;">
-                                        © {DateTime.UtcNow.Year} CRIApp — {System.Web.HttpUtility.HtmlEncode(_localizer["Email_Footer_Copyright"].Value)}
+                                        © {DateTime.UtcNow.Year} CRIApp — {WebUtility.HtmlEncode(_localizer["Email_Footer_Copyright"].Value)}
                                     </p>
                                 </td>
                             </tr>
