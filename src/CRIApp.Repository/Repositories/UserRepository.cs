@@ -56,6 +56,7 @@ public class UserRepository : IUserRepository
             .Include(x => x.Answers)
                 .ThenInclude(x=>x.Question)
                     .ThenInclude(x=>x.Recommendations)
+            .AsSplitQuery()
             .ToListAsync();
     }
 }
