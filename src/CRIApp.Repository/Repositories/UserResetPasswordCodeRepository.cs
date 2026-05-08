@@ -24,4 +24,11 @@ public class UserResetPasswordCodeRepository : IUserResetPasswordCodeRepository
             .OrderByDescending(x => x.CreatedAt)
             .FirstOrDefaultAsync(x => x.UserId == userId);
     }
+
+    public async Task<int> DeleteCodesOlderThan(DateTime threshold)
+    {
+        return await Context.UserResetPasswordCode
+            .Where(x => x.CreatedAt < threshold)
+            .ExecuteDeleteAsync();
+    }
 }
