@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- Account Creation Email -->
+  <data name="Email_AccountCreation_Subject" xml:space="preserve">
+    <value>Bem-vindo(a) ao CRIApp!</value>
+  </data>
+  <data name="Email_AccountCreation_Title" xml:space="preserve">
+    <value>Bem-vindo(a) ao CRIApp!</value>
+  </data>
+  <data name="Email_AccountCreation_Preheader" xml:space="preserve">
+    <value>Sua conta foi criada com sucesso.</value>
+  </data>
+  <data name="Email_AccountCreation_Heading" xml:space="preserve">
+    <value>Bem-vindo(a) ao CRIApp!</value>
+  </data>
+  <data name="Email_AccountCreation_Body" xml:space="preserve">
+    <value>Sua conta foi criada com sucesso. Agora você pode acessar o aplicativo e começar a gerenciar as informações de intervenção educacional da sua família.</value>
+  </data>
+  <data name="Email_AccountCreation_RegisteredWith" xml:space="preserve">
+    <value>Conta registrada com:</value>
+  </data>
+
+  <!-- Forgot Password Email -->
+  <data name="Email_ForgotPassword_Subject" xml:space="preserve">
+    <value>Recuperação de senha — CRIApp</value>
+  </data>
+  <data name="Email_ForgotPassword_Title" xml:space="preserve">
+    <value>Recuperação de senha</value>
+  </data>
+  <data name="Email_ForgotPassword_Preheader" xml:space="preserve">
+    <value>Seu código de verificação está aqui.</value>
+  </data>
+  <data name="Email_ForgotPassword_Heading" xml:space="preserve">
+    <value>Recupere sua senha</value>
+  </data>
+  <data name="Email_ForgotPassword_Body" xml:space="preserve">
+    <value>Recebemos uma solicitação para redefinir a senha da sua conta. Use o seguinte código de verificação:</value>
+  </data>
+  <data name="Email_ForgotPassword_ExpiryTime" xml:space="preserve">
+    <value>10 minutos</value>
+  </data>
+  <data name="Email_ForgotPassword_ExpiryNote" xml:space="preserve">
+    <value>Este código expira em {0}. Se não solicitou esta alteração, ignore esta mensagem.</value>
+  </data>
+
+  <!-- Footer -->
+  <data name="Email_Footer_AutoMessage" xml:space="preserve">
+    <value>Esta é uma mensagem automática de</value>
+  </data>
+  <data name="Email_Footer_NoReply" xml:space="preserve">
+    <value>Por favor, não responda a este e-mail.</value>
+  </data>
+  <data name="Email_Footer_Copyright" xml:space="preserve">
+    <value>Todos os direitos reservados.</value>
+  </data>
+
+  <!-- SMS -->
+  <data name="Sms_AccountCreation" xml:space="preserve">
+    <value>Bem-vindo ao CRIApp</value>
+  </data>
+  <data name="Sms_ForgotPassword" xml:space="preserve">
+    <value>Seu código de recuperação é: {0}</value>
+  </data>
+</root>
+

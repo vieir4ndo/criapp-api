@@ -12,6 +12,7 @@ public static class DependencyInjectionExtensions
 {
     public static void AddServices(this IServiceCollection services)
     {
+        services.AddScoped<EmailTemplates>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IAnswerService, AnswerService>();

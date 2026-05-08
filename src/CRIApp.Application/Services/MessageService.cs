@@ -1,7 +1,9 @@
 using CRIApp.Application.Abstractions;
+using CRIApp.Application.Resources;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Settings;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -14,19 +16,25 @@ public class MessageService : IMessageUser
     private readonly TwilioSettings _twilioSettings;
     private readonly MailjetSettings _mailjetSettings;
     private readonly ILogger<MessageService> _logger;
+    private readonly EmailTemplates _emailTemplates;
+    private readonly IStringLocalizer<EmailMessages> _localizer;
 
     public MessageService(
         ISmsClient smsClient,
         IEmailClient emailClient,
         IOptions<TwilioSettings> twilioSettings,
         IOptions<MailjetSettings> mailjetSettings,
-        ILogger<MessageService> logger)
+        ILogger<MessageService> logger,
+        EmailTemplates emailTemplates,
+        IStringLocalizer<EmailMessages> localizer)
     {
         _smsClient = smsClient;
         _emailClient = emailClient;
         _twilioSettings = twilioSettings.Value;
         _mailjetSettings = mailjetSettings.Value;
         _logger = logger;
+        _emailTemplates = emailTemplates;
+        _localizer = localizer;
     }
 
     public async Task NotifyAccountCreation(User user)
@@ -34,13 +42,13 @@ public class MessageService : IMessageUser
         try
         {
             if (user.UsernameType() == UsernameType.PhoneNumber)
-                _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber, "Bienvenido a CRIApp");
+                _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber, _localizer["Sms_AccountCreation"]);
             else
                 await _emailClient.SendAsync(
                     _mailjetSettings.SenderEmail,
                     user.Username,
-                    "¡Bienvenido/a a CRIApp!",
-                    EmailTemplates.AccountCreation(user.Username));
+                    _localizer["Email_AccountCreation_Subject"],
+                    _emailTemplates.AccountCreation(user.Username));
         }
         catch (Exception ex)
         {
@@ -51,12 +59,13 @@ public class MessageService : IMessageUser
     public async Task NotifyForgotPassword(User user, string code)
     {
         if (user.UsernameType() == UsernameType.PhoneNumber)
-            _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber, "Tu codigo de recuperacion es: " + code);
+            _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber,
+                string.Format(_localizer["Sms_ForgotPassword"], code));
         else
             await _emailClient.SendAsync(
                 _mailjetSettings.SenderEmail,
                 user.Username,
-                "Recuperación de contraseña — CRIApp",
-                EmailTemplates.ForgotPassword(code));
+                _localizer["Email_ForgotPassword_Subject"],
+                _emailTemplates.ForgotPassword(code));
     }
 }
