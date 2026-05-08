@@ -11,6 +11,7 @@ public static class AudiovisualResourceSeeder
         
         context.AudiovisualResource.Add(
             new AudiovisualResource("Aquarela", "Canción de Toquinho", "https://www.youtube.com/watch?v=xT8HIiFQ8Y0", adminId.Value)
+                .WithTranslations("Aquarela", "Song by Toquinho", "Aquarela", "Música de Toquinho")
         );
             
         context.SaveChanges();

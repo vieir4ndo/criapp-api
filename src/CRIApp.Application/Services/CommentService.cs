@@ -1,7 +1,9 @@
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Application.Resources;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Application.Services;
@@ -12,13 +14,15 @@ public class CommentService : ICommentService
     private readonly IUserService _userService;
     private readonly ICommentRepository _commentRepository;
     private readonly ILogger<CommentService> _logger;
+    private readonly IStringLocalizer<AppMessages> _localizer;
 
-    public CommentService(IForumService forumService, IUserService userService, ICommentRepository commentRepository, ILogger<CommentService> logger)
+    public CommentService(IForumService forumService, IUserService userService, ICommentRepository commentRepository, ILogger<CommentService> logger, IStringLocalizer<AppMessages> localizer)
     {
         _forumService = forumService;
         _userService = userService;
         _commentRepository = commentRepository;
         _logger = logger;
+        _localizer = localizer;
     }
     
     public async Task Create(CreateCommentDto dto)
@@ -36,7 +40,7 @@ public class CommentService : ICommentService
         if (comment is null)
         {
             _logger.LogWarning("Comment {CommentId} not found", commentId);
-            throw new NotFoundException("Comentario no encontrado");
+            throw new NotFoundException(_localizer["CommentNotFound"]);
         }
         
         await _commentRepository.Delete(comment);

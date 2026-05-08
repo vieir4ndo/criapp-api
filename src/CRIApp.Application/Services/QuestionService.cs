@@ -1,10 +1,12 @@
 using System.Linq.Expressions;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Application.Resources;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Application.Services;
@@ -14,13 +16,15 @@ public class QuestionService : IQuestionService
     private readonly IQuestionRepository _questionRepository;
     private readonly IUserService _userService;
     private readonly ILogger<QuestionService> _logger;
+    private readonly IStringLocalizer<AppMessages> _localizer;
 
     public QuestionService(IQuestionRepository questionRepository, IUserService userService,
-        ILogger<QuestionService> logger)
+        ILogger<QuestionService> logger, IStringLocalizer<AppMessages> localizer)
     {
         _questionRepository = questionRepository;
         _userService = userService;
         _logger = logger;
+        _localizer = localizer;
     }
 
     public async Task<IEnumerable<QuestionDto>> GetQuestionsToReply(Guid userId, Guid childId)
@@ -120,7 +124,7 @@ public class QuestionService : IQuestionService
         if (question is null)
         {
             _logger.LogWarning("Question {QuestionId} not found", id);
-            throw new NotFoundException("Pregunta no encontrada");
+            throw new NotFoundException(_localizer["QuestionNotFound"]);
         }
 
         return question;

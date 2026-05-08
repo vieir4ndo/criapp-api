@@ -1,5 +1,6 @@
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
+using System.Globalization;
 
 namespace CRIApp.Application.Dtos;
 
@@ -13,7 +14,13 @@ public class QuestionDto
 
     public QuestionDto(Question question)
     {
-        Text = question.Text;
+        var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+        Text = lang switch
+        {
+            "en" => question.TextEn ?? question.Text,
+            "pt" => question.TextPt ?? question.Text,
+            _ => question.Text
+        };
         Active = question.Active;
         Id = question.Id;
         AdminId = question.AdminId;
