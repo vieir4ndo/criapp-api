@@ -6,4 +6,5 @@ public interface IUserResetPasswordCodeRepository : IRepository<UserResetPasswor
 {
     Task Create(UserResetPasswordCode code);
     Task<UserResetPasswordCode?> GetLastCodeByUserId(Guid userId);
+    Task<int> DeleteCodesOlderThan(DateTime threshold);
 }
