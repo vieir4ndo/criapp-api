@@ -2,14 +2,16 @@ using CRIApp.Domain.Extensions;
 
 namespace CRIApp.Domain.Entities;
 
-public class Recommendation : Entity
+public class Recommendation
 {
+    public int Id { get; set; }
     public string Text { get; private set; }
     public Guid AdminId { get; private set; }
     public User Admin { get; private set; }
     public Question Question { get; private set; }
     public Guid QuestionId { get; private set; }
     public List<User> Users { get; private set; }
+    public int ReferenceNumber { get; private set; }
 
     protected Recommendation()
     {
