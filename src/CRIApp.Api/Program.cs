@@ -25,8 +25,7 @@ builder.Services.AddServices();
 builder.Services.AddRepositories();
 builder.Services.AddControllers();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerWithJwt();
 
 var app = builder.Build();
 
