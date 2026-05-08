@@ -17,6 +17,7 @@ public class CreateAnswerRequestTests
     [InlineData(1)]
     [InlineData(3)]
     [InlineData(5)]
+    [InlineData(6)]
     public void ValidValue_ShouldNotThrow(int value)
     {
         var request = ValidRequest();
@@ -30,7 +31,7 @@ public class CreateAnswerRequestTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    [InlineData(6)]
+    [InlineData(7)]
     public void ValueOutOfRange_ShouldThrowValidationException(int value)
     {
         var request = ValidRequest();
