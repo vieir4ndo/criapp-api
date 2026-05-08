@@ -33,11 +33,14 @@ public class MessageService : IMessageUser
     {
         try
         {
-            var message = "Bienvenido a CRIApp";
             if (user.UsernameType() == UsernameType.PhoneNumber)
-                _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber, message);
+                _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber, "Bienvenido a CRIApp");
             else
-                await _emailClient.SendAsync(_mailjetSettings.SenderEmail, user.Username, message, message);
+                await _emailClient.SendAsync(
+                    _mailjetSettings.SenderEmail,
+                    user.Username,
+                    "¡Bienvenido/a a CRIApp!",
+                    EmailTemplates.AccountCreation(user.Username));
         }
         catch (Exception ex)
         {
@@ -47,10 +50,13 @@ public class MessageService : IMessageUser
 
     public async Task NotifyForgotPassword(User user, string code)
     {
-        var message = "Tu codigo de recuperacion es: " + code;
         if (user.UsernameType() == UsernameType.PhoneNumber)
-            _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber, message);
+            _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber, "Tu codigo de recuperacion es: " + code);
         else
-            await _emailClient.SendAsync(_mailjetSettings.SenderEmail, user.Username, message, message);
+            await _emailClient.SendAsync(
+                _mailjetSettings.SenderEmail,
+                user.Username,
+                "Recuperación de contraseña — CRIApp",
+                EmailTemplates.ForgotPassword(code));
     }
 }
