@@ -1,10 +1,12 @@
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Application.Resources;
 using CRIApp.Application.Services;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
@@ -16,6 +18,7 @@ public class CommentServiceTests
     private readonly Mock<IForumService> _forumServiceMock;
     private readonly Mock<IUserService> _userServiceMock;
     private readonly Mock<ICommentRepository> _commentRepositoryMock;
+    private readonly Mock<IStringLocalizer<AppMessages>> _localizerMock;
     private readonly CommentService _sut;
 
     public CommentServiceTests()
@@ -23,7 +26,8 @@ public class CommentServiceTests
         _forumServiceMock = new Mock<IForumService>();
         _userServiceMock = new Mock<IUserService>();
         _commentRepositoryMock = new Mock<ICommentRepository>();
-        _sut = new CommentService(_forumServiceMock.Object, _userServiceMock.Object, _commentRepositoryMock.Object, NullLogger<CommentService>.Instance);
+        _localizerMock = new Mock<IStringLocalizer<AppMessages>>();
+        _sut = new CommentService(_forumServiceMock.Object, _userServiceMock.Object, _commentRepositoryMock.Object, NullLogger<CommentService>.Instance, _localizerMock.Object);
     }
 
     private static User BuildUser()

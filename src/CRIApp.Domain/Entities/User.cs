@@ -148,7 +148,12 @@ public class User : Entity
 
     public void AddAwardIfNeeded(AwardType type)
     {
-        if (!Awards.Any(a => a.Type == type))
+        if (Awards.All(a => a.Type != type))
             Awards.Add(new Award(type, Id));
+    }
+    
+    public void SetAsAdmin()
+    {
+        IsAdmin = true;
     }
 }

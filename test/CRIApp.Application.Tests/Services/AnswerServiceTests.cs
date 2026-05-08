@@ -1,10 +1,12 @@
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Application.Resources;
 using CRIApp.Application.Services;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
@@ -16,6 +18,7 @@ public class AnswerServiceTests
     private readonly Mock<IAnswerRepository> _repositoryMock;
     private readonly Mock<IQuestionService> _questionServiceMock;
     private readonly Mock<IUserService> _userServiceMock;
+    private readonly Mock<IStringLocalizer<AppMessages>> _localizerMock;
     private readonly AnswerService _sut;
 
     public AnswerServiceTests()
@@ -23,7 +26,8 @@ public class AnswerServiceTests
         _repositoryMock = new Mock<IAnswerRepository>();
         _questionServiceMock = new Mock<IQuestionService>();
         _userServiceMock = new Mock<IUserService>();
-        _sut = new AnswerService(_repositoryMock.Object, _questionServiceMock.Object, _userServiceMock.Object, NullLogger<AnswerService>.Instance);
+        _localizerMock = new Mock<IStringLocalizer<AppMessages>>();
+        _sut = new AnswerService(_repositoryMock.Object, _questionServiceMock.Object, _userServiceMock.Object, NullLogger<AnswerService>.Instance, _localizerMock.Object);
     }
 
     private static Question BuildQuestion()

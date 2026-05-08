@@ -67,12 +67,24 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DescriptionPt")
+                        .HasColumnType("text");
+
                     b.Property<string>("Iframe")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NamePt")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -172,8 +184,20 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("AnswerEn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AnswerPt")
+                        .HasColumnType("text");
+
                     b.Property<string>("Question")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("QuestionEn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("QuestionPt")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -230,6 +254,12 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(250)");
 
+                    b.Property<string>("TextEn")
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<string>("TextPt")
+                        .HasColumnType("varchar(250)");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -259,6 +289,12 @@ namespace CRIApp.Repository.Migrations
 
                     b.Property<string>("Text")
                         .IsRequired()
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("TextEn")
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("TextPt")
                         .HasColumnType("varchar(500)");
 
                     b.HasKey("Id");

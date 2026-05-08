@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="UserAlreadyExists" xml:space="preserve">
+    <value>Nombre de usuario ya existe</value>
+  </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Usuario o contraseña incorrecta</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Usuario no encontrado</value>
+  </data>
+  <data name="InvalidResetCode" xml:space="preserve">
+    <value>Código de recuperación inválido o expirado</value>
+  </data>
+  <data name="ChildNotFound" xml:space="preserve">
+    <value>Niño(a) no encontrado</value>
+  </data>
+  <data name="ChildNotBelongsToUser" xml:space="preserve">
+    <value>Niño(a) no pertenece al usuario</value>
+  </data>
+  <data name="ChildNotFoundForUser" xml:space="preserve">
+    <value>El usuario {0} no tiene niño(a) con id {1}</value>
+  </data>
+  <data name="QuestionNotFound" xml:space="preserve">
+    <value>Pregunta no encontrada</value>
+  </data>
+  <data name="ForumNotFound" xml:space="preserve">
+    <value>Foro no encontrado</value>
+  </data>
+  <data name="ForumNotBelongsToUser" xml:space="preserve">
+    <value>Foro no pertenece al usuario</value>
+  </data>
+  <data name="CommentNotFound" xml:space="preserve">
+    <value>Comentario no encontrado</value>
+  </data>
+  <data name="GenericError" xml:space="preserve">
+    <value>Vaya, ha ocurrido un problema. Ya hemos notificado a nuestro equipo y estamos trabajando para resolverlo.</value>
+  </data>
+</root>

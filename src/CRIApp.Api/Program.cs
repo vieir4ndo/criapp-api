@@ -14,6 +14,7 @@ builder.Services.AddSettingsConfiguration(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddHangfireServices(builder.Configuration);
 builder.Services.AddFluentValidationLocalization();
+builder.Services.AddLocalization();
 builder.Services.AddJobServices();
 
 builder.Services.AddDbContext<AppContext>(options =>
@@ -40,6 +41,13 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseErrorHandler(app.Environment);
+
+app.UseRequestLocalization(options =>
+{
+    options.SetDefaultCulture("es");
+    options.AddSupportedCultures("es", "en", "pt");
+    options.AddSupportedUICultures("es", "en", "pt");
+});
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
