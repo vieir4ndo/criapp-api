@@ -13,7 +13,7 @@ namespace CRIApp.Application.Tests.Jobs;
 public class CalculateAndSaveAwardsTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
-    private readonly Mock<IUserService> _userServiceMock;
+    private readonly Mock<IAwardRepository> _awardRepositoryMock;
     private readonly CalculateAndSaveAwards _sut;
 
     private static readonly Guid AdminId = Guid.NewGuid();
@@ -21,11 +21,11 @@ public class CalculateAndSaveAwardsTests
     public CalculateAndSaveAwardsTests()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
-        _userServiceMock = new Mock<IUserService>();
+        _awardRepositoryMock = new Mock<IAwardRepository>();
         _sut = new CalculateAndSaveAwards(
             NullLogger<CalculateAndSaveAwards>.Instance,
             _userRepositoryMock.Object,
-            _userServiceMock.Object);
+            _awardRepositoryMock.Object);
     }
 
     private static User BuildUser(bool isAdmin = false)
@@ -61,7 +61,7 @@ public class CalculateAndSaveAwardsTests
 
         await _sut.Run();
 
-        _userRepositoryMock.Verify(r => r.Update(It.IsAny<User>()), Times.Never);
+        _awardRepositoryMock.Verify(r => r.CreateRange(It.IsAny<IEnumerable<Award>>()), Times.Never);
     }
 
 
@@ -310,13 +310,17 @@ public class CalculateAndSaveAwardsTests
 
 
     [Fact]
-    public async Task Run_WithNonAdminUsers_ShouldCallUpdateForEachUser()
+    public async Task Run_WithNonAdminUsers_ShouldCallCreateRangeForEachUserWithNewAwards()
     {
-        var users = new List<User> { BuildUser(), BuildUser() };
+        var user1 = BuildUser();
+        SetScore(user1, 85);
+        var user2 = BuildUser();
+        SetScore(user2, 85);
+        var users = new List<User> { user1, user2 };
         _userRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(users);
 
         await _sut.Run();
 
-        _userRepositoryMock.Verify(r => r.Update(It.IsAny<User>()), Times.Exactly(2));
+        _awardRepositoryMock.Verify(r => r.CreateRange(It.IsAny<IEnumerable<Award>>()), Times.Exactly(2));
     }
 }

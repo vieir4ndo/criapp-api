@@ -36,5 +36,6 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IForumRepository, ForumRepository>();
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<IAudiovisualResourceRepository, AudiovisualResourceRepository>();
+        services.AddScoped<IAwardRepository, AwardRepository>();
     }
 }
