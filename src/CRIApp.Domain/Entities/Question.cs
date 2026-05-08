@@ -6,6 +6,8 @@ namespace CRIApp.Domain.Entities;
 public class Question : Entity
 {
     public string Text { get; private set; }
+    public string? TextEn { get; private set; }
+    public string? TextPt { get; private set; }
     public bool Active { get; private set; }
     public QuestionType Type { get; private set; }
     public IList<Answer> Answers { get; private set; }
@@ -28,6 +30,13 @@ public class Question : Entity
         ExcludedFamilyTypes = excludedFamilyTypes ?? new List<FamilyType>();
         
         Validate();
+    }
+
+    public Question WithTranslations(string? textEn, string? textPt)
+    {
+        TextEn = textEn;
+        TextPt = textPt;
+        return this;
     }
 
     private void Validate()

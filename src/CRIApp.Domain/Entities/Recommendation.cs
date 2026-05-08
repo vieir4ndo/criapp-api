@@ -6,6 +6,8 @@ public class Recommendation
 {
     public int Id { get; set; }
     public string Text { get; private set; }
+    public string? TextEn { get; private set; }
+    public string? TextPt { get; private set; }
     public Guid AdminId { get; private set; }
     public User Admin { get; private set; }
     public Question Question { get; private set; }
@@ -24,6 +26,13 @@ public class Recommendation
         QuestionId = questionId;
 
         Validate();
+    }
+
+    public Recommendation WithTranslations(string? textEn, string? textPt)
+    {
+        TextEn = textEn;
+        TextPt = textPt;
+        return this;
     }
 
     private void Validate()

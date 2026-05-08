@@ -1,4 +1,5 @@
 using CRIApp.Domain.Entities;
+using System.Globalization;
 
 namespace CRIApp.Application.Dtos;
 
@@ -10,8 +11,19 @@ public class FaqDto
 
     public FaqDto(Faq faq)
     {
+        var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         Id = faq.Id;
-        Question = faq.Question;
-        Answer = faq.Answer;
+        Question = lang switch
+        {
+            "en" => faq.QuestionEn ?? faq.Question,
+            "pt" => faq.QuestionPt ?? faq.Question,
+            _ => faq.Question
+        };
+        Answer = lang switch
+        {
+            "en" => faq.AnswerEn ?? faq.Answer,
+            "pt" => faq.AnswerPt ?? faq.Answer,
+            _ => faq.Answer
+        };
     }
 }

@@ -1,8 +1,10 @@
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Application.Resources;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Application.Services;
@@ -12,12 +14,14 @@ public class ChildService : IChildService
     private readonly IChildRepository _childRepository;
     private readonly IUserService _userService;
     private readonly ILogger<ChildService> _logger;
+    private readonly IStringLocalizer<AppMessages> _localizer;
 
-    public ChildService(IChildRepository childRepository, IUserService userService, ILogger<ChildService> logger)
+    public ChildService(IChildRepository childRepository, IUserService userService, ILogger<ChildService> logger, IStringLocalizer<AppMessages> localizer)
     {
         _childRepository = childRepository;
         _userService = userService;
         _logger = logger;
+        _localizer = localizer;
     }
 
     public async Task Create(CreateChildDto dto)
@@ -45,13 +49,13 @@ public class ChildService : IChildService
         if (child is null)
         {
             _logger.LogWarning("Child {ChildId} not found", id);
-            throw new NotFoundException("Niño(a) no encontrado");
+            throw new NotFoundException(_localizer["ChildNotFound"]);
         }
         
         if (child.PrcId != prcId)
         {
             _logger.LogWarning("Child {ChildId} does not belong to user {UserId}", id, prcId);
-            throw new ValidationException("Niño(a) no pertenece al usuario");
+            throw new ValidationException(_localizer["ChildNotBelongsToUser"]);
         }
 
         return child;
