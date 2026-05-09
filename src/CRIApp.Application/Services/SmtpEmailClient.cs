@@ -26,6 +26,7 @@ public class SmtpEmailClient : IEmailClient
 
         var message = new MailMessage(from, to);
         message.Body = body;
+        message.IsBodyHtml = true;
         message.Subject = subject;
 
         await client.SendMailAsync(message);

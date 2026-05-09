@@ -58,7 +58,7 @@ public class MessageServiceTests
 
         await sut.NotifyAccountCreation(user);
 
-        _emailClient.Verify(e => e.SendAsync("no-reply@criapp.com", user.Username, "Bienvenido a CRIApp", "Bienvenido a CRIApp"), Times.Once);
+        _emailClient.Verify(e => e.SendAsync("no-reply@criapp.com", user.Username, "¡Bienvenido/a a CRIApp!", It.IsAny<string>()), Times.Once);
         _smsClient.VerifyNoOtherCalls();
     }
 
@@ -108,7 +108,7 @@ public class MessageServiceTests
 
         await sut.NotifyForgotPassword(user, "XY999");
 
-        _emailClient.Verify(e => e.SendAsync("no-reply@criapp.com", user.Username, "Tu codigo de recuperacion es: XY999", "Tu codigo de recuperacion es: XY999"), Times.Once);
+        _emailClient.Verify(e => e.SendAsync("no-reply@criapp.com", user.Username, "Recuperación de contraseña — CRIApp", It.Is<string>(b => b.Contains("XY999"))), Times.Once);
         _smsClient.VerifyNoOtherCalls();
     }
 }

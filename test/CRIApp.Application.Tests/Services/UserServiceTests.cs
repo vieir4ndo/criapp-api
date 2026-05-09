@@ -1,11 +1,13 @@
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Application.Resources;
 using CRIApp.Application.Services;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
 using CRIApp.Domain.Settings;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -19,6 +21,7 @@ public class UserServiceTests
     private readonly Mock<IUserResetPasswordCodeRepository> _resetCodeRepositoryMock;
     private readonly Mock<IMessageUser> _messageUserMock;
     private readonly IOptions<JwtTokenSettings> _jwtOptions;
+    private readonly Mock<IStringLocalizer<AppMessages>> _localizerMock;
     private readonly UserService _sut;
 
     public UserServiceTests()
@@ -34,12 +37,14 @@ public class UserServiceTests
             ExpiresInMinutes = 5
         });
 
+        _localizerMock = new Mock<IStringLocalizer<AppMessages>>();
         _sut = new UserService(
             _userRepositoryMock.Object,
             _jwtOptions,
             _messageUserMock.Object,
             _resetCodeRepositoryMock.Object,
-            NullLogger<UserService>.Instance);
+            NullLogger<UserService>.Instance,
+            _localizerMock.Object);
     }
 
     private static User BuildUser(string username = "user@domain.com", string password = "pass123")

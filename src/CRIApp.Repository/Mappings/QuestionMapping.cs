@@ -13,6 +13,12 @@ public class QuestionMapping : IEntityTypeConfiguration<Question>
         builder.Property(x => x.Text)
             .IsRequired()
             .HasColumnType("varchar(250)");
+
+        builder.Property(x => x.TextEn)
+            .HasColumnType("varchar(250)");
+
+        builder.Property(x => x.TextPt)
+            .HasColumnType("varchar(250)");
         
         builder.Property(x => x.Active) 
             .IsRequired();

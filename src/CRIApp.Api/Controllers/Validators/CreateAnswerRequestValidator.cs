@@ -8,10 +8,8 @@ public class CreateAnswerRequestValidator : AbstractValidator<CreateAnswerReques
     public CreateAnswerRequestValidator()
     {
         RuleFor(x => x.Value)
-            .GreaterThanOrEqualTo(0)
-            .LessThanOrEqualTo(5)
-            .NotEmpty()
-            .NotNull();
+            .GreaterThanOrEqualTo(1)
+            .LessThanOrEqualTo(6);
         
         RuleFor(x => x.QuestionId)
             .NotEmpty()
