@@ -4,6 +4,7 @@ using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Api.Controllers;
 
@@ -14,7 +15,7 @@ public class ForumController : CriAppControllerBase
 {
     private readonly IForumService _service;
 
-    public ForumController(IForumService service)
+    public ForumController(IForumService service, ILogger<ForumController> logger) : base(logger)
     {
         _service = service;
     }
@@ -22,7 +23,7 @@ public class ForumController : CriAppControllerBase
     [HttpPost]
     public async Task<ApiResponse<object>> Create(CreateForumRequest request)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
         
         await _service.Create(request.ToDto(GetUserId()));
 
@@ -48,7 +49,7 @@ public class ForumController : CriAppControllerBase
     [HttpPatch("{forumId}")]
     public async Task<ApiResponse<object>> Update([FromRoute] Guid forumId, UpdateForumRequest request)
     {
-        request.ValidateAndThrow();
+        ValidateAndLog(request);
         
         await _service.Update(forumId, request.ToDto(GetUserId()));
 

@@ -3,15 +3,19 @@ using System.Net;
 using CRIApp.Api.Controllers.Responses;
 using CRIApp.Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace CRIApp.Api.Middlewares;
 
-[ExcludeFromCodeCoverage]
 public static class ErrorHandlerExtensions
 {
-    public static void UseErrorHandler(this IApplicationBuilder appBuilder)
+    public static void UseErrorHandler(this IApplicationBuilder appBuilder, IWebHostEnvironment  env)
     {
+        var logger = appBuilder.ApplicationServices
+            .GetRequiredService<ILoggerFactory>()
+            .CreateLogger("CRIApp.Api.Middlewares.ErrorHandler");
+
         appBuilder.UseExceptionHandler(builder =>
         {
             builder.Run(async context =>
@@ -48,11 +52,23 @@ public static class ErrorHandlerExtensions
                         }
                         default:
                         {
-                            //var response = new ApiResponse<object>( "Oops, there was a problem. We already notified our team and we are working to solve it.");
+                            var error = exceptionHandlerPathFeature?.Error;
+                            logger.LogError(error,
+                                "Unhandled exception on {Method} {Path}",
+                                context.Request.Method,
+                                context.Request.Path);
 
-                            var response = new ApiResponse<object>(exceptionHandlerFeature.Error.Message);
-                            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                            context.Response.ContentType = "application/json";
+                            ApiResponse<object> response;
+                            if (env.IsDevelopment() || env.IsStaging())
+                            {
+                                response = new ApiResponse<object>(exceptionHandlerFeature.Error.Message);
+                                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                context.Response.ContentType = "application/json";
+                            }
+                            else
+                            {
+                                response = new ApiResponse<object>( "Oops, there was a problem. We already notified our team and we are working to solve it.");
+                            }
 
                             await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
                             break;

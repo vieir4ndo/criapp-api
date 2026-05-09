@@ -6,6 +6,7 @@ using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
 using CRIApp.Domain.Settings;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -37,7 +38,8 @@ public class UserServiceTests
             _userRepositoryMock.Object,
             _jwtOptions,
             _messageUserMock.Object,
-            _resetCodeRepositoryMock.Object);
+            _resetCodeRepositoryMock.Object,
+            NullLogger<UserService>.Instance);
     }
 
     private static User BuildUser(string username = "user@domain.com", string password = "pass123")

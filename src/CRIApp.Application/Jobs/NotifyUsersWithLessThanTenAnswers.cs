@@ -6,13 +6,18 @@ namespace CRIApp.Application.Jobs;
 [ExcludeFromCodeCoverage]
 public class NotifyUsersWithLessThanTenAnswers
 {
-    public NotifyUsersWithLessThanTenAnswers()
+    private readonly ILogger<NotifyUsersWithLessThanTenAnswers> _logger;
+    public NotifyUsersWithLessThanTenAnswers(ILogger<NotifyUsersWithLessThanTenAnswers> logger)
     {
-        
+        _logger = logger;
     }
 
     public void Run()
     {
-        Console.Write("Entrou no job amem");
+        _logger.LogInformation("Job {JobName} started", nameof(NotifyUsersWithLessThanTenAnswers));
+
+        // TODO: query users with fewer than 10 answers today and send notification via Android push notification
+
+        _logger.LogInformation("Job {JobName} completed", nameof(NotifyUsersWithLessThanTenAnswers));
     }
 }

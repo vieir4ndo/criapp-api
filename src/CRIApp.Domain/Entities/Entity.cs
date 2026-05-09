@@ -9,7 +9,7 @@ public abstract class Entity
         Id = Guid.NewGuid();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         var compareTo = obj as Entity;
 
