@@ -361,6 +361,21 @@ namespace CRIApp.Repository.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("CRIApp.Domain.Entities.UserRecommendation", b =>
+                {
+                    b.Property<int>("RecommendationsId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("RecommendationsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("UserRecommendation");
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.UserResetPasswordCode", b =>
                 {
                     b.Property<Guid>("Id")
@@ -385,21 +400,6 @@ namespace CRIApp.Repository.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserResetPasswordCode");
-                });
-
-            modelBuilder.Entity("System.Collections.Generic.Dictionary<int, object>", b =>
-                {
-                    b.Property<int>("RecommendationsId")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("RecommendationsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("Dictionary<int, object>");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Answer", b =>
@@ -533,6 +533,25 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Question");
                 });
 
+            modelBuilder.Entity("CRIApp.Domain.Entities.UserRecommendation", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.Recommendation", "Recommendation")
+                        .WithMany()
+                        .HasForeignKey("RecommendationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CRIApp.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recommendation");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.UserResetPasswordCode", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.User", "User")
@@ -542,21 +561,6 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("System.Collections.Generic.Dictionary<int, object>", b =>
-                {
-                    b.HasOne("CRIApp.Domain.Entities.Recommendation", null)
-                        .WithMany()
-                        .HasForeignKey("RecommendationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CRIApp.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Child", b =>
