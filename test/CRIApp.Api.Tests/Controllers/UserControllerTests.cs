@@ -247,23 +247,4 @@ public class UserControllerTests
 
         await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetRecommendations());
     }
-
-    [Fact]
-    public async Task Deactivate_AuthenticatedUser_ShouldCallServiceAndReturnSuccess()
-    {
-        _serviceMock.Setup(s => s.Deactivate(_userId)).Returns(Task.CompletedTask);
-
-        var result = await _sut.Deactivate();
-
-        Assert.True(result.Success);
-        _serviceMock.Verify(s => s.Deactivate(_userId), Times.Once);
-    }
-
-    [Fact]
-    public async Task Deactivate_ServiceThrowsNotFoundException_ShouldPropagate()
-    {
-        _serviceMock.Setup(s => s.Deactivate(_userId)).ThrowsAsync(new NotFoundException("Usuario no encontrado"));
-
-        await Assert.ThrowsAsync<NotFoundException>(() => _sut.Deactivate());
-    }
 }

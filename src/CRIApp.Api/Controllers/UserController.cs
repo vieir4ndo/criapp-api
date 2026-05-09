@@ -2,14 +2,12 @@ using CRIApp.Api.Controllers.Requests;
 using CRIApp.Api.Controllers.Responses;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Api.Controllers;
 
 [ApiController]
-[Authorize]
 [Route("user")]
 public class UserController : CriAppControllerBase
 {
@@ -20,7 +18,6 @@ public class UserController : CriAppControllerBase
         _service = service;
     }
 
-    [AllowAnonymous]
     [HttpPost]
     public async Task<ApiResponse<object>> Create(CreateUserRequest request)
     {
@@ -31,7 +28,6 @@ public class UserController : CriAppControllerBase
         return new ApiResponse<object>(true);
     }
 
-    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<ApiResponse<TokenDto>> Login(LoginRequest request)
     {
@@ -60,7 +56,6 @@ public class UserController : CriAppControllerBase
         return new ApiResponse<object>(true);
     }
     
-    [AllowAnonymous]
     [HttpPost("forgot-password")]
     public async Task<ApiResponse<object>> ForgotPassword(ForgotPasswordRequest request)
     {
@@ -71,7 +66,6 @@ public class UserController : CriAppControllerBase
         return new ApiResponse<object>(true);
     }
 
-    [AllowAnonymous]
     [HttpPost("reset-password")]
     public async Task<ApiResponse<object>> ResetPassword(ResetPasswordRequest request)
     {
@@ -98,11 +92,14 @@ public class UserController : CriAppControllerBase
         return new ApiResponse<RecommendationDto>(true, recommendations);
     }
 
-    [HttpDelete]
-    public async Task<ApiResponse<object>> Deactivate()
-    {
-        await _service.Deactivate(GetUserId());
+    /*
+[HttpDelete]
+public IActionResult Deactivate()
+{
+    throw new NotImplementedException();
+}
 
-        return new ApiResponse<object>(true);
-    }
+
+
+*/
 }

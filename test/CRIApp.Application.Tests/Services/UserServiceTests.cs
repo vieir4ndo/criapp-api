@@ -1,13 +1,11 @@
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
-using CRIApp.Application.Resources;
 using CRIApp.Application.Services;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
 using CRIApp.Domain.Settings;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -21,7 +19,6 @@ public class UserServiceTests
     private readonly Mock<IUserResetPasswordCodeRepository> _resetCodeRepositoryMock;
     private readonly Mock<IMessageUser> _messageUserMock;
     private readonly IOptions<JwtTokenSettings> _jwtOptions;
-    private readonly Mock<IStringLocalizer<AppMessages>> _localizerMock;
     private readonly UserService _sut;
 
     public UserServiceTests()
@@ -37,14 +34,12 @@ public class UserServiceTests
             ExpiresInMinutes = 5
         });
 
-        _localizerMock = new Mock<IStringLocalizer<AppMessages>>();
         _sut = new UserService(
             _userRepositoryMock.Object,
             _jwtOptions,
             _messageUserMock.Object,
             _resetCodeRepositoryMock.Object,
-            NullLogger<UserService>.Instance,
-            _localizerMock.Object);
+            NullLogger<UserService>.Instance);
     }
 
     private static User BuildUser(string username = "user@domain.com", string password = "pass123")
@@ -330,29 +325,5 @@ public class UserServiceTests
         var result = await _sut.GetRecommendations(userId);
 
         Assert.Empty(result);
-    }
-
-    [Fact]
-    public async Task Deactivate_UserExists_ShouldSetActiveToFalseAndUpdate()
-    {
-        var userId = Guid.NewGuid();
-        var user = BuildUser();
-        user.Activate();
-        _userRepositoryMock.Setup(r => r.GetById(userId)).ReturnsAsync(user);
-        _userRepositoryMock.Setup(r => r.Update(It.IsAny<User>())).Returns(Task.CompletedTask);
-
-        await _sut.Deactivate(userId);
-
-        Assert.False(user.Active);
-        _userRepositoryMock.Verify(r => r.Update(user), Times.Once);
-    }
-
-    [Fact]
-    public async Task Deactivate_UserNotFound_ShouldThrowNotFoundException()
-    {
-        var userId = Guid.NewGuid();
-        _userRepositoryMock.Setup(r => r.GetById(userId)).ReturnsAsync((User?)null);
-
-        await Assert.ThrowsAsync<NotFoundException>(() => _sut.Deactivate(userId));
     }
 }

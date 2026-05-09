@@ -11,34 +11,20 @@ public static class JobsExtensions
     {
         services.AddTransient<NotifyUsersWithLessThanTenAnswersJob>();
         services.AddTransient<UpdateUsersScoreJob>();
-        services.AddTransient<SaveUsersRecommendations>();
-        services.AddTransient<CalculateAndSaveAwards>();
         return services;
     }
 
     public static WebApplication UseRecurringJobs(this WebApplication app)
     {
         var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
-        recurringJobManager.RemoveIfExists(nameof(NotifyUsersWithLessThanTenAnswersJob));
         recurringJobManager.AddOrUpdate<NotifyUsersWithLessThanTenAnswersJob>(
             nameof(NotifyUsersWithLessThanTenAnswersJob),
             x => x.Run(),
             Cron.Daily);
-        recurringJobManager.RemoveIfExists(nameof(UpdateUsersScoreJob));
         recurringJobManager.AddOrUpdate<UpdateUsersScoreJob>(
             nameof(UpdateUsersScoreJob),
             x => x.Run(),
             Cron.Minutely);
-        recurringJobManager.RemoveIfExists(nameof(SaveUsersRecommendations));
-        recurringJobManager.AddOrUpdate<SaveUsersRecommendations>(
-            nameof(SaveUsersRecommendations),
-            x => x.Run(),
-            Cron.Hourly);
-        recurringJobManager.RemoveIfExists(nameof(CalculateAndSaveAwards));
-        recurringJobManager.AddOrUpdate<CalculateAndSaveAwards>(
-            nameof(CalculateAndSaveAwards),
-            x => x.Run(),
-            Cron.Hourly);
         return app;
     }
 }
