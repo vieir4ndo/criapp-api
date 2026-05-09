@@ -1,10 +1,12 @@
 using System.Linq.Expressions;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Application.Resources;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Application.Services;
@@ -14,13 +16,15 @@ public class QuestionService : IQuestionService
     private readonly IQuestionRepository _questionRepository;
     private readonly IUserService _userService;
     private readonly ILogger<QuestionService> _logger;
+    private readonly IStringLocalizer<AppMessages> _localizer;
 
     public QuestionService(IQuestionRepository questionRepository, IUserService userService,
-        ILogger<QuestionService> logger)
+        ILogger<QuestionService> logger, IStringLocalizer<AppMessages> localizer)
     {
         _questionRepository = questionRepository;
         _userService = userService;
         _logger = logger;
+        _localizer = localizer;
     }
 
     public async Task<IEnumerable<QuestionDto>> GetQuestionsToReply(Guid userId, Guid childId)
@@ -32,15 +36,13 @@ public class QuestionService : IQuestionService
         if (remainingQuestions <= 0)
             return Enumerable.Empty<QuestionDto>();
 
-        var familyType = user.FamilyType!.Value;
-
         var recentQuestionIds = GetRecentlyAnsweredQuestionIds(user, childId);
 
-        var questions = await GetAvailableQuestions(familyType, recentQuestionIds);
+        var questions = await GetAvailableQuestions(user.FamilyType, recentQuestionIds);
 
         questions = await ApplyFallbackIfNeeded(
             questions,
-            familyType,
+            user.FamilyType,
             remainingQuestions);
 
         return GetRandomQuestions(questions, remainingQuestions);
@@ -71,20 +73,19 @@ public class QuestionService : IQuestionService
     }
 
     private async Task<List<Question>> GetAvailableQuestions(
-        FamilyType familyType,
+        FamilyType? familyType,
         List<Guid> recentQuestionIds)
     {
-        Expression<Func<Question, bool>> filter = q =>
-            q.Active &&
-            !recentQuestionIds.Contains(q.Id) &&
-            q.ExcludedFamilyTypes.All(f => f != familyType);
+        Expression<Func<Question, bool>> filter = familyType.HasValue
+            ? q => q.Active && !recentQuestionIds.Contains(q.Id) && q.ExcludedFamilyTypes.All(f => f != familyType.Value)
+            : q => q.Active && !recentQuestionIds.Contains(q.Id);
 
         return await _questionRepository.GetFiltered(filter);
     }
 
     private async Task<List<Question>> ApplyFallbackIfNeeded(
         List<Question> questions,
-        FamilyType familyType,
+        FamilyType? familyType,
         int remainingQuestions)
     {
         if (questions.Count >= remainingQuestions)
@@ -94,10 +95,9 @@ public class QuestionService : IQuestionService
             .Select(q => q.Id)
             .ToList();
 
-        Expression<Func<Question, bool>> fallbackFilter = q =>
-            q.Active &&
-            !currentIds.Contains(q.Id) &&
-            q.ExcludedFamilyTypes.All(f => f != familyType);
+        Expression<Func<Question, bool>> fallbackFilter = familyType.HasValue
+            ? q => q.Active && !currentIds.Contains(q.Id) && q.ExcludedFamilyTypes.All(f => f != familyType.Value)
+            : q => q.Active && !currentIds.Contains(q.Id);
 
         var fallbackQuestions = await _questionRepository.GetFiltered(fallbackFilter);
 
@@ -124,7 +124,7 @@ public class QuestionService : IQuestionService
         if (question is null)
         {
             _logger.LogWarning("Question {QuestionId} not found", id);
-            throw new NotFoundException("Pregunta no encontrada");
+            throw new NotFoundException(_localizer["QuestionNotFound"]);
         }
 
         return question;

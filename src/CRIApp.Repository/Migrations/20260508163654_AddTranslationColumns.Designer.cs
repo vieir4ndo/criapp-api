@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CRIApp.Repository.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20260507170717_AddRecommendationsTable")]
-    partial class AddRecommendationsTable
+    [Migration("20260508163654_AddTranslationColumns")]
+    partial class AddTranslationColumns
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,12 +70,24 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DescriptionPt")
+                        .HasColumnType("text");
+
                     b.Property<string>("Iframe")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NamePt")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -175,8 +187,20 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("AnswerEn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AnswerPt")
+                        .HasColumnType("text");
+
                     b.Property<string>("Question")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("QuestionEn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("QuestionPt")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -233,6 +257,12 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(250)");
 
+                    b.Property<string>("TextEn")
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<string>("TextPt")
+                        .HasColumnType("varchar(250)");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -245,9 +275,11 @@ namespace CRIApp.Repository.Migrations
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Recommendation", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<Guid>("AdminId")
                         .HasColumnType("uuid");
@@ -255,8 +287,17 @@ namespace CRIApp.Repository.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("ReferenceNumber")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Text")
                         .IsRequired()
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("TextEn")
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("TextPt")
                         .HasColumnType("varchar(500)");
 
                     b.HasKey("Id");
@@ -347,6 +388,21 @@ namespace CRIApp.Repository.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserResetPasswordCode");
+                });
+
+            modelBuilder.Entity("System.Collections.Generic.Dictionary<int, object>", b =>
+                {
+                    b.Property<int>("RecommendationsId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("RecommendationsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("Dictionary<int, object>");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Answer", b =>
@@ -464,7 +520,7 @@ namespace CRIApp.Repository.Migrations
             modelBuilder.Entity("CRIApp.Domain.Entities.Recommendation", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.User", "Admin")
-                        .WithMany("Recommendations")
+                        .WithMany("AdminRecommendations")
                         .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -491,6 +547,21 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("System.Collections.Generic.Dictionary<int, object>", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.Recommendation", null)
+                        .WithMany()
+                        .HasForeignKey("RecommendationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CRIApp.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.Child", b =>
                 {
                     b.Navigation("Answers");
@@ -510,6 +581,8 @@ namespace CRIApp.Repository.Migrations
 
             modelBuilder.Entity("CRIApp.Domain.Entities.User", b =>
                 {
+                    b.Navigation("AdminRecommendations");
+
                     b.Navigation("Answers");
 
                     b.Navigation("AudiovisualResources");
@@ -525,8 +598,6 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Forums");
 
                     b.Navigation("Questions");
-
-                    b.Navigation("Recommendations");
 
                     b.Navigation("UserResetPasswordCodes");
                 });

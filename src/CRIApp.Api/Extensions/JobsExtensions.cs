@@ -28,17 +28,17 @@ public static class JobsExtensions
         recurringJobManager.AddOrUpdate<UpdateUsersScoreJob>(
             nameof(UpdateUsersScoreJob),
             x => x.Run(),
-            Cron.Hourly);
+            Cron.Minutely);
         recurringJobManager.RemoveIfExists(nameof(SaveUsersRecommendations));
         recurringJobManager.AddOrUpdate<SaveUsersRecommendations>(
             nameof(SaveUsersRecommendations),
             x => x.Run(),
-            Cron.Daily);
+            Cron.Hourly);
         recurringJobManager.RemoveIfExists(nameof(CalculateAndSaveAwards));
         recurringJobManager.AddOrUpdate<CalculateAndSaveAwards>(
             nameof(CalculateAndSaveAwards),
             x => x.Run(),
-            Cron.Daily);
+            Cron.Hourly);
         return app;
     }
 }

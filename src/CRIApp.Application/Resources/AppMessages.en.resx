@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="UserAlreadyExists" xml:space="preserve">
+    <value>Username already exists</value>
+  </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Incorrect username or password</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="InvalidResetCode" xml:space="preserve">
+    <value>Invalid or expired recovery code</value>
+  </data>
+  <data name="ChildNotFound" xml:space="preserve">
+    <value>Child not found</value>
+  </data>
+  <data name="ChildNotBelongsToUser" xml:space="preserve">
+    <value>Child does not belong to user</value>
+  </data>
+  <data name="ChildNotFoundForUser" xml:space="preserve">
+    <value>User {0} has no child with id {1}</value>
+  </data>
+  <data name="QuestionNotFound" xml:space="preserve">
+    <value>Question not found</value>
+  </data>
+  <data name="ForumNotFound" xml:space="preserve">
+    <value>Forum not found</value>
+  </data>
+  <data name="ForumNotBelongsToUser" xml:space="preserve">
+    <value>Forum does not belong to user</value>
+  </data>
+  <data name="CommentNotFound" xml:space="preserve">
+    <value>Comment not found</value>
+  </data>
+  <data name="GenericError" xml:space="preserve">
+    <value>Oops, there was a problem. We already notified our team and we are working to solve it.</value>
+  </data>
+</root>

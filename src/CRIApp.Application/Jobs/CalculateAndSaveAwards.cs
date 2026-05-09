@@ -1,4 +1,3 @@
-using CRIApp.Application.Abstractions;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Enums;
 using Microsoft.Extensions.Logging;
@@ -9,11 +8,13 @@ public class CalculateAndSaveAwards : IRecurrentJob
 {
     private readonly ILogger<CalculateAndSaveAwards> _logger;
     private readonly IUserRepository _userRepository;
+    private readonly IAwardRepository _awardRepository;
 
-    public CalculateAndSaveAwards(ILogger<CalculateAndSaveAwards> logger, IUserRepository userRepository, IUserService userService)
+    public CalculateAndSaveAwards(ILogger<CalculateAndSaveAwards> logger, IUserRepository userRepository, IAwardRepository awardRepository)
     {
         _logger = logger;
         _userRepository = userRepository;
+        _awardRepository = awardRepository;
     }
 
     public async Task Run()
@@ -32,13 +33,17 @@ public class CalculateAndSaveAwards : IRecurrentJob
             var scoreYesterday = CalculateScore(user.Answers.Where(a => a.CreatedAt.Date <= yesterday).ToList());
             var scoreDayBefore = CalculateScore(user.Answers.Where(a => a.CreatedAt.Date <= dayBefore).ToList());
 
+            var awardsBefore = user.Awards.Select(a => a.Id).ToHashSet();
+
             EvaluateFirstSteps(user);
             EvaluateEngagedFamily(user);
             EvaluateOvercoming(user, scoreYesterday, scoreDayBefore);
             EvaluatePositiveEnvironment(user);
             EvaluateSmallProgress(user, scoreYesterday, scoreDayBefore);
 
-            await _userRepository.Update(user);
+            var newAwards = user.Awards.Where(a => !awardsBefore.Contains(a.Id)).ToList();
+            if (newAwards.Count > 0)
+                await _awardRepository.CreateRange(newAwards);
         }
 
         _logger.LogInformation("Job {JobName} completed", nameof(CalculateAndSaveAwards));
