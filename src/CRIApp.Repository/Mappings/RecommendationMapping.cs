@@ -27,6 +27,8 @@ public class RecommendationMapping: IEntityTypeConfiguration<Recommendation>
 
         builder.HasMany(x => x.Users)
             .WithMany(x => x.Recommendations)
-            .UsingEntity<Dictionary<int, object>>();
+            .UsingEntity<UserRecommendation>(
+                l => l.HasOne(ur => ur.User).WithMany().HasForeignKey(ur => ur.UsersId),
+                r => r.HasOne(ur => ur.Recommendation).WithMany().HasForeignKey(ur => ur.RecommendationsId));
     }
 }
