@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mail;
+using System.Net.Mime;
 using CRIApp.Application.Abstractions;
 using CRIApp.Domain.Settings;
 using Microsoft.Extensions.Options;
@@ -25,9 +26,17 @@ public class SmtpEmailClient : IEmailClient
         client.Port = _settings.Port;
 
         var message = new MailMessage(from, to);
-        message.Body = body;
-        message.IsBodyHtml = true;
         message.Subject = subject;
+
+        var htmlView = AlternateView.CreateAlternateViewFromString(body, null, MediaTypeNames.Text.Html);
+        var logoBytes = Convert.FromBase64String(EmailTemplates.LogoBase64);
+        var logoResource = new LinkedResource(new MemoryStream(logoBytes), "image/png")
+        {
+            ContentId = EmailTemplates.LogoContentId,
+            TransferEncoding = TransferEncoding.Base64
+        };
+        htmlView.LinkedResources.Add(logoResource);
+        message.AlternateViews.Add(htmlView);
 
         await client.SendMailAsync(message);
     }
