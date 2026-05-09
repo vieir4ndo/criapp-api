@@ -118,6 +118,18 @@ public class UserServiceTests
     }
 
     [Fact]
+    public async Task Login_InactiveUser_ShouldThrowValidationException()
+    {
+        var user = BuildUser("user@domain.com", "correctpass");
+        user.Deactivate();
+        var dto = new LoginDto { Username = "user@domain.com", Password = "correctpass" };
+        _userRepositoryMock.Setup(r => r.GetByUsername(dto.Username))
+            .ReturnsAsync(user);
+
+        await Assert.ThrowsAsync<ValidationException>(() => _sut.Login(dto));
+    }
+
+    [Fact]
     public async Task Login_UserNotFound_ShouldThrowValidationException()
     {
         var dto = new LoginDto { Username = "nobody@domain.com", Password = "pass" };

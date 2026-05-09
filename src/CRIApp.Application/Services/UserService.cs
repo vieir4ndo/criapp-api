@@ -59,7 +59,7 @@ public class UserService : IUserService
     {
         var user = await GetByUsername(dto.Username);
 
-        if (user is not null && user.VerifyPassword(dto.Password))
+        if (user is not null && user.Active && user.VerifyPassword(dto.Password))
         {
             return GenerateToken(user);
         }
