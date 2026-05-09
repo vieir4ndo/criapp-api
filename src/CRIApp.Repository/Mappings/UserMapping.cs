@@ -44,5 +44,8 @@ public class AdminMapping : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.IsAdmin)
             .IsRequired();
+        
+        builder.Property(x=> x.Score)
+            .IsRequired();
     }
 }

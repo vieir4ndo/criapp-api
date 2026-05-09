@@ -237,4 +237,117 @@ public class UserServiceTests
 
         Assert.Null(result);
     }
+
+    [Fact]
+    public async Task UpdateScore_ShouldCallUpdateOnRepository()
+    {
+        var user = BuildUser();
+        _userRepositoryMock.Setup(r => r.Update(user)).Returns(Task.CompletedTask);
+
+        await _sut.UpdateScore(user);
+
+        _userRepositoryMock.Verify(r => r.Update(user), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateScore_ShouldUpdateUserScoreBeforePersisting()
+    {
+        var user = BuildUser();
+        User? captured = null;
+        _userRepositoryMock.Setup(r => r.Update(It.IsAny<User>()))
+            .Callback<User>(u => captured = u)
+            .Returns(Task.CompletedTask);
+
+        await _sut.UpdateScore(user);
+
+        Assert.NotNull(captured);
+        Assert.Equal(user.Score, captured!.Score);
+    }
+
+    [Fact]
+    public async Task GetAwards_UserNotFound_ShouldThrowNotFoundException()
+    {
+        var userId = Guid.NewGuid();
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+            .ReturnsAsync((User?)null);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetAwards(userId));
+    }
+
+    [Fact]
+    public async Task GetAwards_UserWithNoAwards_ShouldReturnEmptyList()
+    {
+        var userId = Guid.NewGuid();
+        var user = BuildUser();
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+            .ReturnsAsync(user);
+
+        var result = await _sut.GetAwards(userId);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetAwards_UserWithAwards_ShouldReturnMappedDtos()
+    {
+        var userId = Guid.NewGuid();
+        var user = BuildUser();
+        user.AddAwardIfNeeded(AwardType.FirstSteps);
+        user.AddAwardIfNeeded(AwardType.EngagedFamily);
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+            .ReturnsAsync(user);
+
+        var result = await _sut.GetAwards(userId);
+
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, a => a.Type == AwardType.FirstSteps);
+        Assert.Contains(result, a => a.Type == AwardType.EngagedFamily);
+    }
+
+    [Fact]
+    public async Task GetRecommendations_UserNotFound_ShouldThrowNotFoundException()
+    {
+        var userId = Guid.NewGuid();
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+            .ReturnsAsync((User?)null);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetRecommendations(userId));
+    }
+
+    [Fact]
+    public async Task GetRecommendations_UserWithNoRecommendations_ShouldReturnEmptyList()
+    {
+        var userId = Guid.NewGuid();
+        var user = BuildUser();
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+            .ReturnsAsync(user);
+
+        var result = await _sut.GetRecommendations(userId);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task Deactivate_UserExists_ShouldSetActiveToFalseAndUpdate()
+    {
+        var userId = Guid.NewGuid();
+        var user = BuildUser();
+        user.Activate();
+        _userRepositoryMock.Setup(r => r.GetById(userId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.Update(It.IsAny<User>())).Returns(Task.CompletedTask);
+
+        await _sut.Deactivate(userId);
+
+        Assert.False(user.Active);
+        _userRepositoryMock.Verify(r => r.Update(user), Times.Once);
+    }
+
+    [Fact]
+    public async Task Deactivate_UserNotFound_ShouldThrowNotFoundException()
+    {
+        var userId = Guid.NewGuid();
+        _userRepositoryMock.Setup(r => r.GetById(userId)).ReturnsAsync((User?)null);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.Deactivate(userId));
+    }
 }

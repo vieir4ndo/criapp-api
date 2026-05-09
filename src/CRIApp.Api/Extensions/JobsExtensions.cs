@@ -9,18 +9,36 @@ public static class JobsExtensions
 {
     public static IServiceCollection AddJobServices(this IServiceCollection services)
     {
-        services.AddTransient<NotifyUsersWithLessThanTenAnswers>();
+        services.AddTransient<NotifyUsersWithLessThanTenAnswersJob>();
+        services.AddTransient<UpdateUsersScoreJob>();
+        services.AddTransient<SaveUsersRecommendations>();
+        services.AddTransient<CalculateAndSaveAwards>();
         return services;
     }
 
     public static WebApplication UseRecurringJobs(this WebApplication app)
     {
         var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
-        recurringJobManager.AddOrUpdate<NotifyUsersWithLessThanTenAnswers>(
-            nameof(NotifyUsersWithLessThanTenAnswers),
+        recurringJobManager.RemoveIfExists(nameof(NotifyUsersWithLessThanTenAnswersJob));
+        recurringJobManager.AddOrUpdate<NotifyUsersWithLessThanTenAnswersJob>(
+            nameof(NotifyUsersWithLessThanTenAnswersJob),
             x => x.Run(),
             Cron.Daily);
-
+        recurringJobManager.RemoveIfExists(nameof(UpdateUsersScoreJob));
+        recurringJobManager.AddOrUpdate<UpdateUsersScoreJob>(
+            nameof(UpdateUsersScoreJob),
+            x => x.Run(),
+            Cron.Hourly);
+        recurringJobManager.RemoveIfExists(nameof(SaveUsersRecommendations));
+        recurringJobManager.AddOrUpdate<SaveUsersRecommendations>(
+            nameof(SaveUsersRecommendations),
+            x => x.Run(),
+            Cron.Daily);
+        recurringJobManager.RemoveIfExists(nameof(CalculateAndSaveAwards));
+        recurringJobManager.AddOrUpdate<CalculateAndSaveAwards>(
+            nameof(CalculateAndSaveAwards),
+            x => x.Run(),
+            Cron.Daily);
         return app;
     }
 }

@@ -152,4 +152,50 @@ public class UserService : IUserService
         
         await _repository.Update(user);
     }
+
+    public async Task UpdateScore(User user)
+    {
+        user.UpdateScore();
+        await _repository.Update(user);
+    }
+    
+    public async Task<IList<User>> GetAllUsers()
+    {
+        return await _repository.GetAll();
+    }
+
+    public async Task<IList<AwardDto>> GetAwards(Guid userId)
+    {
+        var user = await _repository.GetByIdWithAwardsAndRecommendations(userId);
+
+        if (user is null)
+        {
+            _logger.LogWarning("User {UserId} not found when fetching awards", userId);
+            throw new NotFoundException("Usuario no encontrado");
+        }
+
+        return user.Awards.Select(a => new AwardDto(a)).ToList();
+    }
+
+    public async Task<IList<RecommendationDto>> GetRecommendations(Guid userId)
+    {
+        var user = await _repository.GetByIdWithAwardsAndRecommendations(userId);
+
+        if (user is null)
+        {
+            _logger.LogWarning("User {UserId} not found when fetching recommendations", userId);
+            throw new NotFoundException("Usuario no encontrado");
+        }
+
+        return user.Recommendations.Select(r => new RecommendationDto(r)).ToList();
+    }
+
+    public async Task Deactivate(Guid userId)
+    {
+        var user = await GetAndValidateById(userId);
+
+        user.Deactivate();
+
+        await _repository.Update(user);
+    }
 }
