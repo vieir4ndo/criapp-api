@@ -23,6 +23,8 @@ public class SaveUsersRecommendations : IRecurrentJob
 
         foreach (var user in users)
         {
+            var countBefore = user.Recommendations.Count;
+
             foreach (var answer in user.Answers)
             {
                 List<int> values = answer.Question.ScoringType switch
@@ -36,6 +38,10 @@ public class SaveUsersRecommendations : IRecurrentJob
                 {
                     user.AddRecommendationsIfNeeded(answer.Question.Recommendations);
                 }
+            }
+
+            if (user.Recommendations.Count != countBefore)
+            {
                 await _repository.Update(user);
             }
         }

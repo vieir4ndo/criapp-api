@@ -25,17 +25,20 @@ public class SmtpEmailClient : IEmailClient
         client.Credentials = new NetworkCredential(_settings.ApiKey, _settings.ApiKeySecret);
         client.Port = _settings.Port;
 
-        var message = new MailMessage(from, to);
-        message.Subject = subject;
-
-        var htmlView = AlternateView.CreateAlternateViewFromString(body, null, MediaTypeNames.Text.Html);
         var logoBytes = Convert.FromBase64String(EmailTemplates.LogoBase64);
-        var logoResource = new LinkedResource(new MemoryStream(logoBytes), "image/png")
+        using var logoStream = new MemoryStream(logoBytes);
+        using var logoResource = new LinkedResource(logoStream, "image/png")
         {
             ContentId = EmailTemplates.LogoContentId,
             TransferEncoding = TransferEncoding.Base64
         };
+        using var htmlView = AlternateView.CreateAlternateViewFromString(body, null, MediaTypeNames.Text.Html);
         htmlView.LinkedResources.Add(logoResource);
+
+        using var message = new MailMessage(from, to);
+        message.Subject = subject;
+        message.Body = body;
+        message.IsBodyHtml = false;
         message.AlternateViews.Add(htmlView);
 
         await client.SendMailAsync(message);

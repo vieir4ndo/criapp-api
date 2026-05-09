@@ -37,13 +37,6 @@ public class AnswerService : IAnswerService
             throw new NotFoundException(_localizer["ChildNotFoundForUser", dto.PrcId, dto.ChildId]);
         }
 
-        try
-        {
-            await _repository.Create(dto.ToDomainObject());
-        }
-        finally
-        {
-            await _userService.UpdateScore(user);
-        }
+        await _repository.Create(dto.ToDomainObject());
     }
 }

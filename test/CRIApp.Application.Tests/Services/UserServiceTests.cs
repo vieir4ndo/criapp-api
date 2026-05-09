@@ -331,4 +331,28 @@ public class UserServiceTests
 
         Assert.Empty(result);
     }
+
+    [Fact]
+    public async Task Deactivate_UserExists_ShouldSetActiveToFalseAndUpdate()
+    {
+        var userId = Guid.NewGuid();
+        var user = BuildUser();
+        user.Activate();
+        _userRepositoryMock.Setup(r => r.GetById(userId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.Update(It.IsAny<User>())).Returns(Task.CompletedTask);
+
+        await _sut.Deactivate(userId);
+
+        Assert.False(user.Active);
+        _userRepositoryMock.Verify(r => r.Update(user), Times.Once);
+    }
+
+    [Fact]
+    public async Task Deactivate_UserNotFound_ShouldThrowNotFoundException()
+    {
+        var userId = Guid.NewGuid();
+        _userRepositoryMock.Setup(r => r.GetById(userId)).ReturnsAsync((User?)null);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.Deactivate(userId));
+    }
 }

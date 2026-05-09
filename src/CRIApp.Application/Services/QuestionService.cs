@@ -50,7 +50,7 @@ public class QuestionService : IQuestionService
 
     private int GetRemainingQuestions(User user, Guid childId)
     {
-        var today = DateTime.Today;
+        var today = DateTime.UtcNow.Date;
 
         var answeredToday = user.Answers.Count(x =>
             x.ChildId == childId &&
@@ -61,7 +61,7 @@ public class QuestionService : IQuestionService
 
     private List<Guid> GetRecentlyAnsweredQuestionIds(User user, Guid childId)
     {
-        var today = DateTime.Today;
+        var today = DateTime.UtcNow.Date;
 
         return user.Answers
             .Where(x =>

@@ -5,7 +5,7 @@ namespace CRIApp.Application.Dtos;
 
 public class RecommendationDto
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public string Text { get; set; }
     public Guid QuestionId { get; set; }
 
