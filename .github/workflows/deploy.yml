@@ -3,7 +3,7 @@ name: Build, Test & Deploy
 on:
   push:
     branches:
-      - '**'
+      - 'main'
 
 env:
   DOTNET_SDK_VERSION: "8.0.x"
