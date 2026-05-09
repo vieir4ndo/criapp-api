@@ -10,7 +10,6 @@ public static class FaqSeeder
         
         context.Faq.Add(
             new Faq("teste?", "teste", adminId.Value)
-                .WithTranslations("test?", "test", "teste?", "teste")
         );
             
         context.SaveChanges();
