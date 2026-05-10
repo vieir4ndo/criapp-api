@@ -72,7 +72,7 @@ public class SaveUsersRecommendationsTests
     public async Task Run_AnswerWithBadDefaultScore_ShouldAddAdvice()
     {
         var childBook = BuildChildBook();
-        var (answer, _, recommendation) = BuildAnswerWithRecommendation(5, QuestionScoringType.Default);
+        var (answer, _, recommendation) = BuildAnswerWithRecommendation(1, QuestionScoringType.Default);
         childBook.Child.Answers.Add(answer);
 
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
@@ -86,7 +86,7 @@ public class SaveUsersRecommendationsTests
     public async Task Run_AnswerWithGoodDefaultScore_ShouldNotAddAdvice()
     {
         var childBook = BuildChildBook();
-        var (answer, _, recommendation) = BuildAnswerWithRecommendation(1, QuestionScoringType.Default);
+        var (answer, _, recommendation) = BuildAnswerWithRecommendation(5, QuestionScoringType.Default);
         childBook.Child.Answers.Add(answer);
 
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
@@ -100,7 +100,7 @@ public class SaveUsersRecommendationsTests
     public async Task Run_AnswerWithBadReversedScore_ShouldAddAdvice()
     {
         var childBook = BuildChildBook();
-        var (answer, _, recommendation) = BuildAnswerWithRecommendation(1, QuestionScoringType.Reversed);
+        var (answer, _, recommendation) = BuildAnswerWithRecommendation(5, QuestionScoringType.Reversed);
         childBook.Child.Answers.Add(answer);
 
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
@@ -114,7 +114,7 @@ public class SaveUsersRecommendationsTests
     public async Task Run_AnswerWithGoodDefaultScore_ShouldNotCallUpdate()
     {
         var childBook = BuildChildBook();
-        var (answer, _, _) = BuildAnswerWithRecommendation(1, QuestionScoringType.Default);
+        var (answer, _, _) = BuildAnswerWithRecommendation(5, QuestionScoringType.Default);
         childBook.Child.Answers.Add(answer);
 
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
@@ -128,7 +128,7 @@ public class SaveUsersRecommendationsTests
     public async Task Run_AnswerWithGoodReversedScore_ShouldNotAddAdvice()
     {
         var childBook = BuildChildBook();
-        var (answer, _, recommendation) = BuildAnswerWithRecommendation(5, QuestionScoringType.Reversed);
+        var (answer, _, recommendation) = BuildAnswerWithRecommendation(1, QuestionScoringType.Reversed);
         childBook.Child.Answers.Add(answer);
 
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
@@ -142,8 +142,8 @@ public class SaveUsersRecommendationsTests
     public async Task Run_ShouldCallUpdateOncePerChildBook()
     {
         var childBook = BuildChildBook();
-        var (answer1, _, _) = BuildAnswerWithRecommendation(5, QuestionScoringType.Default);
-        var (answer2, _, _) = BuildAnswerWithRecommendation(5, QuestionScoringType.Default);
+        var (answer1, _, _) = BuildAnswerWithRecommendation(1, QuestionScoringType.Default);
+        var (answer2, _, _) = BuildAnswerWithRecommendation(1, QuestionScoringType.Default);
         childBook.Child.Answers.Add(answer1);
         childBook.Child.Answers.Add(answer2);
 
@@ -166,7 +166,7 @@ public class SaveUsersRecommendationsTests
 
         for (var i = 0; i < 3; i++)
         {
-            var answer = new Answer(5, question.Id, Guid.NewGuid(), Guid.NewGuid());
+            var answer = new Answer(1, question.Id, Guid.NewGuid(), Guid.NewGuid());
             typeof(Answer).GetProperty(nameof(Answer.Question))!.SetValue(answer, question);
             childBook.Child.Answers.Add(answer);
         }

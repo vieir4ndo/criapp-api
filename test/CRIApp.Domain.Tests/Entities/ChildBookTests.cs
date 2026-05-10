@@ -47,36 +47,12 @@ public class ChildBookTests
     }
 
     [Theory]
-    [InlineData(1)]
-    [InlineData(2)]
-    [InlineData(3)]
-    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
     public void UpdateScore_DefaultScoringWithCountableValue_ShouldScore100(int value)
     {
         var childBook = CreateChildBook();
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Default));
-
-        childBook.UpdateScore(childBook.Child.Answers, []);
-
-        Assert.Equal(100, childBook.Score);
-    }
-
-    [Fact]
-    public void UpdateScore_DefaultScoringWithValue5_ShouldNotCount()
-    {
-        var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
-
-        childBook.UpdateScore(childBook.Child.Answers, []);
-
-        Assert.Equal(0, childBook.Score);
-    }
-
-    [Fact]
-    public void UpdateScore_ReversedScoringWithValue5_ShouldScore100()
-    {
-        var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Reversed));
 
         childBook.UpdateScore(childBook.Child.Answers, []);
 
@@ -88,7 +64,35 @@ public class ChildBookTests
     [InlineData(2)]
     [InlineData(3)]
     [InlineData(4)]
-    public void UpdateScore_ReversedScoringWithLowValue_ShouldNotCount(int value)
+    public void UpdateScore_DefaultScoringWithLowValue_ShouldNotCount(int value)
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Default));
+
+        childBook.UpdateScore(childBook.Child.Answers, []);
+
+        Assert.Equal(0, childBook.Score);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void UpdateScore_ReversedScoringWithLowValue_ShouldScore100(int value)
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Reversed));
+
+        childBook.UpdateScore(childBook.Child.Answers, []);
+
+        Assert.Equal(100, childBook.Score);
+    }
+
+    [Theory]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    public void UpdateScore_ReversedScoringWithHighValue_ShouldNotCount(int value)
     {
         var childBook = CreateChildBook();
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Reversed));
@@ -137,7 +141,7 @@ public class ChildBookTests
     public void UpdateScore_NoRecommendations_ShouldApplyFullAnswersWeight()
     {
         var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
 
         childBook.UpdateScore(childBook.Child.Answers, []);
 
@@ -148,7 +152,7 @@ public class ChildBookTests
     public void UpdateScore_WithRecommendationsAndNoCheckpoints_ShouldApply70AnswersWeight()
     {
         var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
         childBook.AddRecommendationsIfNeeded([BuildRecommendation()]);
 
         childBook.UpdateScore(childBook.Child.Answers, []);
@@ -160,7 +164,7 @@ public class ChildBookTests
     public void UpdateScore_WithAllCheckpointsCompleted_ShouldScore100()
     {
         var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
         childBook.AddRecommendationsIfNeeded([BuildRecommendation()]);
         var checkpoint = BuildCheckpoint(1, childBook.Id, completed: true);
 
@@ -173,7 +177,7 @@ public class ChildBookTests
     public void UpdateScore_WithPartialCheckpoints_ShouldApplyPartialCheckpointWeight()
     {
         var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
         childBook.AddRecommendationsIfNeeded([BuildRecommendation(), BuildRecommendation()]);
         var completedCheckpoint = BuildCheckpoint(1, childBook.Id, completed: true);
         var incompleteCheckpoint = BuildCheckpoint(2, childBook.Id, completed: false);
@@ -187,19 +191,19 @@ public class ChildBookTests
     public void AddAwardIfNeeded_NewAwardType_ShouldAddAward()
     {
         var childBook = CreateChildBook();
-        var award = new Award(AwardType.FirstSteps, "First Steps");
+        var award = new Award(AwardType.HabitBuilder, "Habit Builder");
 
         childBook.AddAwardIfNeeded(award);
 
         Assert.Single(childBook.Awards);
-        Assert.Equal(AwardType.FirstSteps, childBook.Awards[0].Type);
+        Assert.Equal(AwardType.HabitBuilder, childBook.Awards[0].Type);
     }
 
     [Fact]
     public void AddAwardIfNeeded_SameAwardTypeTwice_ShouldNotDuplicate()
     {
         var childBook = CreateChildBook();
-        var award = new Award(AwardType.FirstSteps, "First Steps");
+        var award = new Award(AwardType.HabitBuilder, "Habit Builder");
 
         childBook.AddAwardIfNeeded(award);
         childBook.AddAwardIfNeeded(award);
@@ -212,24 +216,26 @@ public class ChildBookTests
     {
         var childBook = CreateChildBook();
 
-        childBook.AddAwardIfNeeded(new Award(AwardType.FirstSteps, "First Steps"));
-        childBook.AddAwardIfNeeded(new Award(AwardType.EngagedFamily, "Engaged Family"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.HabitBuilder, "Habit Builder"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.ConsistentParent, "Consistent Parent"));
 
         Assert.Equal(2, childBook.Awards.Count);
     }
 
     [Fact]
-    public void AddAwardIfNeeded_AllFiveTypes_ShouldAddAllFive()
+    public void AddAwardIfNeeded_AllSevenTypes_ShouldAddAllSeven()
     {
         var childBook = CreateChildBook();
 
-        childBook.AddAwardIfNeeded(new Award(AwardType.FirstSteps, "First Steps"));
-        childBook.AddAwardIfNeeded(new Award(AwardType.EngagedFamily, "Engaged Family"));
-        childBook.AddAwardIfNeeded(new Award(AwardType.Overcoming, "Overcoming"));
-        childBook.AddAwardIfNeeded(new Award(AwardType.PositiveEnvironment, "Positive Environment"));
-        childBook.AddAwardIfNeeded(new Award(AwardType.SmallProgress, "Small Progress"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.HabitBuilder, "Habit Builder"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.ConsistentParent, "Consistent Parent"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.SilverCognitiveDevelopment, "Silver Cognitive"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.SilverEmotionalBonding, "Silver Emotional"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.SilverDailyRoutines, "Silver Routines"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.SilverSocialInteraction, "Silver Social"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.GoldParent, "Gold Parent"));
 
-        Assert.Equal(5, childBook.Awards.Count);
+        Assert.Equal(7, childBook.Awards.Count);
     }
 
     [Fact]

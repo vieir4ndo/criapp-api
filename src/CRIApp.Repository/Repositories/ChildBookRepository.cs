@@ -38,6 +38,7 @@ public class ChildBookRepository : IChildBookRepository
         return await _context.ChildBook
             .Include(x => x.Awards)
             .Include(x => x.Recommendations)
+            .Include(x => x.RecommendationCheckpoints)
             .Include(x => x.Child)
                 .ThenInclude(c => c.Answers)
                     .ThenInclude(a => a.Question)

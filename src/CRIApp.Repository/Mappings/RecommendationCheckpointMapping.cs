@@ -22,7 +22,7 @@ public class RecommendationCheckpointMapping : IEntityTypeConfiguration<Recommen
             .HasForeignKey(x => x.RecommendationId);
 
         builder.HasOne(x => x.ChildBook)
-            .WithMany()
+            .WithMany(x => x.RecommendationCheckpoints)
             .HasForeignKey(x => x.ChildBookId);
     }
 }
