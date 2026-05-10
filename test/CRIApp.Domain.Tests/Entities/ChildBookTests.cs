@@ -191,19 +191,19 @@ public class ChildBookTests
     public void AddAwardIfNeeded_NewAwardType_ShouldAddAward()
     {
         var childBook = CreateChildBook();
-        var award = new Award(AwardType.FirstSteps, "First Steps");
+        var award = new Award(AwardType.HabitBuilder, "Habit Builder");
 
         childBook.AddAwardIfNeeded(award);
 
         Assert.Single(childBook.Awards);
-        Assert.Equal(AwardType.FirstSteps, childBook.Awards[0].Type);
+        Assert.Equal(AwardType.HabitBuilder, childBook.Awards[0].Type);
     }
 
     [Fact]
     public void AddAwardIfNeeded_SameAwardTypeTwice_ShouldNotDuplicate()
     {
         var childBook = CreateChildBook();
-        var award = new Award(AwardType.FirstSteps, "First Steps");
+        var award = new Award(AwardType.HabitBuilder, "Habit Builder");
 
         childBook.AddAwardIfNeeded(award);
         childBook.AddAwardIfNeeded(award);
@@ -216,24 +216,26 @@ public class ChildBookTests
     {
         var childBook = CreateChildBook();
 
-        childBook.AddAwardIfNeeded(new Award(AwardType.FirstSteps, "First Steps"));
-        childBook.AddAwardIfNeeded(new Award(AwardType.EngagedFamily, "Engaged Family"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.HabitBuilder, "Habit Builder"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.ConsistentParent, "Consistent Parent"));
 
         Assert.Equal(2, childBook.Awards.Count);
     }
 
     [Fact]
-    public void AddAwardIfNeeded_AllFiveTypes_ShouldAddAllFive()
+    public void AddAwardIfNeeded_AllSevenTypes_ShouldAddAllSeven()
     {
         var childBook = CreateChildBook();
 
-        childBook.AddAwardIfNeeded(new Award(AwardType.FirstSteps, "First Steps"));
-        childBook.AddAwardIfNeeded(new Award(AwardType.EngagedFamily, "Engaged Family"));
-        childBook.AddAwardIfNeeded(new Award(AwardType.Overcoming, "Overcoming"));
-        childBook.AddAwardIfNeeded(new Award(AwardType.PositiveEnvironment, "Positive Environment"));
-        childBook.AddAwardIfNeeded(new Award(AwardType.SmallProgress, "Small Progress"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.HabitBuilder, "Habit Builder"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.ConsistentParent, "Consistent Parent"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.SilverCognitiveDevelopment, "Silver Cognitive"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.SilverEmotionalBonding, "Silver Emotional"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.SilverDailyRoutines, "Silver Routines"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.SilverSocialInteraction, "Silver Social"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.GoldParent, "Gold Parent"));
 
-        Assert.Equal(5, childBook.Awards.Count);
+        Assert.Equal(7, childBook.Awards.Count);
     }
 
     [Fact]

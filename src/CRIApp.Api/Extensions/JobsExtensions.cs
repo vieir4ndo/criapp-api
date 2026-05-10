@@ -10,9 +10,8 @@ public static class JobsExtensions
     public static IServiceCollection AddJobServices(this IServiceCollection services)
     {
         services.AddTransient<NotifyUsersWithLessThanTenAnswersJob>();
-        services.AddTransient<UpdateChildBookScoreJob>();
+        services.AddTransient<UpdateAndAwardChildBookJob>();
         services.AddTransient<SaveUsersRecommendations>();
-        services.AddTransient<CalculateAndSaveAwards>();
         services.AddTransient<CleanUserResetPasswordCodesJob>();
         return services;
     }
@@ -25,19 +24,14 @@ public static class JobsExtensions
             nameof(NotifyUsersWithLessThanTenAnswersJob),
             x => x.Run(),
             Cron.Daily);
-        recurringJobManager.RemoveIfExists(nameof(UpdateChildBookScoreJob));
-        recurringJobManager.AddOrUpdate<UpdateChildBookScoreJob>(
-            nameof(UpdateChildBookScoreJob),
+        recurringJobManager.RemoveIfExists(nameof(UpdateAndAwardChildBookJob));
+        recurringJobManager.AddOrUpdate<UpdateAndAwardChildBookJob>(
+            nameof(UpdateAndAwardChildBookJob),
             x => x.Run(),
             Cron.Minutely);
         recurringJobManager.RemoveIfExists(nameof(SaveUsersRecommendations));
         recurringJobManager.AddOrUpdate<SaveUsersRecommendations>(
             nameof(SaveUsersRecommendations),
-            x => x.Run(),
-            Cron.Hourly);
-        recurringJobManager.RemoveIfExists(nameof(CalculateAndSaveAwards));
-        recurringJobManager.AddOrUpdate<CalculateAndSaveAwards>(
-            nameof(CalculateAndSaveAwards),
             x => x.Run(),
             Cron.Hourly);
         recurringJobManager.RemoveIfExists(nameof(CleanUserResetPasswordCodesJob));
