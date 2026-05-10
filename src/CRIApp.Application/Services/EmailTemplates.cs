@@ -6,9 +6,9 @@ namespace CRIApp.Application.Services;
 
 public class EmailTemplates
 {
-    private readonly IStringLocalizer<EmailMessages> _localizer;
+    private readonly IStringLocalizer<MessageTemplates> _localizer;
 
-    public EmailTemplates(IStringLocalizer<EmailMessages> localizer)
+    public EmailTemplates(IStringLocalizer<MessageTemplates> localizer)
     {
         _localizer = localizer;
     }

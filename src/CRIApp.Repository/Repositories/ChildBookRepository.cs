@@ -46,4 +46,16 @@ public class ChildBookRepository : IChildBookRepository
             .AsSplitQuery()
             .ToListAsync();
     }
+
+    public async Task<IList<ChildBook>> GetAllForNotifications()
+    {
+        return await _context.ChildBook
+            .Include(x => x.RecommendationCheckpoints)
+            .Include(x => x.Child)
+                .ThenInclude(c => c.Answers)
+            .Include(x => x.Child)
+                .ThenInclude(c => c.Prc)
+            .AsSplitQuery()
+            .ToListAsync();
+    }
 }

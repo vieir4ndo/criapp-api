@@ -19,6 +19,7 @@ public class AppContext : DbContext
     public DbSet<Question> Question { get; set; }
     public DbSet<Recommendation> Recommendation { get; set; }
     public DbSet<RecommendationCheckpoint> RecommendationCheckpoint { get; set; }
+    public DbSet<Notification> Notification { get; set; }
     public DbSet<User> User { get; set; }
     public DbSet<UserResetPasswordCode> UserResetPasswordCode { get; set; }
 

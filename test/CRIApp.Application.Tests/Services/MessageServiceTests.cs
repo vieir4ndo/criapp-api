@@ -17,7 +17,7 @@ public class MessageServiceTests
     private readonly Mock<ISmsClient> _smsClient = new();
     private readonly Mock<IEmailClient> _emailClient = new();
     private readonly Mock<ILogger<MessageService>> _logger = new();
-    private readonly Mock<IStringLocalizer<EmailMessages>> _emailLocalizerMock = new();
+    private readonly Mock<IStringLocalizer<MessageTemplates>> _emailLocalizerMock = new();
 
     public MessageServiceTests()
     {

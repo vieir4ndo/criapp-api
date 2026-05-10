@@ -1,4 +1,4 @@
 namespace CRIApp.Application.Resources;
 
-public class EmailMessages;
+public class MessageTemplates;
 

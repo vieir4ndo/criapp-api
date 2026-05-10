@@ -17,7 +17,7 @@ public class MessageService : IMessageUser
     private readonly MailjetSettings _mailjetSettings;
     private readonly ILogger<MessageService> _logger;
     private readonly EmailTemplates _emailTemplates;
-    private readonly IStringLocalizer<EmailMessages> _localizer;
+    private readonly IStringLocalizer<MessageTemplates> _localizer;
 
     public MessageService(
         ISmsClient smsClient,
@@ -26,7 +26,7 @@ public class MessageService : IMessageUser
         IOptions<MailjetSettings> mailjetSettings,
         ILogger<MessageService> logger,
         EmailTemplates emailTemplates,
-        IStringLocalizer<EmailMessages> localizer)
+        IStringLocalizer<MessageTemplates> localizer)
     {
         _smsClient = smsClient;
         _emailClient = emailClient;

@@ -295,6 +295,35 @@ namespace CRIApp.Repository.Migrations
                     b.ToTable("Forum");
                 });
 
+            modelBuilder.Entity("CRIApp.Domain.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ChildBookId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Delivered")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Read")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChildBookId", "Type", "Date")
+                        .IsUnique();
+
+                    b.ToTable("Notification", (string)null);
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.Question", b =>
                 {
                     b.Property<Guid>("Id")
@@ -586,6 +615,17 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Prc");
                 });
 
+            modelBuilder.Entity("CRIApp.Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.ChildBook", "ChildBook")
+                        .WithMany()
+                        .HasForeignKey("ChildBookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChildBook");
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.Recommendation", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.Question", "Question")
@@ -600,7 +640,7 @@ namespace CRIApp.Repository.Migrations
             modelBuilder.Entity("CRIApp.Domain.Entities.RecommendationCheckpoint", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.ChildBook", "ChildBook")
-                        .WithMany()
+                        .WithMany("RecommendationCheckpoints")
                         .HasForeignKey("ChildBookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -632,6 +672,11 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Answers");
 
                     b.Navigation("ChildBook");
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.ChildBook", b =>
+                {
+                    b.Navigation("RecommendationCheckpoints");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Forum", b =>
