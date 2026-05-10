@@ -8,8 +8,6 @@ public class Advice
     public string Text { get; private set; }
     public string? TextEn { get; private set; }
     public string? TextPt { get; private set; }
-    public Guid AdminId { get; private set; }
-    public User Admin { get; private set; }
     public Question Question { get; private set; }
     public Guid QuestionId { get; private set; }
     public List<User> Users { get; private set; }
@@ -22,7 +20,6 @@ public class Advice
     public Advice(string text, Guid adminId, Guid questionId)
     {
         Text = text;
-        AdminId = adminId;
         QuestionId = questionId;
 
         Validate();
@@ -38,7 +35,6 @@ public class Advice
     private void Validate()
     {
         Text.IsNullOrEmpty("An advice cannot have a null or empty text");
-        AdminId.IsEmptyGuid("An advice has to have an administrator associated");
         QuestionId.IsEmptyGuid("An advice has to have a question associated");
     }
 }

@@ -19,7 +19,6 @@ public class FaqTests
         Assert.NotNull(faq);
         Assert.Equal("What is CRI?", faq.Question);
         Assert.Equal("CRI is a child rearing index.", faq.Answer);
-        Assert.Equal(ValidAdminId, faq.AdminId);
     }
 
     [Fact]
@@ -46,9 +45,4 @@ public class FaqTests
         Assert.Throws<DomainException>(() => new Faq("question?", null!, ValidAdminId));
     }
 
-    [Fact]
-    public void Create_WithEmptyAdminId_ShouldThrowDomainException()
-    {
-        Assert.Throws<DomainException>(() => new Faq("question?", "answer", Guid.Empty));
-    }
 }

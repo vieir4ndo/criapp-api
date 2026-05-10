@@ -25,9 +25,5 @@ public class AudiovisualResourceMapping : IEntityTypeConfiguration<AudiovisualRe
         
         builder.Property(x => x.Iframe)
             .IsRequired();
-        
-        builder.HasOne(x => x.Admin)
-            .WithMany(x => x.AudiovisualResources)
-            .HasForeignKey(x => x.AdminId);
     }
 }

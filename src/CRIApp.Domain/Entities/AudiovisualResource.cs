@@ -10,16 +10,14 @@ public class AudiovisualResource : Entity
     public string? DescriptionEn { get; private set; }
     public string? NamePt { get; private set; }
     public string? DescriptionPt { get; private set; }
-    
-    public Guid AdminId { get; private set; }
-    public User Admin { get; private set; }
-    
+
+    protected AudiovisualResource() {}
+
     public AudiovisualResource(string name, string description, string iframe, Guid adminId)
     {
         Name = name;
         Description = description;
         Iframe = iframe;
-        AdminId = adminId;
         
         Validate();
     }
@@ -38,6 +36,5 @@ public class AudiovisualResource : Entity
         Name.IsNullOrEmpty("An audio resource cannot have a null or empty name");
         Description.IsNullOrEmpty("An audio resource cannot have a null or empty description");
         Iframe.IsNullOrEmpty("An audio resource cannot have a null or empty iframe");
-        AdminId.IsEmptyGuid("An audio resource has to have an administrator associated");
     }
 }
