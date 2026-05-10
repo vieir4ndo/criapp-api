@@ -17,10 +17,20 @@ public class CalculateAndSaveAwardsTests
 
     private static readonly Guid AdminId = Guid.NewGuid();
 
+    private static IList<Award> CreateAllAwards() =>
+    [
+        new Award(AwardType.FirstSteps, "First Steps"),
+        new Award(AwardType.EngagedFamily, "Engaged Family"),
+        new Award(AwardType.Overcoming, "Overcoming"),
+        new Award(AwardType.PositiveEnvironment, "Positive Environment"),
+        new Award(AwardType.SmallProgress, "Small Progress"),
+    ];
+
     public CalculateAndSaveAwardsTests()
     {
         _childBookRepositoryMock = new Mock<IChildBookRepository>();
         _awardRepositoryMock = new Mock<IAwardRepository>();
+        _awardRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(CreateAllAwards());
         _sut = new CalculateAndSaveAwards(
             NullLogger<CalculateAndSaveAwards>.Instance,
             _childBookRepositoryMock.Object,
@@ -281,7 +291,7 @@ public class CalculateAndSaveAwardsTests
     }
 
     [Fact]
-    public async Task Run_TwoChildBooksWithNewAwards_ShouldCallCreateRangeForEach()
+    public async Task Run_TwoChildBooksWithNewAwards_ShouldCallUpdateForEach()
     {
         var childBook1 = BuildChildBook();
         SetScore(childBook1, 85);
@@ -291,7 +301,7 @@ public class CalculateAndSaveAwardsTests
 
         await _sut.Run();
 
-        _awardRepositoryMock.Verify(r => r.CreateRange(It.IsAny<IEnumerable<Award>>()), Times.Exactly(2));
+        _childBookRepositoryMock.Verify(r => r.Update(It.IsAny<ChildBook>()), Times.Exactly(2));
     }
 }
 

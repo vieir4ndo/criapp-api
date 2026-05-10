@@ -47,10 +47,10 @@ public class ChildBook : Entity
         ScoreLastUpdatedAt = DateTime.UtcNow;
     }
 
-    public void AddAwardIfNeeded(AwardType type)
+    public void AddAwardIfNeeded(Award award)
     {
-        if (Awards.All(a => a.Type != type))
-            Awards.Add(new Award(type, Id));
+        if (Awards.All(a => a.Type != award.Type))
+            Awards.Add(award);
     }
 
     public void AddAdvicesIfNeeded(IList<Advice> advices)

@@ -23,6 +23,7 @@ public class CalculateAndSaveAwards : IRecurrentJob
         _logger.LogInformation("Job {JobName} started", nameof(CalculateAndSaveAwards));
 
         var childBooks = await _childBookRepository.GetAll();
+        var awards = await _awardRepository.GetAll();
         var today = DateTime.UtcNow.Date;
         var yesterday = today.AddDays(-1);
         var dayBefore = today.AddDays(-2);
@@ -33,30 +34,32 @@ public class CalculateAndSaveAwards : IRecurrentJob
             var scoreYesterday = CalculateScore(answers.Where(a => a.CreatedAt.Date <= yesterday).ToList());
             var scoreDayBefore = CalculateScore(answers.Where(a => a.CreatedAt.Date <= dayBefore).ToList());
 
-            var awardsBefore = childBook.Awards.Select(a => a.Id).ToHashSet();
+            var countBefore = childBook.Awards.Count;
 
-            EvaluateFirstSteps(childBook, answers);
-            EvaluateEngagedFamily(childBook, answers);
-            EvaluateOvercoming(childBook, scoreYesterday, scoreDayBefore);
-            EvaluatePositiveEnvironment(childBook);
-            EvaluateSmallProgress(childBook, scoreYesterday, scoreDayBefore);
+            EvaluateFirstSteps(childBook, answers, awards);
+            EvaluateEngagedFamily(childBook, answers, awards);
+            EvaluateOvercoming(childBook, scoreYesterday, scoreDayBefore, awards);
+            EvaluatePositiveEnvironment(childBook, awards);
+            EvaluateSmallProgress(childBook, scoreYesterday, scoreDayBefore, awards);
 
-            var newAwards = childBook.Awards.Where(a => !awardsBefore.Contains(a.Id)).ToList();
-            if (newAwards.Count > 0)
-                await _awardRepository.CreateRange(newAwards);
+            if (childBook.Awards.Count > countBefore)
+                await _childBookRepository.Update(childBook);
         }
 
         _logger.LogInformation("Job {JobName} completed", nameof(CalculateAndSaveAwards));
     }
 
-    private static void EvaluateFirstSteps(ChildBook childBook, List<Answer> answers)
+    private static void EvaluateFirstSteps(ChildBook childBook, List<Answer> answers, IList<Award> awards)
     {
         var distinctQuestionsAnswered = answers.Select(a => a.QuestionId).Distinct().Count();
         if (distinctQuestionsAnswered >= 5)
-            childBook.AddAwardIfNeeded(AwardType.FirstSteps);
+        {
+            var award = awards.FirstOrDefault(a => a.Type == AwardType.FirstSteps);
+            if (award != null) childBook.AddAwardIfNeeded(award);
+        }
     }
 
-    private static void EvaluateEngagedFamily(ChildBook childBook, List<Answer> answers)
+    private static void EvaluateEngagedFamily(ChildBook childBook, List<Answer> answers, IList<Award> awards)
     {
         var answerDates = answers
             .Select(a => a.CreatedAt.Date)
@@ -65,25 +68,37 @@ public class CalculateAndSaveAwards : IRecurrentJob
             .ToList();
 
         if (HasThreeConsecutiveDays(answerDates))
-            childBook.AddAwardIfNeeded(AwardType.EngagedFamily);
+        {
+            var award = awards.FirstOrDefault(a => a.Type == AwardType.EngagedFamily);
+            if (award != null) childBook.AddAwardIfNeeded(award);
+        }
     }
 
-    private static void EvaluateOvercoming(ChildBook childBook, int scoreYesterday, int scoreDayBefore)
+    private static void EvaluateOvercoming(ChildBook childBook, int scoreYesterday, int scoreDayBefore, IList<Award> awards)
     {
         if (scoreDayBefore > 0 && scoreYesterday >= scoreDayBefore * 1.20)
-            childBook.AddAwardIfNeeded(AwardType.Overcoming);
+        {
+            var award = awards.FirstOrDefault(a => a.Type == AwardType.Overcoming);
+            if (award != null) childBook.AddAwardIfNeeded(award);
+        }
     }
 
-    private static void EvaluatePositiveEnvironment(ChildBook childBook)
+    private static void EvaluatePositiveEnvironment(ChildBook childBook, IList<Award> awards)
     {
         if (childBook.Score > 80)
-            childBook.AddAwardIfNeeded(AwardType.PositiveEnvironment);
+        {
+            var award = awards.FirstOrDefault(a => a.Type == AwardType.PositiveEnvironment);
+            if (award != null) childBook.AddAwardIfNeeded(award);
+        }
     }
 
-    private static void EvaluateSmallProgress(ChildBook childBook, int scoreYesterday, int scoreDayBefore)
+    private static void EvaluateSmallProgress(ChildBook childBook, int scoreYesterday, int scoreDayBefore, IList<Award> awards)
     {
         if (scoreYesterday > scoreDayBefore)
-            childBook.AddAwardIfNeeded(AwardType.SmallProgress);
+        {
+            var award = awards.FirstOrDefault(a => a.Type == AwardType.SmallProgress);
+            if (award != null) childBook.AddAwardIfNeeded(award);
+        }
     }
 
     private static bool HasThreeConsecutiveDays(List<DateTime> sortedDates)

@@ -127,8 +127,9 @@ public class ChildBookTests
     public void AddAwardIfNeeded_NewAwardType_ShouldAddAward()
     {
         var childBook = CreateChildBook();
+        var award = new Award(AwardType.FirstSteps, "First Steps");
 
-        childBook.AddAwardIfNeeded(AwardType.FirstSteps);
+        childBook.AddAwardIfNeeded(award);
 
         Assert.Single(childBook.Awards);
         Assert.Equal(AwardType.FirstSteps, childBook.Awards[0].Type);
@@ -138,9 +139,10 @@ public class ChildBookTests
     public void AddAwardIfNeeded_SameAwardTypeTwice_ShouldNotDuplicate()
     {
         var childBook = CreateChildBook();
+        var award = new Award(AwardType.FirstSteps, "First Steps");
 
-        childBook.AddAwardIfNeeded(AwardType.FirstSteps);
-        childBook.AddAwardIfNeeded(AwardType.FirstSteps);
+        childBook.AddAwardIfNeeded(award);
+        childBook.AddAwardIfNeeded(award);
 
         Assert.Single(childBook.Awards);
     }
@@ -150,8 +152,8 @@ public class ChildBookTests
     {
         var childBook = CreateChildBook();
 
-        childBook.AddAwardIfNeeded(AwardType.FirstSteps);
-        childBook.AddAwardIfNeeded(AwardType.EngagedFamily);
+        childBook.AddAwardIfNeeded(new Award(AwardType.FirstSteps, "First Steps"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.EngagedFamily, "Engaged Family"));
 
         Assert.Equal(2, childBook.Awards.Count);
     }
@@ -161,11 +163,11 @@ public class ChildBookTests
     {
         var childBook = CreateChildBook();
 
-        childBook.AddAwardIfNeeded(AwardType.FirstSteps);
-        childBook.AddAwardIfNeeded(AwardType.EngagedFamily);
-        childBook.AddAwardIfNeeded(AwardType.Overcoming);
-        childBook.AddAwardIfNeeded(AwardType.PositiveEnvironment);
-        childBook.AddAwardIfNeeded(AwardType.SmallProgress);
+        childBook.AddAwardIfNeeded(new Award(AwardType.FirstSteps, "First Steps"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.EngagedFamily, "Engaged Family"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.Overcoming, "Overcoming"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.PositiveEnvironment, "Positive Environment"));
+        childBook.AddAwardIfNeeded(new Award(AwardType.SmallProgress, "Small Progress"));
 
         Assert.Equal(5, childBook.Awards.Count);
     }

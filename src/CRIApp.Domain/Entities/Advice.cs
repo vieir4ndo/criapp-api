@@ -10,6 +10,7 @@ public class Advice
     public string? TextPt { get; private set; }
     public Question Question { get; private set; }
     public Guid QuestionId { get; private set; }
+    public byte[]? Image { get; private set; }
     public List<ChildBook> ChildBooks { get; private set; }
     public int ReferenceNumber { get; private set; }
 
@@ -29,6 +30,12 @@ public class Advice
     {
         TextEn = textEn;
         TextPt = textPt;
+        return this;
+    }
+
+    public Advice WithImage(byte[]? image)
+    {
+        Image = image;
         return this;
     }
 

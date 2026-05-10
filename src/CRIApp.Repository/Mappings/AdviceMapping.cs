@@ -23,6 +23,8 @@ public class AdviceMapping: IEntityTypeConfiguration<Advice>
         builder.Property(x => x.TextPt)
             .HasColumnType("varchar(500)");
 
+        builder.Property(x => x.Image);
+
         builder.HasMany(x => x.ChildBooks)
             .WithMany(x => x.Advices)
             .UsingEntity<ChildBookAdvice>(

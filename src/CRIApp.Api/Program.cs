@@ -38,6 +38,7 @@ using (var scope = app.Services.CreateScope())
     QuestionAdviceSeeder.Execute(context, adminId);
     FaqSeeder.Execute(context, adminId);
     AudiovisualResourceSeeder.Execute(context, adminId);
+    AwardSeeder.Execute(context);
 }
 
 app.UseErrorHandler(app.Environment);

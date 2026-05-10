@@ -19,9 +19,5 @@ public class ChildBookMapping : IEntityTypeConfiguration<ChildBook>
         builder.HasOne(x => x.Child)
             .WithOne(x => x.ChildBook)
             .HasForeignKey<ChildBook>(x => x.ChildId);
-
-        builder.HasMany(x => x.Awards)
-            .WithOne(x => x.ChildBook)
-            .HasForeignKey(x => x.ChildBookId);
     }
 }
