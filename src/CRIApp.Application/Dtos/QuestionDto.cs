@@ -11,6 +11,7 @@ public class QuestionDto
     public bool Active { get; set; }
     public QuestionType Type { get; set; }
     public QuestionScoringType ScoringType { get; set; }
+    public QuestionGroup Group { get; set; }
 
     public QuestionDto(Question question)
     {
@@ -25,5 +26,6 @@ public class QuestionDto
         Id = question.Id;
         Type = question.Type;
         ScoringType = question.ScoringType;
+        Group = question.Group;
     }
 }

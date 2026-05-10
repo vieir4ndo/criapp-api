@@ -78,7 +78,8 @@ namespace CRIApp.Repository.Migrations
                     Active = table.Column<bool>(type: "boolean", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     ExcludedFamilyTypes = table.Column<int[]>(type: "integer[]", nullable: false),
-                    ScoringType = table.Column<int>(type: "integer", nullable: false)
+                    ScoringType = table.Column<int>(type: "integer", nullable: false),
+                    Group = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -322,6 +323,33 @@ namespace CRIApp.Repository.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "RecommendationCheckpoint",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RecommendationId = table.Column<int>(type: "integer", nullable: false),
+                    ChildBookId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Completed = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecommendationCheckpoint", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecommendationCheckpoint_ChildBook_ChildBookId",
+                        column: x => x.ChildBookId,
+                        principalTable: "ChildBook",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RecommendationCheckpoint_Recommendation_RecommendationId",
+                        column: x => x.RecommendationId,
+                        principalTable: "Recommendation",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Answer_ChildId",
                 table: "Answer",
@@ -379,6 +407,17 @@ namespace CRIApp.Repository.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RecommendationCheckpoint_ChildBookId",
+                table: "RecommendationCheckpoint",
+                column: "ChildBookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecommendationCheckpoint_RecommendationId_ChildBookId_Date",
+                table: "RecommendationCheckpoint",
+                columns: new[] { "RecommendationId", "ChildBookId", "Date" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_User_Username",
                 table: "User",
                 column: "Username",
@@ -412,19 +451,22 @@ namespace CRIApp.Repository.Migrations
                 name: "Faq");
 
             migrationBuilder.DropTable(
+                name: "RecommendationCheckpoint");
+
+            migrationBuilder.DropTable(
                 name: "UserResetPasswordCode");
 
             migrationBuilder.DropTable(
                 name: "Award");
 
             migrationBuilder.DropTable(
+                name: "Forum");
+
+            migrationBuilder.DropTable(
                 name: "ChildBook");
 
             migrationBuilder.DropTable(
                 name: "Recommendation");
-
-            migrationBuilder.DropTable(
-                name: "Forum");
 
             migrationBuilder.DropTable(
                 name: "Child");

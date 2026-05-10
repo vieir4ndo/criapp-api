@@ -29,6 +29,9 @@ public class QuestionMapping : IEntityTypeConfiguration<Question>
         builder.Property(x => x.ScoringType)
             .IsRequired();
 
+        builder.Property(x => x.Group)
+            .IsRequired();
+
         builder.Property(x => x.ExcludedFamilyTypes)
             .IsRequired();
         

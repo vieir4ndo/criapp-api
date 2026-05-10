@@ -18,284 +18,303 @@ public static class QuestionRecommendationSeeder
 
         var questions = new List<Question>
         {
+            // Q0–Q9: CognitiveDevelopment
             new Question(
                 "Le animamos a imitar gestos (por ejemplo, aplaudir al ritmo de la música, saludar, tirar besos, etc.).",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.CognitiveDevelopment)
                 .WithTranslations(
                     "We encourage them to imitate gestures (e.g., clapping to music, waving, blowing kisses, etc.).",
                     "Incentivamos a imitar gestos (por exemplo, bater palmas ao ritmo da música, acenar, mandar beijos, etc.)."),
             new Question(
                 "Jugamos a mover y acercar objetos ayudándonos, a su vez, de otro objeto y le animamos a que nos imite (por ejemplo, acercar una pelota con un palo largo).",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.CognitiveDevelopment)
                 .WithTranslations(
                     "We play at moving and bringing objects closer using another object, and we encourage them to imitate us (e.g., pulling a ball with a long stick).",
                     "Brincamos de mover e aproximar objetos com a ajuda de outro objeto e incentivamos a imitar (por exemplo, puxar uma bola com um pau comprido)."),
             new Question(
                 "Jugamos con juguetes de encaje de piezas (por ejemplo, encajar los objetos de distintas formas en su correspondiente espacio).",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.CognitiveDevelopment)
                 .WithTranslations(
                     "We play with shape-sorting toys (e.g., fitting objects of different shapes into the corresponding space).",
                     "Brincamos com brinquedos de encaixe (por exemplo, encaixar objetos de diferentes formas no espaço correspondente)."),
             new Question(
                 "Le respondemos cuando fija la atención en algo (por ejemplo, seguimos con la mirada el objeto que está observando o señalando, lo nombramos y le hablamos sobre ese mismo objeto).",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.CognitiveDevelopment)
                 .WithTranslations(
                     "We respond when they focus their attention on something (e.g., we follow the object they are looking at or pointing to, name it, and talk about it).",
                     "Respondemos quando fixa a atenção em algo (por exemplo, seguimos o objeto que está olhando ou apontando, o nomeamos e falamos sobre ele)."),
             new Question(
                 "Jugamos a imitar sonidos de distintos animales y objetos (por ejemplo, vaca, gato, coche, tren, etc.).",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.CognitiveDevelopment)
                 .WithTranslations(
                     "We play at imitating sounds of different animals and objects (e.g., cow, cat, car, train, etc.).",
                     "Brincamos de imitar sons de diferentes animais e objetos (por exemplo, vaca, gato, carro, trem, etc.)."),
-            new Question("Le leemos cuentos infantiles.", adminId.Value, QuestionType.Agreement)
+            new Question("Le leemos cuentos infantiles.", adminId.Value, QuestionType.Agreement,
+                group: QuestionGroup.CognitiveDevelopment)
                 .WithTranslations(
                     "We read children's stories to them.",
                     "Lemos histórias infantis para eles."),
             new Question(
                 "Le respondemos a sus sonidos, gestos y movimientos (por ejemplo, cuando dice \"ma-ma, ta-ta\" o hace algún otro sonido o gesto como aplaudir, le respondemos y/o lo repetimos).",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.CognitiveDevelopment)
                 .WithTranslations(
                     "We respond to their sounds, gestures, and movements (e.g., when they say \"ma-ma, ta-ta\" or make another sound or gesture like clapping, we respond and/or repeat it).",
                     "Respondemos aos sons, gestos e movimentos (por exemplo, quando diz \"ma-ma, ta-ta\" ou faz outro som ou gesto como bater palmas, respondemos e/ou repetimos)."),
             new Question(
                 "Establecemos turnos de comunicación (ahora tú, ahora yo), dejando tiempo para que pueda responder mediante sonidos y/o movimientos.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.CognitiveDevelopment)
                 .WithTranslations(
                     "We establish communication turns (now you, now me), leaving time for them to respond through sounds and/or movements.",
                     "Estabelecemos turnos de comunicação (agora você, agora eu), deixando tempo para responder por meio de sons e/ou movimentos."),
             new Question(
                 "Cuando pronuncia mal una palabra, inmediatamente, la repetimos de forma correcta, lenta y clara para que la diga otra vez.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.CognitiveDevelopment)
                 .WithTranslations(
                     "When they mispronounce a word, we immediately repeat it correctly, slowly, and clearly so they say it again.",
                     "Quando pronuncia mal uma palavra, a repetimos imediatamente de forma correta, lenta e clara para que diga novamente."),
             new Question(
                 "Nombramos los objetos que señala y le enseñamos a pronunciar la palabra.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.CognitiveDevelopment)
                 .WithTranslations(
                     "We name the objects they point to and teach them to pronounce the word.",
                     "Nomeamos os objetos que aponta e ensinamos a pronunciar a palavra."),
+            // Q10–Q21: EmotionalBonding
             new Question(
                 "Intentamos reprimir y no expresar nuestras emociones. *",
-                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed)
+                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
+                group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "We try to suppress and not express our emotions. *",
                     "Tentamos reprimir e não expressar nossas emoções. *"),
             new Question(
                 "Le dejamos llorar para que aprenda a calmarse solo/sola. *",
-                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed)
+                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
+                group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "We let them cry so they learn to calm down on their own. *",
                     "Deixamos chorar para que aprenda a se acalmar sozinho/sozinha. *"),
             new Question(
                 "Ponemos palabras a las emociones y hablamos sobre cómo nos sentimos (por ejemplo, \"estás enfadado porque tienes mucha hambre\", \"estoy contenta porque vamos a dar un paseo juntos\", etc.).",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "We put words to emotions and talk about how we feel (e.g., \"you're upset because you're very hungry\", \"I'm happy because we're going for a walk together\", etc.).",
                     "Colocamos palavras nas emoções e falamos sobre como nos sentimos (por exemplo, \"você está chateado porque está com muita fome\", \"estou feliz porque vamos dar um passeio juntos\", etc.)."),
             new Question(
                 "Le explicamos la razón por la que no le permitimos hacer algo (por ejemplo, decirle que se puede hacer daño).",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "We explain the reason why we don't allow them to do something (e.g., telling them they could get hurt).",
                     "Explicamos a razão pela qual não permitimos fazer algo (por exemplo, dizer que pode se machucar)."),
             new Question(
                 "Cuando intenta hacer algo y no le sale (por ejemplo, alcanzar un juguete, sostener un sonajero, tomar el biberón, etc.), lo hacemos nosotros para evitar que sufra o que se sienta mal.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "When they try to do something and fail (e.g., reach a toy, hold a rattle, take a bottle, etc.), we do it ourselves to prevent them from suffering or feeling bad.",
                     "Quando tenta fazer algo e não consegue (por exemplo, alcançar um brinquedo, segurar um chocalho, tomar mamadeira, etc.), fazemos por ele/ela para evitar sofrimento."),
             new Question(
                 "La única manera de que nos haga caso es gritándole. *",
-                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed)
+                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
+                group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "The only way to make them listen is to shout at them. *",
                     "A única maneira de fazer com que nos ouça é gritando. *"),
             new Question(
                 "Mantenemos un horario regular en los hábitos de organización de la vida cotidiana (por ejemplo, las horas de las comidas, baño, sueño, juego, etc.).",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "We maintain a regular schedule in daily life habits (e.g., mealtimes, bath, sleep, play, etc.).",
                     "Mantemos um horário regular nos hábitos da vida cotidiana (por exemplo, horários das refeições, banho, sono, brincadeiras, etc.)."),
             new Question(
                 "Le pegamos cuando hace algo peligroso o inadecuado. *",
-                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed)
+                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
+                group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "We hit them when they do something dangerous or inappropriate. *",
                     "Batemos quando faz algo perigoso ou inadequado. *"),
             new Question(
                 "Cuando tiene una rabieta, nos mantenemos firmes y no cedemos a sus caprichos.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "When they have a tantrum, we remain firm and do not give in to their demands.",
                     "Quando tem uma birra, ficamos firmes e não cedemos às suas exigências."),
             new Question(
                 "Cuando consigue hacer algo (por ejemplo, coger un objeto, aplaudir, caminar hasta un punto, etc.), se lo reconocemos y hacemos saber mediante expresiones verbales o gestos de aprobación.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "When they achieve something (e.g., grabbing an object, clapping, walking to a point, etc.), we acknowledge it and let them know through verbal expressions or gestures of approval.",
                     "Quando consegue fazer algo (por exemplo, pegar um objeto, bater palmas, caminhar até um ponto, etc.), reconhecemos e demonstramos por expressões verbais ou gestos de aprovação."),
             new Question(
                 "Somos capaces de esperar pacientemente a que haga las cosas por sí mismo/misma (por ejemplo, comer solo/sola, coger un objeto, etc.), ofreciéndole pequeñas ayudas en caso de que las necesite, aunque se tarde mucho más tiempo.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "We are able to patiently wait for them to do things on their own (e.g., eat alone, pick up an object, etc.), offering small help if needed, even if it takes much longer.",
                     "Somos capazes de esperar pacientemente para que faça as coisas sozinho/sozinha (por exemplo, comer sozinho/sozinha, pegar um objeto, etc.), oferecendo pequenas ajudas se necessário."),
             new Question(
                 "Le permitimos hacer cosas por sí mismo/misma (por ejemplo, recoger juguetes, quitarse los calcetines, recoger ropa, comer solo/sola, etc.).",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.EmotionalBonding)
                 .WithTranslations(
                     "We allow them to do things on their own (e.g., pick up toys, take off their socks, put away clothes, eat alone, etc.).",
                     "Permitimos fazer coisas sozinho/sozinha (por exemplo, guardar brinquedos, tirar meias, dobrar roupas, comer sozinho/sozinha, etc.)."),
+            // Q22–Q27: DailyRoutines
             new Question(
                 "Podemos contar con la ayuda de la familia extensa (abuelos-as, hermanos-as, etc.) cuando lo necesitamos.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.DailyRoutines)
                 .WithTranslations(
                     "We can count on the help of extended family (grandparents, siblings, etc.) when we need it.",
                     "Podemos contar com a ajuda da família extensa (avós, irmãos/irmãs, etc.) quando precisamos."),
             new Question(
                 "Tenemos amigos y amigas con los que podemos contar en caso de necesitar ayuda con las tareas de la crianza.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.DailyRoutines)
                 .WithTranslations(
                     "We have friends we can count on when we need help with parenting tasks.",
                     "Temos amigos/amigas com quem podemos contar quando precisamos de ajuda com as tarefas de criação."),
             new Question(
                 "Consideramos que nuestro pediatra es una persona de confianza que nos atiende adecuadamente.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.DailyRoutines)
                 .WithTranslations(
                     "We consider our pediatrician to be a trusted person who attends to us properly.",
                     "Consideramos que nosso pediatra é uma pessoa de confiança que nos atende adequadamente."),
             new Question(
                 "Conocemos alguna persona profesional de confianza con la que podemos consultar dudas sobre la crianza y la educación de nuestro hijo/hija.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.DailyRoutines)
                 .WithTranslations(
                     "We know a trusted professional we can consult with about parenting and education doubts.",
                     "Conhecemos algum profissional de confiança com quem podemos tirar dúvidas sobre criação e educação."),
             new Question(
                 "Acudimos a las reuniones generales convocadas en la guardería o centro infantil.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.DailyRoutines)
                 .WithTranslations(
                     "We attend general meetings called at the nursery or childcare centre.",
                     "Participamos das reuniões gerais convocadas na creche ou centro infantil."),
             new Question(
                 "Conocemos de manera detallada y tenemos información suficiente sobre lo que nuestro hijo/hija hace en la guardería o centro infantil.",
-                adminId.Value, QuestionType.Agreement)
+                adminId.Value, QuestionType.Agreement, group: QuestionGroup.DailyRoutines)
                 .WithTranslations(
                     "We know in detail and have sufficient information about what our child does at the nursery or childcare centre.",
                     "Conhecemos detalhadamente e temos informações suficientes sobre o que nosso filho/filha faz na creche ou centro infantil."),
+            // Q28–Q44: SocialInteraction
             new Question(
                 "Me cuesta decidir qué hacer con mi hijo/hija cuando surge alguna dificultad (por ejemplo, cuando le duele algo, cuando tiene una rabieta, cuando se pone a llorar, etc.) *",
-                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed)
+                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
+                group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "I find it hard to decide what to do with my child when a difficulty arises (e.g., when something hurts, when they have a tantrum, when they start crying, etc.) *",
                     "Tenho dificuldade em decidir o que fazer com meu filho/filha quando surge alguma dificuldade (por exemplo, quando algo dói, quando tem uma birra, quando começa a chorar, etc.) *"),
             new Question(
                 "Siento que no puedo criar a mi hijo/hija como realmente me gustaría. *",
-                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed)
+                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
+                group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "I feel I cannot raise my child the way I would really like to. *",
                     "Sinto que não consigo criar meu filho/filha como realmente gostaria. *"),
             new Question(
                 "Me siento disgustada/disgustado e intranquila/intranquilo con la crianza de mi hijo/hija. *",
-                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed)
+                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
+                group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "I feel upset and anxious about raising my child. *",
                     "Sinto-me perturbado(a) e ansioso(a) com a criação do meu filho/filha. *"),
             new Question(
                 "Siento que la obligación de tener que cuidar a mi hijo/hija me supone más tiempo y energía de la que tengo. *",
-                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed)
+                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
+                group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "I feel that the obligation of having to care for my child takes more time and energy than I have. *",
                     "Sinto que a obrigação de cuidar do meu filho/filha me exige mais tempo e energia do que tenho. *"),
             new Question(
                 "Siento que no consigo relajarme cuando estoy con mi hijo/hija.",
-                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed)
+                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
+                group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "I feel I cannot relax when I am with my child.",
                     "Sinto que não consigo relaxar quando estou com meu filho/filha."),
             new Question(
                 "Tener un hijo/hija me ha supuesto una carga que me ha generado más preocupaciones de las que esperaba.",
-                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed)
+                adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
+                group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "Having a child has been a burden that has caused me more worries than I expected.",
                     "Ter um filho/filha foi um fardo que me gerou mais preocupações do que eu esperava."),
             new Question(
                 "Compartimos de manera equilibrada las tareas de cuidado de nuestro hijo/hija (alimentación, baño, juego, etc.).",
-                adminId.Value, QuestionType.Agreement, excludedFamilyTypes: singleParentFamilyTypes)
+                adminId.Value, QuestionType.Agreement, excludedFamilyTypes: singleParentFamilyTypes,
+                group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "We share the childcare tasks equally (feeding, bathing, playing, etc.).",
                     "Compartilhamos de forma equilibrada as tarefas de cuidado do nosso filho/filha (alimentação, banho, brincadeiras, etc.)."),
             new Question(
                 "Compartimos de manera equilibrada las tareas domésticas (limpiar, cocinar, hacer la compra, etc.).",
-                adminId.Value, QuestionType.Agreement, excludedFamilyTypes: singleParentFamilyTypes)
+                adminId.Value, QuestionType.Agreement, excludedFamilyTypes: singleParentFamilyTypes,
+                group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "We share household tasks equally (cleaning, cooking, shopping, etc.).",
                     "Compartilhamos de forma equilibrada as tarefas domésticas (limpar, cozinhar, fazer compras, etc.)."),
             new Question(
                 "Ambos reconocemos el esfuerzo del otro en la realización de las tareas domésticas y de crianza.",
-                adminId.Value, QuestionType.Agreement, excludedFamilyTypes: singleParentFamilyTypes)
+                adminId.Value, QuestionType.Agreement, excludedFamilyTypes: singleParentFamilyTypes,
+                group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "We both recognise each other's effort in carrying out household and parenting tasks.",
                     "Ambos reconhecemos o esforço do outro na realização das tarefas domésticas e de criação."),
             new Question(
                 "Nuestras discusiones a veces alcanzan los insultos y amenazas. *",
                 adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
-                excludedFamilyTypes: singleParentFamilyTypes)
+                excludedFamilyTypes: singleParentFamilyTypes, group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "Our arguments sometimes reach insults and threats. *",
                     "Nossas discussões às vezes chegam a insultos e ameaças. *"),
             new Question(
                 "El/la bebé ha presenciado una discusión en la que nos hemos insultado. *",
                 adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
-                excludedFamilyTypes: singleParentFamilyTypes)
+                excludedFamilyTypes: singleParentFamilyTypes, group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "The baby has witnessed an argument in which we insulted each other. *",
                     "O bebê presenciou uma discussão em que nos insultamos. *"),
             new Question(
                 "El bebé tiene contacto con algún dispositivo electrónico (ej. teléfono, Tablet, TV) mientras las personas adultas están haciendo otras tareas. *",
                 adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
-                excludedFamilyTypes: singleParentFamilyTypes)
+                excludedFamilyTypes: singleParentFamilyTypes, group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "The baby has contact with an electronic device (e.g., phone, tablet, TV) while adults are doing other tasks. *",
                     "O bebê tem contato com algum dispositivo eletrônico (ex. celular, tablet, TV) enquanto os adultos estão fazendo outras tarefas. *"),
             new Question(
                 "El bebé tiene contacto con algún dispositivo electrónico (ej. teléfono, Tablet, TV) para conseguir que haga otras tareas (ej. comer, esperar, dormir, cuando tiene berrinches, etc.) *",
                 adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
-                excludedFamilyTypes: singleParentFamilyTypes)
+                excludedFamilyTypes: singleParentFamilyTypes, group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "The baby has contact with an electronic device (e.g., phone, tablet, TV) to get them to do other things (e.g., eat, wait, sleep, when they have tantrums, etc.) *",
                     "O bebê tem contato com algum dispositivo eletrônico (ex. celular, tablet, TV) para conseguir que faça outras tarefas (ex. comer, esperar, dormir, quando tem birras, etc.) *"),
             new Question(
                 "Hacemos un uso excesivo de dispositivos electrónicos ante la presencia de nuestro hijo/hija.",
                 adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
-                excludedFamilyTypes: singleParentFamilyTypes)
+                excludedFamilyTypes: singleParentFamilyTypes, group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "We make excessive use of electronic devices in the presence of our child.",
                     "Fazemos uso excessivo de dispositivos eletrônicos na presença do nosso filho/filha."),
             new Question(
                 "Creemos que la utilización y exposición a los dispositivos perjudica el desarrollo de su bebé.",
                 adminId.Value, QuestionType.Agreement, QuestionScoringType.Reversed,
-                excludedFamilyTypes: singleParentFamilyTypes)
+                excludedFamilyTypes: singleParentFamilyTypes, group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "We believe that the use and exposure to devices harms the development of our baby.",
                     "Acreditamos que o uso e a exposição a dispositivos prejudica o desenvolvimento do nosso bebê."),
             new Question(
                 "Le llevamos a eventos o espectáculos adecuados para su edad (teatro, cine, marionetas, etc.).",
-                adminId.Value, QuestionType.Agreement, excludedFamilyTypes: singleParentFamilyTypes)
+                adminId.Value, QuestionType.Agreement, excludedFamilyTypes: singleParentFamilyTypes,
+                group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "We take them to events or shows appropriate for their age (theatre, cinema, puppets, etc.).",
                     "Levamos a eventos ou espetáculos adequados para sua idade (teatro, cinema, fantoches, etc.)."),
             new Question(
                 "Realizamos habitualmente algún viaje o excursión en familia.",
-                adminId.Value, QuestionType.Agreement, excludedFamilyTypes: singleParentFamilyTypes)
+                adminId.Value, QuestionType.Agreement, excludedFamilyTypes: singleParentFamilyTypes,
+                group: QuestionGroup.SocialInteraction)
                 .WithTranslations(
                     "We regularly go on family trips or outings.",
                     "Realizamos habitualmente alguma viagem ou passeio em família."),
         };
 
-        var recommendations = new List<Recommendation>
-        {
+        var recommendations = new List<Recommendation>        {
             new Recommendation("Jugar a imitar gestos (ej. aplaudir al ritmo de la música, saludar, etc.).",
                 adminId.Value, questions[0].Id)
                 .WithTranslations(

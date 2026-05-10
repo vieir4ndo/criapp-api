@@ -308,6 +308,9 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("integer[]");
 
+                    b.Property<int>("Group")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ScoringType")
                         .HasColumnType("integer");
 

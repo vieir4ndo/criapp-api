@@ -31,21 +31,17 @@ public class QuestionService : IQuestionService
     {
         var user = await _userService.GetAndValidateById(userId);
 
-        var remainingQuestions = GetRemainingQuestions(user, childId);
+        var remaining = GetRemainingQuestions(user, childId);
 
-        if (remainingQuestions <= 0)
+        if (remaining <= 0)
             return Enumerable.Empty<QuestionDto>();
 
-        var recentQuestionIds = GetRecentlyAnsweredQuestionIds(user, childId);
+        var recentIds = GetRecentlyAnsweredQuestionIds(user, childId);
 
-        var questions = await GetAvailableQuestions(user.FamilyType, recentQuestionIds);
+        var preferred = await GetAvailableQuestions(user.FamilyType, recentIds);
+        var fallback = await GetFallbackPool(user.FamilyType, preferred);
 
-        questions = await ApplyFallbackIfNeeded(
-            questions,
-            user.FamilyType,
-            remainingQuestions);
-
-        return GetRandomQuestions(questions, remainingQuestions);
+        return SelectByGroup(preferred, fallback, remaining);
     }
 
     private int GetRemainingQuestions(User user, Guid childId)
@@ -83,37 +79,59 @@ public class QuestionService : IQuestionService
         return await _questionRepository.GetFiltered(filter);
     }
 
-    private async Task<List<Question>> ApplyFallbackIfNeeded(
-        List<Question> questions,
-        FamilyType? familyType,
-        int remainingQuestions)
+    private async Task<List<Question>> GetFallbackPool(FamilyType? familyType, List<Question> preferred)
     {
-        if (questions.Count >= remainingQuestions)
-            return questions;
+        var preferredIds = preferred.Select(q => q.Id).ToList();
 
-        var currentIds = questions
-            .Select(q => q.Id)
-            .ToList();
+        Expression<Func<Question, bool>> filter = familyType.HasValue
+            ? q => q.Active && !preferredIds.Contains(q.Id) && q.ExcludedFamilyTypes.All(f => f != familyType.Value)
+            : q => q.Active && !preferredIds.Contains(q.Id);
 
-        Expression<Func<Question, bool>> fallbackFilter = familyType.HasValue
-            ? q => q.Active && !currentIds.Contains(q.Id) && q.ExcludedFamilyTypes.All(f => f != familyType.Value)
-            : q => q.Active && !currentIds.Contains(q.Id);
-
-        var fallbackQuestions = await _questionRepository.GetFiltered(fallbackFilter);
-
-        questions.AddRange(fallbackQuestions);
-
-        return questions;
+        return await _questionRepository.GetFiltered(filter);
     }
 
-    private IEnumerable<QuestionDto> GetRandomQuestions(
-        List<Question> questions,
-        int remainingQuestions)
+    private IEnumerable<QuestionDto> SelectByGroup(
+        List<Question> preferred,
+        List<Question> fallback,
+        int limit)
     {
-        return questions
+        var selected = new List<Question>();
+        var preferredIds = preferred.Select(q => q.Id).ToHashSet();
+
+        var byGroup = preferred
+            .Concat(fallback)
             .DistinctBy(q => q.Id)
+            .GroupBy(q => q.Group)
+            .ToList();
+
+        foreach (var group in byGroup)
+        {
+            if (selected.Count >= limit) break;
+
+            var nonRecent = group.Where(q => preferredIds.Contains(q.Id)).ToList();
+            var candidate = nonRecent.Count > 0
+                ? nonRecent.OrderBy(_ => Guid.NewGuid()).First()
+                : group.OrderBy(_ => Guid.NewGuid()).First();
+
+            selected.Add(candidate);
+        }
+
+        if (selected.Count < limit)
+        {
+            var selectedIds = selected.Select(q => q.Id).ToHashSet();
+
+            var extras = preferred
+                .Concat(fallback)
+                .DistinctBy(q => q.Id)
+                .Where(q => !selectedIds.Contains(q.Id))
+                .OrderBy(_ => Guid.NewGuid())
+                .Take(limit - selected.Count);
+
+            selected.AddRange(extras);
+        }
+
+        return selected
             .OrderBy(_ => Guid.NewGuid())
-            .Take(remainingQuestions)
             .Select(q => new QuestionDto(q));
     }
 
