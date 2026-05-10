@@ -25,6 +25,17 @@ public class NotificationService : INotificationService
     public async Task<IList<NotificationDto>> GetPendingByUserId(Guid userId)
     {
         var notifications = await _notificationRepository.GetPendingByUserId(userId);
+        return MapToDtos(notifications);
+    }
+
+    public async Task<IList<NotificationDto>> GetHistoryByUserId(Guid userId)
+    {
+        var notifications = await _notificationRepository.GetHistoryByUserId(userId);
+        return MapToDtos(notifications);
+    }
+
+    private IList<NotificationDto> MapToDtos(IList<Notification> notifications)
+    {
         return notifications.Select(n =>
         {
             var childName = n.ChildBook?.Child?.Name ?? string.Empty;
@@ -49,7 +60,7 @@ public class NotificationService : INotificationService
             string.Format(_localizer["Notification_ReEvaluation_Body"].Value, childName)
         ),
         NotificationType.NewAward => (
-            _localizer["Notification_NewAward_Heading"].Value,
+            string.Format(_localizer["Notification_NewAward_Heading"].Value, childName),
             string.Format(_localizer["Notification_NewAward_Body"].Value, childName)
         ),
         NotificationType.NewRecommendations => (
