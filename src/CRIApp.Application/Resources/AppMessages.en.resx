@@ -36,6 +36,12 @@
   <data name="CommentNotFound" xml:space="preserve">
     <value>Comment not found</value>
   </data>
+  <data name="CheckpointAlreadyExists" xml:space="preserve">
+    <value>A checkpoint already exists for this recommendation today</value>
+  </data>
+  <data name="RecommendationNotInChildBook" xml:space="preserve">
+    <value>The recommendation is not active for this child</value>
+  </data>
   <data name="GenericError" xml:space="preserve">
     <value>Oops, there was a problem. We already notified our team and we are working to solve it.</value>
   </data>

@@ -40,5 +40,6 @@ public static class DependencyInjectionExtensions
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<IAudiovisualResourceRepository, AudiovisualResourceRepository>();
         services.AddScoped<IAwardRepository, AwardRepository>();
+        services.AddScoped<IRecommendationCheckpointRepository, RecommendationCheckpointRepository>();
     }
 }

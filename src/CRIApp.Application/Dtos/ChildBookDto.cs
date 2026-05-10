@@ -11,13 +11,20 @@ public class ChildBookDto
     public List<AwardDto> Awards { get; set; }
     public List<RecommendationDto> Recommendations { get; set; }
 
-    public ChildBookDto(ChildBook childBook)
+    public ChildBookDto(ChildBook childBook, IList<RecommendationCheckpoint>? todayCheckpoints = null)
     {
         Id = childBook.Id;
         ChildId = childBook.ChildId;
         Score = childBook.Score;
         ScoreLastUpdatedAt = childBook.ScoreLastUpdatedAt;
         Awards = childBook.Awards.Select(a => new AwardDto(a)).ToList();
-        Recommendations = childBook.Recommendations.Select(r => new RecommendationDto(r)).ToList();
+
+        var checkpointMap = todayCheckpoints?.ToDictionary(c => c.RecommendationId, c => (bool?)c.Completed);
+        Recommendations = childBook.Recommendations.Select(r =>
+        {
+            bool? todayCompleted = null;
+            checkpointMap?.TryGetValue(r.Id, out todayCompleted);
+            return new RecommendationDto(r, todayCompleted);
+        }).ToList();
     }
 }

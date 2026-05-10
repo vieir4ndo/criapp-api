@@ -363,6 +363,34 @@ namespace CRIApp.Repository.Migrations
                     b.ToTable("Recommendation", (string)null);
                 });
 
+            modelBuilder.Entity("CRIApp.Domain.Entities.RecommendationCheckpoint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ChildBookId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Completed")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RecommendationId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChildBookId");
+
+                    b.HasIndex("RecommendationId", "ChildBookId", "Date")
+                        .IsUnique();
+
+                    b.ToTable("RecommendationCheckpoint", (string)null);
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -564,6 +592,25 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.RecommendationCheckpoint", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.ChildBook", "ChildBook")
+                        .WithMany()
+                        .HasForeignKey("ChildBookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CRIApp.Domain.Entities.Recommendation", "Recommendation")
+                        .WithMany()
+                        .HasForeignKey("RecommendationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChildBook");
+
+                    b.Navigation("Recommendation");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.UserResetPasswordCode", b =>
