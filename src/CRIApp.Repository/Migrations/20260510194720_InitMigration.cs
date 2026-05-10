@@ -324,6 +324,28 @@ namespace CRIApp.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notification",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ChildBookId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Delivered = table.Column<bool>(type: "boolean", nullable: false),
+                    Read = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notification", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notification_ChildBook_ChildBookId",
+                        column: x => x.ChildBookId,
+                        principalTable: "ChildBook",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RecommendationCheckpoint",
                 columns: table => new
                 {
@@ -402,6 +424,12 @@ namespace CRIApp.Repository.Migrations
                 column: "PrcId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notification_ChildBookId_Type_Date",
+                table: "Notification",
+                columns: new[] { "ChildBookId", "Type", "Date" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Recommendation_QuestionId",
                 table: "Recommendation",
                 column: "QuestionId");
@@ -449,6 +477,9 @@ namespace CRIApp.Repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "Faq");
+
+            migrationBuilder.DropTable(
+                name: "Notification");
 
             migrationBuilder.DropTable(
                 name: "RecommendationCheckpoint");
