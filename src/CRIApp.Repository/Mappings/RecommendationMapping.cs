@@ -35,8 +35,5 @@ public class RecommendationMapping: IEntityTypeConfiguration<Recommendation>
                     j.ToTable("ChildBookRecommendation");
                     j.Property(cb => cb.RecommendationsId).HasColumnName("RecommendationsId");
                 });
-
-        builder.Property(x => x.Id)
-            .HasColumnName("Id");
     }
 }
