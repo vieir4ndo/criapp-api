@@ -8,34 +8,34 @@ using Xunit;
 
 namespace CRIApp.Application.Tests.Jobs;
 
-public class SaveUsersRecommendationsTests
+public class SaveUsersAdvicesTests
 {
     private readonly Mock<IUserRepository> _repositoryMock;
-    private readonly SaveUsersRecommendations _sut;
+    private readonly SaveUsersAdvices _sut;
 
     private static readonly Guid AdminId = Guid.NewGuid();
 
-    public SaveUsersRecommendationsTests()
+    public SaveUsersAdvicesTests()
     {
         _repositoryMock = new Mock<IUserRepository>();
-        _sut = new SaveUsersRecommendations(NullLogger<SaveUsersRecommendations>.Instance, _repositoryMock.Object);
+        _sut = new SaveUsersAdvices(NullLogger<SaveUsersAdvices>.Instance, _repositoryMock.Object);
     }
 
     private static User BuildUser()
         => new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123", FamilyType.HeterosexualCouple);
 
-    private static (Answer answer, Question question, Recommendation recommendation) BuildAnswerWithRecommendation(
+    private static (Answer answer, Question question, Advice advice) BuildAnswerWithAdvice(
         int value, QuestionScoringType scoringType)
     {
-        var recommendation = new Recommendation("Do this.", AdminId, Guid.NewGuid());
+        var advice = new Advice("Do this.", AdminId, Guid.NewGuid());
         var question = new Question("Q?", AdminId, QuestionType.Agreement, scoringType);
-        typeof(Question).GetProperty(nameof(Question.Recommendations))!
-            .SetValue(question, new List<Recommendation> { recommendation });
+        typeof(Question).GetProperty(nameof(Question.Advices))!
+            .SetValue(question, new List<Advice> { advice });
 
         var answer = new Answer(value, question.Id, Guid.NewGuid(), Guid.NewGuid());
         typeof(Answer).GetProperty(nameof(Answer.Question))!.SetValue(answer, question);
 
-        return (answer, question, recommendation);
+        return (answer, question, advice);
     }
 
     [Fact]
@@ -60,52 +60,52 @@ public class SaveUsersRecommendationsTests
     }
 
     [Fact]
-    public async Task Run_AnswerWithBadDefaultScore_ShouldAddRecommendation()
+    public async Task Run_AnswerWithBadDefaultScore_ShouldAddAdvice()
     {
         var user = BuildUser();
-        var (answer, _, recommendation) = BuildAnswerWithRecommendation(5, QuestionScoringType.Default);
+        var (answer, _, advice) = BuildAnswerWithAdvice(5, QuestionScoringType.Default);
         user.Answers.Add(answer);
 
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
 
         await _sut.Run();
 
-        Assert.Contains(recommendation, user.Recommendations);
+        Assert.Contains(advice, user.Advices);
     }
 
     [Fact]
-    public async Task Run_AnswerWithGoodDefaultScore_ShouldNotAddRecommendation()
+    public async Task Run_AnswerWithGoodDefaultScore_ShouldNotAddAdvice()
     {
         var user = BuildUser();
-        var (answer, _, recommendation) = BuildAnswerWithRecommendation(1, QuestionScoringType.Default);
+        var (answer, _, advice) = BuildAnswerWithAdvice(1, QuestionScoringType.Default);
         user.Answers.Add(answer);
 
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
 
         await _sut.Run();
 
-        Assert.DoesNotContain(recommendation, user.Recommendations);
+        Assert.DoesNotContain(advice, user.Advices);
     }
 
     [Fact]
-    public async Task Run_AnswerWithBadReversedScore_ShouldAddRecommendation()
+    public async Task Run_AnswerWithBadReversedScore_ShouldAddAdvice()
     {
         var user = BuildUser();
-        var (answer, _, recommendation) = BuildAnswerWithRecommendation(1, QuestionScoringType.Reversed);
+        var (answer, _, advice) = BuildAnswerWithAdvice(1, QuestionScoringType.Reversed);
         user.Answers.Add(answer);
 
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
 
         await _sut.Run();
 
-        Assert.Contains(recommendation, user.Recommendations);
+        Assert.Contains(advice, user.Advices);
     }
 
     [Fact]
     public async Task Run_AnswerWithGoodDefaultScore_ShouldNotCallUpdate()
     {
         var user = BuildUser();
-        var (answer, _, _) = BuildAnswerWithRecommendation(1, QuestionScoringType.Default);
+        var (answer, _, _) = BuildAnswerWithAdvice(1, QuestionScoringType.Default);
         user.Answers.Add(answer);
 
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
@@ -116,25 +116,25 @@ public class SaveUsersRecommendationsTests
     }
 
     [Fact]
-    public async Task Run_AnswerWithGoodReversedScore_ShouldNotAddRecommendation()
+    public async Task Run_AnswerWithGoodReversedScore_ShouldNotAddAdvice()
     {
         var user = BuildUser();
-        var (answer, _, recommendation) = BuildAnswerWithRecommendation(5, QuestionScoringType.Reversed);
+        var (answer, _, advice) = BuildAnswerWithAdvice(5, QuestionScoringType.Reversed);
         user.Answers.Add(answer);
 
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
 
         await _sut.Run();
 
-        Assert.DoesNotContain(recommendation, user.Recommendations);
+        Assert.DoesNotContain(advice, user.Advices);
     }
 
     [Fact]
     public async Task Run_ShouldCallUpdateOncePerUser()
     {
         var user = BuildUser();
-        var (answer1, _, _) = BuildAnswerWithRecommendation(5, QuestionScoringType.Default);
-        var (answer2, _, _) = BuildAnswerWithRecommendation(5, QuestionScoringType.Default);
+        var (answer1, _, _) = BuildAnswerWithAdvice(5, QuestionScoringType.Default);
+        var (answer2, _, _) = BuildAnswerWithAdvice(5, QuestionScoringType.Default);
         user.Answers.Add(answer1);
         user.Answers.Add(answer2);
 
@@ -146,14 +146,14 @@ public class SaveUsersRecommendationsTests
     }
 
     [Fact]
-    public async Task Run_SameRecommendationFromMultipleAnswers_ShouldNotDuplicate()
+    public async Task Run_SameAdviceFromMultipleAnswers_ShouldNotDuplicate()
     {
         var user = BuildUser();
-        var recommendation = new Recommendation("Do this.", AdminId, Guid.NewGuid());
+        var advice = new Advice("Do this.", AdminId, Guid.NewGuid());
 
         var question = new Question("Q?", AdminId, QuestionType.Agreement, QuestionScoringType.Default);
-        typeof(Question).GetProperty(nameof(Question.Recommendations))!
-            .SetValue(question, new List<Recommendation> { recommendation });
+        typeof(Question).GetProperty(nameof(Question.Advices))!
+            .SetValue(question, new List<Advice> { advice });
 
         for (var i = 0; i < 3; i++)
         {
@@ -166,6 +166,6 @@ public class SaveUsersRecommendationsTests
 
         await _sut.Run();
 
-        Assert.Single(user.Recommendations);
+        Assert.Single(user.Advices);
     }
 }

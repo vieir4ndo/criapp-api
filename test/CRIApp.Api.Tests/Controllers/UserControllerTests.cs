@@ -211,41 +211,41 @@ public class UserControllerTests
     }
 
     [Fact]
-    public async Task GetRecommendations_AuthenticatedUser_ShouldReturnRecommendations()
+    public async Task GetAdvices_AuthenticatedUser_ShouldReturnAdvices()
     {
         var adminId = Guid.NewGuid();
         var questionId = Guid.NewGuid();
-        var recommendations = new List<RecommendationDto>
+        var advices = new List<AdviceDto>
         {
-            new RecommendationDto(new Recommendation("Recommendation 1", adminId, questionId)),
-            new RecommendationDto(new Recommendation("Recommendation 2", adminId, questionId))
+            new AdviceDto(new Advice("Advice 1", adminId, questionId)),
+            new AdviceDto(new Advice("Advice 2", adminId, questionId))
         };
-        _serviceMock.Setup(s => s.GetRecommendations(_userId)).ReturnsAsync(recommendations);
+        _serviceMock.Setup(s => s.GetAdvices(_userId)).ReturnsAsync(advices);
 
-        var result = await _sut.GetRecommendations();
+        var result = await _sut.GetAdvices();
 
         Assert.True(result.Success);
         Assert.Equal(2, result.Data.Count());
-        _serviceMock.Verify(s => s.GetRecommendations(_userId), Times.Once);
+        _serviceMock.Verify(s => s.GetAdvices(_userId), Times.Once);
     }
 
     [Fact]
-    public async Task GetRecommendations_UserHasNoRecommendations_ShouldReturnEmptyList()
+    public async Task GetAdvices_UserHasNoAdvices_ShouldReturnEmptyList()
     {
-        _serviceMock.Setup(s => s.GetRecommendations(_userId)).ReturnsAsync(new List<RecommendationDto>());
+        _serviceMock.Setup(s => s.GetAdvices(_userId)).ReturnsAsync(new List<AdviceDto>());
 
-        var result = await _sut.GetRecommendations();
+        var result = await _sut.GetAdvices();
 
         Assert.True(result.Success);
         Assert.Empty(result.Data);
     }
 
     [Fact]
-    public async Task GetRecommendations_ServiceThrowsNotFoundException_ShouldPropagate()
+    public async Task GetAdvices_ServiceThrowsNotFoundException_ShouldPropagate()
     {
-        _serviceMock.Setup(s => s.GetRecommendations(_userId)).ThrowsAsync(new NotFoundException("Usuario no encontrado"));
+        _serviceMock.Setup(s => s.GetAdvices(_userId)).ThrowsAsync(new NotFoundException("Usuario no encontrado"));
 
-        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetRecommendations());
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetAdvices());
     }
 
     [Fact]

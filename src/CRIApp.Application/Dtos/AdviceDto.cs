@@ -3,22 +3,22 @@ using System.Globalization;
 
 namespace CRIApp.Application.Dtos;
 
-public class RecommendationDto
+public class AdviceDto
 {
     public int Id { get; set; }
     public string Text { get; set; }
     public Guid QuestionId { get; set; }
 
-    public RecommendationDto(Recommendation recommendation)
+    public AdviceDto(Advice advice)
     {
         var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         Text = lang switch
         {
-            "en" => recommendation.TextEn ?? recommendation.Text,
-            "pt" => recommendation.TextPt ?? recommendation.Text,
-            _ => recommendation.Text
+            "en" => advice.TextEn ?? advice.Text,
+            "pt" => advice.TextPt ?? advice.Text,
+            _ => advice.Text
         };
-        Id = recommendation.Id;
-        QuestionId = recommendation.QuestionId;
+        Id = advice.Id;
+        QuestionId = advice.QuestionId;
     }
 }

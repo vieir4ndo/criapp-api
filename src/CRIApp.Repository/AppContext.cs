@@ -16,7 +16,7 @@ public class AppContext : DbContext
     public DbSet<Faq> Faq { get; set; }
     public DbSet<Forum> Forum { get; set; }
     public DbSet<Question> Question { get; set; }
-    public DbSet<Recommendation>  Recommendation { get; set; }
+    public DbSet<Advice> Advice { get; set; }
     public DbSet<User> User { get; set; }
     public DbSet<UserResetPasswordCode> UserResetPasswordCode { get; set; }
 

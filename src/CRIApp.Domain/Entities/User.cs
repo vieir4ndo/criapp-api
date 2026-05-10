@@ -24,11 +24,11 @@ public class User : Entity
     public List<UserResetPasswordCode> UserResetPasswordCodes { get; private set; } = new();
     public int Score { get; private set; }
     public DateTime ScoreLastUpdatedAt { get; private set; }
-    public List<Recommendation> Recommendations { get; private set; } = new();
+    public List<Advice> Advices { get; private set; } = new();
     
     #region admin fields
     public List<Question> Questions { get; private set; } = new();
-    public List<Recommendation> AdminRecommendations { get; private set; } = new();
+    public List<Advice> AdminAdvices { get; private set; } = new();
     public List<AudiovisualResource> AudiovisualResources { get; private set; } = new();
     public List<Faq> Faqs { get; private set; } = new();
     #endregion
@@ -135,13 +135,13 @@ public class User : Entity
         ScoreLastUpdatedAt = DateTime.UtcNow;
     }
 
-    public void AddRecommendationsIfNeeded(IList<Recommendation> recommendations)
+    public void AddAdvicesIfNeeded(IList<Advice> advices)
     {
-        foreach (var recommendation in recommendations)
+        foreach (var advice in advices)
         {
-            if (!Recommendations.Contains(recommendation))
+            if (!Advices.Contains(advice))
             {
-                Recommendations.Add(recommendation);
+                Advices.Add(advice);
             }
         }
     }

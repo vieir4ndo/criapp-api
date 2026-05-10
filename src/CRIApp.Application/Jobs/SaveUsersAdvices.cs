@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Application.Jobs;
 
-public class SaveUsersRecommendations : IRecurrentJob
+public class SaveUsersAdvices : IRecurrentJob
 {
-    private readonly ILogger<SaveUsersRecommendations> _logger;
+    private readonly ILogger<SaveUsersAdvices> _logger;
     private readonly IUserRepository _repository;
 
-    public SaveUsersRecommendations(ILogger<SaveUsersRecommendations> logger, IUserRepository repository)
+    public SaveUsersAdvices(ILogger<SaveUsersAdvices> logger, IUserRepository repository)
     {
         _logger = logger;
         _repository = repository;
@@ -17,13 +17,13 @@ public class SaveUsersRecommendations : IRecurrentJob
 
     public async Task Run()
     {
-        _logger.LogInformation("Job {JobName} started", nameof(SaveUsersRecommendations));
+        _logger.LogInformation("Job {JobName} started", nameof(SaveUsersAdvices));
 
         var users = await _repository.GetAll();
 
         foreach (var user in users)
         {
-            var countBefore = user.Recommendations.Count;
+            var countBefore = user.Advices.Count;
 
             foreach (var answer in user.Answers)
             {
@@ -36,16 +36,16 @@ public class SaveUsersRecommendations : IRecurrentJob
 
                 if (!values.Contains(answer.Value))
                 {
-                    user.AddRecommendationsIfNeeded(answer.Question.Recommendations);
+                    user.AddAdvicesIfNeeded(answer.Question.Advices);
                 }
             }
 
-            if (user.Recommendations.Count != countBefore)
+            if (user.Advices.Count != countBefore)
             {
                 await _repository.Update(user);
             }
         }
 
-        _logger.LogInformation("Job {JobName} completed", nameof(SaveUsersRecommendations));
+        _logger.LogInformation("Job {JobName} completed", nameof(SaveUsersAdvices));
     }
 }

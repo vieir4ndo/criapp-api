@@ -15,6 +15,6 @@ public interface IUserService
     Task UpdateScore(User user);
     Task<IList<User>> GetAllUsers();
     Task<IList<AwardDto>> GetAwards(Guid userId);
-    Task<IList<RecommendationDto>> GetRecommendations(Guid userId);
+    Task<IList<AdviceDto>> GetAdvices(Guid userId);
     Task Deactivate(Guid userId);
 }

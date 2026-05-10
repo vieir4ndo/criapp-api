@@ -35,7 +35,7 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<AppContext>();
 
     var adminId = UserSeeder.Execute(context);
-    QuestionRecommendationSeeder.Execute(context, adminId);
+    QuestionAdviceSeeder.Execute(context, adminId);
     FaqSeeder.Execute(context, adminId);
     AudiovisualResourceSeeder.Execute(context, adminId);
 }
