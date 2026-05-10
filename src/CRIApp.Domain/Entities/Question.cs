@@ -13,11 +13,12 @@ public class Question : Entity
     public IList<Answer> Answers { get; private set; }
     public IList<FamilyType> ExcludedFamilyTypes { get; private set; }
     public QuestionScoringType ScoringType { get; private set; }
+    public QuestionGroup Group { get; private set; }
     public IList<Recommendation> Recommendations { get; private set; } = new List<Recommendation>();
 
     protected Question() {}
     
-    public Question(string text, Guid adminId, QuestionType type, QuestionScoringType scoringType = QuestionScoringType.Default, IList<FamilyType>? excludedFamilyTypes = null)
+    public Question(string text, Guid adminId, QuestionType type, QuestionScoringType scoringType = QuestionScoringType.Default, IList<FamilyType>? excludedFamilyTypes = null, QuestionGroup group = QuestionGroup.CognitiveDevelopment)
     {
         Text = text;
         Answers = new List<Answer>();
@@ -25,6 +26,7 @@ public class Question : Entity
         Type = type;
         ScoringType = scoringType;
         ExcludedFamilyTypes = excludedFamilyTypes ?? new List<FamilyType>();
+        Group = group;
         
         Validate();
     }

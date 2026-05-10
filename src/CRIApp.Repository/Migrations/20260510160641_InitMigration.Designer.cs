@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CRIApp.Repository.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20260510142003_AddRecommendationCheckpointTable")]
-    partial class AddRecommendationCheckpointTable
+    [Migration("20260510160641_InitMigration")]
+    partial class InitMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -310,6 +310,9 @@ namespace CRIApp.Repository.Migrations
                     b.Property<int[]>("ExcludedFamilyTypes")
                         .IsRequired()
                         .HasColumnType("integer[]");
+
+                    b.Property<int>("Group")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ScoringType")
                         .HasColumnType("integer");

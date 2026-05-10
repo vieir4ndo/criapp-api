@@ -28,8 +28,8 @@ public class QuestionServiceTests
         _sut = new QuestionService(_questionRepositoryMock.Object, _userServiceMock.Object, NullLogger<QuestionService>.Instance, _localizerMock.Object);
     }
 
-    private static Question BuildQuestion()
-        => new Question("Is your child eating well?", Guid.NewGuid(), QuestionType.Agreement);
+    private static Question BuildQuestion(QuestionGroup group = QuestionGroup.CognitiveDevelopment)
+        => new Question("Is your child eating well?", Guid.NewGuid(), QuestionType.Agreement, group: group);
 
     private static User BuildUser(FamilyType? familyType = FamilyType.HeterosexualCouple)
         => new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123", familyType);
@@ -53,14 +53,14 @@ public class QuestionServiceTests
         return user;
     }
 
-    private void SetupGetFiltered(List<Question> questions)
+    private void SetupGetFiltered(List<Question> preferred, List<Question>? fallback = null)
         => _questionRepositoryMock
-            .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Question, bool>>>()))
-            .ReturnsAsync(questions);
-
+            .SetupSequence(r => r.GetFiltered(It.IsAny<Expression<Func<Question, bool>>>()))
+            .ReturnsAsync(preferred)
+            .ReturnsAsync(fallback ?? new List<Question>());
 
     [Fact]
-    public async Task GetQuestionsToReply_NoAnswersToday_ShouldReturnUpTo10()
+    public async Task GetQuestionsToReply_NoAnswersToday_ShouldReturnUpTo5()
     {
         var userId = Guid.NewGuid();
         var childId = Guid.NewGuid();
@@ -99,7 +99,6 @@ public class QuestionServiceTests
         var user = BuildUserWithAnswers(childId, answersToday: 10);
 
         _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
-        SetupGetFiltered(new List<Question>());
 
         var result = await _sut.GetQuestionsToReply(userId, childId);
 
@@ -203,4 +202,106 @@ public class QuestionServiceTests
 
         Assert.Empty(result);
     }
+
+    [Fact]
+    public async Task GetQuestionsToReply_MultipleGroups_ShouldIncludeAtLeastOnePerGroup()
+    {
+        var userId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var user = BuildUser();
+
+        var preferred = new List<Question>
+        {
+            BuildQuestion(QuestionGroup.CognitiveDevelopment),
+            BuildQuestion(QuestionGroup.CognitiveDevelopment),
+            BuildQuestion(QuestionGroup.EmotionalBonding),
+            BuildQuestion(QuestionGroup.EmotionalBonding),
+            BuildQuestion(QuestionGroup.DailyRoutines),
+            BuildQuestion(QuestionGroup.DailyRoutines),
+            BuildQuestion(QuestionGroup.SocialInteraction),
+            BuildQuestion(QuestionGroup.SocialInteraction),
+        };
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
+        SetupGetFiltered(preferred);
+
+        var result = (await _sut.GetQuestionsToReply(userId, childId)).ToList();
+        var groups = result.Select(q => q.Group).Distinct().ToList();
+
+        Assert.Equal(5, result.Count);
+        Assert.Contains(QuestionGroup.CognitiveDevelopment, groups);
+        Assert.Contains(QuestionGroup.EmotionalBonding, groups);
+        Assert.Contains(QuestionGroup.DailyRoutines, groups);
+        Assert.Contains(QuestionGroup.SocialInteraction, groups);
+    }
+
+    [Fact]
+    public async Task GetQuestionsToReply_FourGroupsWithOneQuestionEach_ShouldReturnFourQuestions()
+    {
+        var userId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var user = BuildUser();
+
+        var preferred = new List<Question>
+        {
+            BuildQuestion(QuestionGroup.CognitiveDevelopment),
+            BuildQuestion(QuestionGroup.EmotionalBonding),
+            BuildQuestion(QuestionGroup.DailyRoutines),
+            BuildQuestion(QuestionGroup.SocialInteraction),
+        };
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
+        SetupGetFiltered(preferred);
+
+        var result = (await _sut.GetQuestionsToReply(userId, childId)).ToList();
+        var groups = result.Select(q => q.Group).Distinct().ToList();
+
+        Assert.Equal(4, result.Count);
+        Assert.Equal(4, groups.Count);
+    }
+
+    [Fact]
+    public async Task GetQuestionsToReply_GroupOnlyInFallback_ShouldIncludeThatGroup()
+    {
+        var userId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var user = BuildUser();
+
+        var preferred = new List<Question>
+        {
+            BuildQuestion(QuestionGroup.CognitiveDevelopment),
+            BuildQuestion(QuestionGroup.EmotionalBonding),
+            BuildQuestion(QuestionGroup.DailyRoutines),
+        };
+
+        var fallback = new List<Question>
+        {
+            BuildQuestion(QuestionGroup.SocialInteraction),
+        };
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
+        SetupGetFiltered(preferred, fallback);
+
+        var result = (await _sut.GetQuestionsToReply(userId, childId)).ToList();
+        var groups = result.Select(q => q.Group).ToList();
+
+        Assert.Contains(QuestionGroup.SocialInteraction, groups);
+    }
+
+    [Fact]
+    public async Task GetQuestionsToReply_ShouldIncludeGroupFieldInDto()
+    {
+        var userId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var user = BuildUser();
+        var question = BuildQuestion(QuestionGroup.EmotionalBonding);
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(userId)).ReturnsAsync(user);
+        SetupGetFiltered(new List<Question> { question });
+
+        var result = await _sut.GetQuestionsToReply(userId, childId);
+
+        Assert.Equal(QuestionGroup.EmotionalBonding, result.Single().Group);
+    }
 }
+
