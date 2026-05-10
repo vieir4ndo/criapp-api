@@ -20,7 +20,6 @@ public class AudiovisualResourceTests
         Assert.Equal("Video 1", resource.Name);
         Assert.Equal("A helpful video", resource.Description);
         Assert.Equal("<iframe src='...'/>", resource.Iframe);
-        Assert.Equal(ValidAdminId, resource.AdminId);
     }
 
     [Fact]
@@ -65,10 +64,4 @@ public class AudiovisualResourceTests
             new AudiovisualResource("name", "description", null!, ValidAdminId));
     }
 
-    [Fact]
-    public void Create_WithEmptyAdminId_ShouldThrowDomainException()
-    {
-        Assert.Throws<DomainException>(() =>
-            new AudiovisualResource("name", "description", "<iframe/>", Guid.Empty));
-    }
 }

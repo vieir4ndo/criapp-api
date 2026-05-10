@@ -31,9 +31,6 @@ namespace CRIApp.Repository.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("AdminId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uuid");
 
@@ -51,8 +48,6 @@ namespace CRIApp.Repository.Migrations
                         .HasColumnType("varchar(500)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AdminId");
 
                     b.HasIndex("QuestionId");
 
@@ -97,9 +92,6 @@ namespace CRIApp.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AdminId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -125,8 +117,6 @@ namespace CRIApp.Repository.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AdminId");
 
                     b.ToTable("AudiovisualResource");
                 });
@@ -214,9 +204,6 @@ namespace CRIApp.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AdminId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Answer")
                         .IsRequired()
                         .HasColumnType("text");
@@ -238,8 +225,6 @@ namespace CRIApp.Repository.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AdminId");
 
                     b.ToTable("Faq");
                 });
@@ -277,9 +262,6 @@ namespace CRIApp.Repository.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid>("AdminId")
-                        .HasColumnType("uuid");
-
                     b.Property<int[]>("ExcludedFamilyTypes")
                         .IsRequired()
                         .HasColumnType("integer[]");
@@ -301,8 +283,6 @@ namespace CRIApp.Repository.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AdminId");
 
                     b.ToTable("Question");
                 });
@@ -406,19 +386,11 @@ namespace CRIApp.Repository.Migrations
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Advice", b =>
                 {
-                    b.HasOne("CRIApp.Domain.Entities.User", "Admin")
-                        .WithMany("AdminAdvices")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CRIApp.Domain.Entities.Question", "Question")
                         .WithMany("Advices")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Admin");
 
                     b.Navigation("Question");
                 });
@@ -448,17 +420,6 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Prc");
 
                     b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("CRIApp.Domain.Entities.AudiovisualResource", b =>
-                {
-                    b.HasOne("CRIApp.Domain.Entities.User", "Admin")
-                        .WithMany("AudiovisualResources")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Admin");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Award", b =>
@@ -502,17 +463,6 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Prc");
                 });
 
-            modelBuilder.Entity("CRIApp.Domain.Entities.Faq", b =>
-                {
-                    b.HasOne("CRIApp.Domain.Entities.User", "Admin")
-                        .WithMany("Faqs")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Admin");
-                });
-
             modelBuilder.Entity("CRIApp.Domain.Entities.Forum", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.User", "Prc")
@@ -522,17 +472,6 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Prc");
-                });
-
-            modelBuilder.Entity("CRIApp.Domain.Entities.Question", b =>
-                {
-                    b.HasOne("CRIApp.Domain.Entities.User", "Admin")
-                        .WithMany("Questions")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Admin");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.UserAdvice", b =>
@@ -584,11 +523,7 @@ namespace CRIApp.Repository.Migrations
 
             modelBuilder.Entity("CRIApp.Domain.Entities.User", b =>
                 {
-                    b.Navigation("AdminAdvices");
-
                     b.Navigation("Answers");
-
-                    b.Navigation("AudiovisualResources");
 
                     b.Navigation("Awards");
 
@@ -596,11 +531,7 @@ namespace CRIApp.Repository.Migrations
 
                     b.Navigation("Comments");
 
-                    b.Navigation("Faqs");
-
                     b.Navigation("Forums");
-
-                    b.Navigation("Questions");
 
                     b.Navigation("UserResetPasswordCodes");
                 });

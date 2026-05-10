@@ -9,14 +9,13 @@ public class Faq : Entity
     public string? AnswerEn { get; private set; }
     public string? QuestionPt { get; private set; }
     public string? AnswerPt { get; private set; }
-    public Guid AdminId { get; private set; }
-    public User Admin { get; private set; }
-    
+
+    protected Faq() {}
+
     public Faq(string question, string answer, Guid adminId)
     {
         Question = question;
         Answer = answer;
-        AdminId = adminId;
         
         Validate();
     }
@@ -34,6 +33,5 @@ public class Faq : Entity
     {
         Question.IsNullOrEmpty("A faq cannot have a null or empty question");
         Answer.IsNullOrEmpty("A faq cannot have a null or empty answer");
-        AdminId.IsEmptyGuid("A faq has to have an administrator associated");
     }
 }

@@ -23,10 +23,6 @@ public class AdviceMapping: IEntityTypeConfiguration<Advice>
         builder.Property(x => x.TextPt)
             .HasColumnType("varchar(500)");
 
-        builder.HasOne(x => x.Admin)
-            .WithMany(x => x.AdminAdvices)
-            .HasForeignKey(x => x.AdminId);
-
         builder.HasMany(x => x.Users)
             .WithMany(x => x.Advices)
             .UsingEntity<UserAdvice>(

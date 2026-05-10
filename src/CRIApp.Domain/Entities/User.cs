@@ -26,13 +26,6 @@ public class User : Entity
     public DateTime ScoreLastUpdatedAt { get; private set; }
     public List<Advice> Advices { get; private set; } = new();
     
-    #region admin fields
-    public List<Question> Questions { get; private set; } = new();
-    public List<Advice> AdminAdvices { get; private set; } = new();
-    public List<AudiovisualResource> AudiovisualResources { get; private set; } = new();
-    public List<Faq> Faqs { get; private set; } = new();
-    #endregion
-    
     public void Activate() => Active = true;
     public void Deactivate() => Active = false;
     

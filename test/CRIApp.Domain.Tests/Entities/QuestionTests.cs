@@ -19,7 +19,6 @@ public class QuestionTests
 
         Assert.NotNull(question);
         Assert.Equal("Does your child sleep well?", question.Text);
-        Assert.Equal(ValidAdminId, question.AdminId);
         Assert.Equal(QuestionType.Agreement, question.Type);
         Assert.True(question.Active);
     }
@@ -36,13 +35,6 @@ public class QuestionTests
     {
         Assert.Throws<DomainException>(() =>
             new Question(null!, ValidAdminId, QuestionType.Agreement));
-    }
-
-    [Fact]
-    public void Create_WithEmptyAdminId_ShouldThrowDomainException()
-    {
-        Assert.Throws<DomainException>(() =>
-            new Question("Valid text?", Guid.Empty, QuestionType.Agreement));
     }
 
     [Fact]

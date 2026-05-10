@@ -23,9 +23,5 @@ public class FaqMapping : IEntityTypeConfiguration<Faq>
         
         builder.Property(x => x.Answer)
             .IsRequired();
-        
-        builder.HasOne(x => x.Admin)
-            .WithMany(x => x.Faqs)
-            .HasForeignKey(x => x.AdminId);
     }
 }
