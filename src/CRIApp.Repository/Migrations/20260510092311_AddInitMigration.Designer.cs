@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CRIApp.Repository.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20260510091217_AddInitMigration")]
+    [Migration("20260510092311_AddInitMigration")]
     partial class AddInitMigration
     {
         /// <inheritdoc />
@@ -59,7 +59,7 @@ namespace CRIApp.Repository.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Recommendation", (string)null);
+                    b.ToTable("Advice", (string)null);
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Answer", b =>
@@ -369,7 +369,7 @@ namespace CRIApp.Repository.Migrations
                 {
                     b.Property<int>("AdvicesId")
                         .HasColumnType("integer")
-                        .HasColumnName("RecommendationsId");
+                        .HasColumnName("AdvicesId");
 
                     b.Property<Guid>("UsersId")
                         .HasColumnType("uuid");
@@ -378,7 +378,7 @@ namespace CRIApp.Repository.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("UserRecommendation", (string)null);
+                    b.ToTable("UserAdvice", (string)null);
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.UserResetPasswordCode", b =>

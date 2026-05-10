@@ -8,7 +8,7 @@ public class AdviceMapping: IEntityTypeConfiguration<Advice>
 {
     public void Configure(EntityTypeBuilder<Advice> builder)
     {
-        builder.ToTable("Recommendation");
+        builder.ToTable("Advice");
 
         builder.Property(p => p.Id)
             .UseIdentityByDefaultColumn();
@@ -34,8 +34,8 @@ public class AdviceMapping: IEntityTypeConfiguration<Advice>
                 r => r.HasOne(ur => ur.Advice).WithMany().HasForeignKey(ur => ur.AdvicesId),
                 j =>
                 {
-                    j.ToTable("UserRecommendation");
-                    j.Property(ur => ur.AdvicesId).HasColumnName("RecommendationsId");
+                    j.ToTable("UserAdvice");
+                    j.Property(ur => ur.AdvicesId).HasColumnName("AdvicesId");
                 });
 
         builder.Property(x => x.Id)

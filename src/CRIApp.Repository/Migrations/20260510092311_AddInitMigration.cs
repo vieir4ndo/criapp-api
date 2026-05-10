@@ -219,6 +219,36 @@ namespace CRIApp.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Advice",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Text = table.Column<string>(type: "varchar(500)", nullable: false),
+                    TextEn = table.Column<string>(type: "varchar(500)", nullable: true),
+                    TextPt = table.Column<string>(type: "varchar(500)", nullable: true),
+                    AdminId = table.Column<Guid>(type: "uuid", nullable: false),
+                    QuestionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ReferenceNumber = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Advice", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Advice_Question_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Question",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Advice_User_AdminId",
+                        column: x => x.AdminId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Answer",
                 columns: table => new
                 {
@@ -253,58 +283,38 @@ namespace CRIApp.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Recommendation",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Text = table.Column<string>(type: "varchar(500)", nullable: false),
-                    TextEn = table.Column<string>(type: "varchar(500)", nullable: true),
-                    TextPt = table.Column<string>(type: "varchar(500)", nullable: true),
-                    AdminId = table.Column<Guid>(type: "uuid", nullable: false),
-                    QuestionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ReferenceNumber = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Recommendation", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Recommendation_Question_QuestionId",
-                        column: x => x.QuestionId,
-                        principalTable: "Question",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Recommendation_User_AdminId",
-                        column: x => x.AdminId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserRecommendation",
+                name: "UserAdvice",
                 columns: table => new
                 {
                     UsersId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RecommendationsId = table.Column<int>(type: "integer", nullable: false)
+                    AdvicesId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserRecommendation", x => new { x.RecommendationsId, x.UsersId });
+                    table.PrimaryKey("PK_UserAdvice", x => new { x.AdvicesId, x.UsersId });
                     table.ForeignKey(
-                        name: "FK_UserRecommendation_Recommendation_RecommendationsId",
-                        column: x => x.RecommendationsId,
-                        principalTable: "Recommendation",
+                        name: "FK_UserAdvice_Advice_AdvicesId",
+                        column: x => x.AdvicesId,
+                        principalTable: "Advice",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserRecommendation_User_UsersId",
+                        name: "FK_UserAdvice_User_UsersId",
                         column: x => x.UsersId,
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Advice_AdminId",
+                table: "Advice",
+                column: "AdminId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Advice_QuestionId",
+                table: "Advice",
+                column: "QuestionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Answer_ChildId",
@@ -362,24 +372,14 @@ namespace CRIApp.Repository.Migrations
                 column: "AdminId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Recommendation_AdminId",
-                table: "Recommendation",
-                column: "AdminId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Recommendation_QuestionId",
-                table: "Recommendation",
-                column: "QuestionId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_User_Username",
                 table: "User",
                 column: "Username",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRecommendation_UsersId",
-                table: "UserRecommendation",
+                name: "IX_UserAdvice_UsersId",
+                table: "UserAdvice",
                 column: "UsersId");
 
             migrationBuilder.CreateIndex(
@@ -407,7 +407,7 @@ namespace CRIApp.Repository.Migrations
                 name: "Faq");
 
             migrationBuilder.DropTable(
-                name: "UserRecommendation");
+                name: "UserAdvice");
 
             migrationBuilder.DropTable(
                 name: "UserResetPasswordCode");
@@ -419,7 +419,7 @@ namespace CRIApp.Repository.Migrations
                 name: "Forum");
 
             migrationBuilder.DropTable(
-                name: "Recommendation");
+                name: "Advice");
 
             migrationBuilder.DropTable(
                 name: "Question");
