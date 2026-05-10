@@ -29,6 +29,20 @@ public class RecommendationCheckpointRepository : IRecommendationCheckpointRepos
             .ToListAsync();
     }
 
+    public async Task<int> CountDistinctCompletedDaysInPeriod(int recommendationId, Guid childBookId, DateTime from, DateTime to)
+    {
+        return await _context.RecommendationCheckpoint
+            .Where(x =>
+                x.RecommendationId == recommendationId &&
+                x.ChildBookId == childBookId &&
+                x.Completed &&
+                x.Date >= from &&
+                x.Date <= to)
+            .Select(x => x.Date)
+            .Distinct()
+            .CountAsync();
+    }
+
     public async Task Create(RecommendationCheckpoint checkpoint)
     {
         await _context.RecommendationCheckpoint.AddAsync(checkpoint);

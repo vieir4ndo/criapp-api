@@ -61,4 +61,11 @@ public class ChildBook : Entity
                 Recommendations.Add(recommendation);
         }
     }
+
+    public void RemoveRecommendation(int recommendationId)
+    {
+        var recommendation = Recommendations.FirstOrDefault(r => r.Id == recommendationId);
+        if (recommendation is not null)
+            Recommendations.Remove(recommendation);
+    }
 }

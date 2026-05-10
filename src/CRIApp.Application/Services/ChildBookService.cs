@@ -78,5 +78,21 @@ public class ChildBookService : IChildBookService
 
         var checkpoint = new RecommendationCheckpoint(recommendationId, childBook.Id, completed);
         await _checkpointRepository.Create(checkpoint);
+
+        if (completed)
+        {
+            var windowStart = today.AddDays(-6);
+            var distinctDays = await _checkpointRepository.CountDistinctCompletedDaysInPeriod(
+                recommendationId, childBook.Id, windowStart, today);
+
+            if (distinctDays >= 4)
+            {
+                _logger.LogInformation(
+                    "Recommendation {RecommendationId} assimilated for ChildBook {ChildBookId}",
+                    recommendationId, childBook.Id);
+                childBook.RemoveRecommendation(recommendationId);
+                await _childBookRepository.Update(childBook);
+            }
+        }
     }
 }

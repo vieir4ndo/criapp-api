@@ -143,11 +143,15 @@ public class ChildBookServiceTests
             .Setup(r => r.GetByDateAndIds(5, childBook.Id, It.IsAny<DateTime>()))
             .ReturnsAsync((RecommendationCheckpoint?)null);
         _checkpointRepositoryMock.Setup(r => r.Create(It.IsAny<RecommendationCheckpoint>())).Returns(Task.CompletedTask);
+        _checkpointRepositoryMock
+            .Setup(r => r.CountDistinctCompletedDaysInPeriod(5, childBook.Id, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .ReturnsAsync(1);
 
         await _sut.SaveCheckpoint(childId, prcId, 5, true);
 
         _checkpointRepositoryMock.Verify(r => r.Create(It.Is<RecommendationCheckpoint>(
             c => c.RecommendationId == 5 && c.ChildBookId == childBook.Id && c.Completed == true)), Times.Once);
+        _childBookRepositoryMock.Verify(r => r.Update(It.IsAny<ChildBook>()), Times.Never);
     }
 
     [Fact]
@@ -201,5 +205,60 @@ public class ChildBookServiceTests
         await Assert.ThrowsAsync<ValidationException>(() => _sut.SaveCheckpoint(childId, prcId, 3, true));
 
         _checkpointRepositoryMock.Verify(r => r.Create(It.IsAny<RecommendationCheckpoint>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task SaveCheckpoint_FourDistinctCompletedDays_ShouldAssimilateAndRemoveRecommendation()
+    {
+        var prcId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var child = BuildChild(prcId, childId);
+        var childBook = BuildChildBook(childId);
+        var recommendation = BuildRecommendation(7);
+        typeof(ChildBook).GetProperty(nameof(ChildBook.Recommendations))!
+            .SetValue(childBook, new List<Recommendation> { recommendation });
+
+        _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
+        _childBookRepositoryMock.Setup(r => r.GetByChildId(childId)).ReturnsAsync(childBook);
+        _checkpointRepositoryMock
+            .Setup(r => r.GetByDateAndIds(7, childBook.Id, It.IsAny<DateTime>()))
+            .ReturnsAsync((RecommendationCheckpoint?)null);
+        _checkpointRepositoryMock.Setup(r => r.Create(It.IsAny<RecommendationCheckpoint>())).Returns(Task.CompletedTask);
+        _checkpointRepositoryMock
+            .Setup(r => r.CountDistinctCompletedDaysInPeriod(7, childBook.Id, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .ReturnsAsync(4);
+        _childBookRepositoryMock.Setup(r => r.Update(It.IsAny<ChildBook>())).Returns(Task.CompletedTask);
+
+        await _sut.SaveCheckpoint(childId, prcId, 7, true);
+
+        Assert.Empty(childBook.Recommendations);
+        _childBookRepositoryMock.Verify(r => r.Update(childBook), Times.Once);
+    }
+
+    [Fact]
+    public async Task SaveCheckpoint_FourDistinctDaysButCompletedFalse_ShouldNotAssimilate()
+    {
+        var prcId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var child = BuildChild(prcId, childId);
+        var childBook = BuildChildBook(childId);
+        var recommendation = BuildRecommendation(8);
+        typeof(ChildBook).GetProperty(nameof(ChildBook.Recommendations))!
+            .SetValue(childBook, new List<Recommendation> { recommendation });
+
+        _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
+        _childBookRepositoryMock.Setup(r => r.GetByChildId(childId)).ReturnsAsync(childBook);
+        _checkpointRepositoryMock
+            .Setup(r => r.GetByDateAndIds(8, childBook.Id, It.IsAny<DateTime>()))
+            .ReturnsAsync((RecommendationCheckpoint?)null);
+        _checkpointRepositoryMock.Setup(r => r.Create(It.IsAny<RecommendationCheckpoint>())).Returns(Task.CompletedTask);
+
+        await _sut.SaveCheckpoint(childId, prcId, 8, false);
+
+        Assert.Single(childBook.Recommendations);
+        _checkpointRepositoryMock.Verify(
+            r => r.CountDistinctCompletedDaysInPeriod(It.IsAny<int>(), It.IsAny<Guid>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()),
+            Times.Never);
+        _childBookRepositoryMock.Verify(r => r.Update(It.IsAny<ChildBook>()), Times.Never);
     }
 }
