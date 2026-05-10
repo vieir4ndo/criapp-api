@@ -55,7 +55,7 @@ public class SendReEvaluationNotificationJob : IRecurrentJob
 
         var lastActivityDate = lastCheckpointDate > lastAnswerDate ? lastCheckpointDate : lastAnswerDate;
 
-        if (lastActivityDate == default) return true;
+        if (lastActivityDate == default) return false;
 
         return (today - lastActivityDate).Days >= 7;
     }

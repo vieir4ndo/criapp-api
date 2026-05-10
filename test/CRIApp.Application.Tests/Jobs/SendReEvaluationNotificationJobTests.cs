@@ -38,10 +38,10 @@ public class SendReEvaluationNotificationJobTests
     }
 
     [Fact]
-    public void ShouldNotify_NoActivity_ReturnsTrue()
+    public void ShouldNotify_NoActivity_ReturnsFalse()
     {
         var childBook = NotificationJobTestHelpers.BuildChildBook();
-        Assert.True(SendReEvaluationNotificationJob.ShouldNotify(childBook, Today));
+        Assert.False(SendReEvaluationNotificationJob.ShouldNotify(childBook, Today));
     }
 
     [Fact]
