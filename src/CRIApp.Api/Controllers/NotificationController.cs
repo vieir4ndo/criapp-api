@@ -28,6 +28,13 @@ public class NotificationController : CriAppControllerBase
         return new ApiResponse<NotificationDto>(true, notifications);
     }
 
+    [HttpGet("history")]
+    public async Task<ApiResponse<NotificationDto>> GetHistory()
+    {
+        var notifications = await _notificationService.GetHistoryByUserId(GetUserId());
+        return new ApiResponse<NotificationDto>(true, notifications);
+    }
+
     [HttpPatch("{id:guid}/delivered")]
     public async Task<ApiResponse<object>> MarkDelivered(Guid id)
     {
