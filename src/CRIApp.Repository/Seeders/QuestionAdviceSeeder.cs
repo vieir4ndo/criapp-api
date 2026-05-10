@@ -3,7 +3,7 @@ using CRIApp.Domain.Enums;
 
 namespace CRIApp.Repository.Seeders;
 
-public static class QuestionRecommendationSeeder
+public static class QuestionAdviceSeeder
 {
     public static void Execute(AppContext context, Guid? adminId)
     {
@@ -293,266 +293,266 @@ public static class QuestionRecommendationSeeder
                     "Realizamos habitualmente alguma viagem ou passeio em família."),
         };
 
-        var recommendations = new List<Recommendation>
+        var advices = new List<Advice>
         {
-            new Recommendation("Jugar a imitar gestos (ej. aplaudir al ritmo de la música, saludar, etc.).",
+            new Advice("Jugar a imitar gestos (ej. aplaudir al ritmo de la música, saludar, etc.).",
                 adminId.Value, questions[0].Id)
                 .WithTranslations(
                     "Play at imitating gestures (e.g., clapping to music, waving, etc.).",
                     "Brincar de imitar gestos (ex. bater palmas ao ritmo da música, acenar, etc.)."),
-            new Recommendation(
+            new Advice(
                 "Acercar objetos sirviéndose, a su vez, de otro objeto animándole a que los imite (ej. acercar una pelota con un palo largo).",
                 adminId.Value, questions[1].Id)
                 .WithTranslations(
                     "Bring objects closer using another object, encouraging them to imitate (e.g., pulling a ball with a long stick).",
                     "Aproximar objetos com a ajuda de outro objeto, incentivando a imitar (ex. puxar uma bola com um pau comprido)."),
-            new Recommendation(
+            new Advice(
                 "Jugar con juguetes de encaje de piezas (ej. cajas en las que se deben encajar objetos de distinta forma). Además de mejorar sus habilidades motrices, esto le permitirá desarrollar su concentración y la capacidad de resolver problemas.",
                 adminId.Value, questions[2].Id)
                 .WithTranslations(
                     "Play with shape-sorting toys (e.g., boxes where objects of different shapes must be fitted). Besides improving motor skills, this develops concentration and problem-solving ability.",
                     "Brincar com brinquedos de encaixe (ex. caixas onde objetos de diferentes formas devem ser encaixados). Além de melhorar as habilidades motoras, isso desenvolve concentração e capacidade de resolver problemas."),
-            new Recommendation(
+            new Advice(
                 "Responderle cuando fija la atención en algo (ej. nombrar el objeto que está mirando, entregarle el juguete, hablarle del mismo, etc.).",
                 adminId.Value, questions[3].Id)
                 .WithTranslations(
                     "Respond when they focus on something (e.g., name the object they are looking at, hand them the toy, talk about it, etc.).",
                     "Responder quando fixa a atenção em algo (ex. nomear o objeto que está olhando, entregar o brinquedo, falar sobre ele, etc.)."),
-            new Recommendation(
+            new Advice(
                 "Jugar a imitar sonidos de animales y objetos (ej. cómo hace la vaca, el perro, cómo es el ruido de los coches, del tren, etc.).",
                 adminId.Value, questions[4].Id)
                 .WithTranslations(
                     "Play at imitating animal and object sounds (e.g., how the cow moos, the dog barks, car sounds, train, etc.).",
                     "Brincar de imitar sons de animais e objetos (ex. como a vaca faz, o cachorro late, como é o barulho dos carros, do trem, etc.)."),
-            new Recommendation(
+            new Advice(
                 "Leerle cuentos infantiles diariamente. Aunque parezca que no os entiendan, es una manera importante de estimular el lenguaje y el desarrollo de la atención. Podéis hablar sobre los personajes, mencionar los objetos que aparecen, etc.",
                 adminId.Value, questions[5].Id)
                 .WithTranslations(
                     "Read children's stories daily. Even if it seems they do not understand, it is an important way to stimulate language and attention development. You can talk about characters, mention objects that appear, etc.",
                     "Ler histórias infantis diariamente. Mesmo que pareça que não entendem, é uma forma importante de estimular a linguagem e o desenvolvimento da atenção. Você pode falar sobre os personagens, mencionar objetos que aparecem, etc."),
-            new Recommendation(
+            new Advice(
                 "Responder a sus señales, vocalizaciones, movimientos, etc. (ej. cuando hace ma-ma, ta-ta, etc., responder con un sonido similar).",
                 adminId.Value, questions[6].Id)
                 .WithTranslations(
                     "Respond to their signals, vocalisations, movements, etc. (e.g., when they say ma-ma, ta-ta, etc., respond with a similar sound).",
                     "Responder aos seus sinais, vocalizações, movimentos, etc. (ex. quando diz ma-ma, ta-ta, etc., responder com um som semelhante)."),
-            new Recommendation(
+            new Advice(
                 "Practicar turnos de comunicación, haciendo pausas para que el/la bebé pueda responder mediante sonidos y/o movimientos.",
                 adminId.Value, questions[7].Id)
                 .WithTranslations(
                     "Practise communication turns, pausing so the baby can respond through sounds and/or movements.",
                     "Praticar turnos de comunicação, fazendo pausas para que o bebê possa responder por meio de sons e/ou movimentos."),
-            new Recommendation(
+            new Advice(
                 "Cuando empiece a hablar y pronuncie mal una palabra, repetirla de forma correcta y lenta, para que la diga nuevamente.",
                 adminId.Value, questions[8].Id)
                 .WithTranslations(
                     "When they start talking and mispronounce a word, repeat it correctly and slowly so they say it again.",
                     "Quando começar a falar e pronunciar mal uma palavra, repeti-la corretamente e devagar para que diga novamente."),
-            new Recommendation("Nombrar los objetos que señala y enseñarle a pronunciar las palabras.", adminId.Value,
+            new Advice("Nombrar los objetos que señala y enseñarle a pronunciar las palabras.", adminId.Value,
                 questions[9].Id)
                 .WithTranslations(
                     "Name the objects they point to and teach them to pronounce the words.",
                     "Nomear os objetos que aponta e ensinar a pronunciar as palavras."),
-            new Recommendation(
+            new Advice(
                 "Expresar las emociones de manera controlada, mostrando lo que pensáis, sentís y hacéis, y poniéndole nombre a las mismas.",
                 adminId.Value, questions[10].Id)
                 .WithTranslations(
                     "Express emotions in a controlled way, showing what you think, feel, and do, and naming them.",
                     "Expressar as emoções de forma controlada, mostrando o que você pensa, sente e faz, e dando nome a elas."),
-            new Recommendation(
+            new Advice(
                 "Calmarle cada vez que esté llorando. El/la bebé no es capaz de calmarse sin ayuda; las personas adultas son las encargadas de autorregular su comportamiento durante la primera etapa de vida.",
                 adminId.Value, questions[11].Id)
                 .WithTranslations(
                     "Comfort them every time they cry. The baby cannot calm down without help; adults are responsible for regulating their behaviour during the first stage of life.",
                     "Acalmá-lo/la toda vez que estiver chorando. O bebê não consegue se acalmar sem ajuda; os adultos são responsáveis por regular seu comportamento durante a primeira fase de vida."),
-            new Recommendation(
+            new Advice(
                 "Poner palabras a las emociones y hablar sobre cómo os sentís (ej. estás enfadado/a porque tienes mucha hambre, estoy contenta porque vamos a dar un paseo juntos, etc.).",
                 adminId.Value, questions[12].Id)
                 .WithTranslations(
                     "Put words to emotions and talk about how you feel (e.g., you are upset because you are very hungry, I am happy because we are going for a walk together, etc.).",
                     "Colocar palavras nas emoções e falar sobre como vocês se sentem (ex. você está chateado/a porque está com muita fome, estou feliz porque vamos dar um passeio juntos, etc.)."),
-            new Recommendation(
+            new Advice(
                 "Explicarle inmediatamente la razón de la prohibición cuando hace algo peligroso o inadecuado (ej. decirle que hace daño y duele).",
                 adminId.Value, questions[13].Id)
                 .WithTranslations(
                     "Immediately explain the reason for the prohibition when they do something dangerous or inappropriate (e.g., tell them it hurts).",
                     "Explicar imediatamente o motivo da proibição quando faz algo perigoso ou inadequado (ex. dizer que dói e machuca)."),
-            new Recommendation(
+            new Advice(
                 "Cuando algo no le sale bien la primera vez, dejarle el tiempo que necesite para lograrlo (ej. coger un objeto, subir un escalón, encajar una pieza de un juguete, etc.). Es importante no hacer las cosas por él o ella, lo cual no le permitiría aprender nada nuevo, pero sí que es importante dar ayuda cuando la pide o la necesita.",
                 adminId.Value, questions[14].Id)
                 .WithTranslations(
                     "When something does not work out the first time, give them all the time they need to achieve it. It is important not to do things for them, but it is important to help when they ask or need it.",
                     "Quando algo não dá certo da primeira vez, dar todo o tempo necessário para conseguir. É importante não fazer as coisas por ele/ela, mas é importante ajudar quando pede ou precisa."),
-            new Recommendation(
+            new Advice(
                 "No gritarle para impedir o conseguir que haga algo. Recordar que sois modelos de comportamiento y si le manifestáis vuestro malestar gritando, posiblemente tienda a repetir ese comportamiento en otros contextos.",
                 adminId.Value, questions[15].Id)
                 .WithTranslations(
                     "Do not shout to stop or get them to do something. Remember that you are role models.",
                     "Não gritar para impedir ou fazer com que faça algo. Lembrar que vocês são modelos de comportamento."),
-            new Recommendation(
+            new Advice(
                 "Mantener un horario regular en los hábitos de organización de la vida cotidiana (ej. comidas, baño, sueño, juego, etc.). Esto le ayuda a crear un ambiente estructurado y predecible que genera un sentimiento de seguridad.",
                 adminId.Value, questions[16].Id)
                 .WithTranslations(
                     "Maintain a regular schedule in daily life habits (e.g., meals, bath, sleep, play, etc.). This helps create a structured and predictable environment that fosters a sense of security.",
                     "Manter um horário regular nos hábitos da vida cotidiana (ex. refeições, banho, sono, brincadeiras, etc.). Isso ajuda a criar um ambiente estruturado e previsível que gera um sentimento de segurança."),
-            new Recommendation(
+            new Advice(
                 "No pegarle cuando hace algo peligroso o inadecuado. Pegar a tu hijo o hija ofrece un modelo de comportamiento violento para actuar con otras personas, afecta a la autoestima, genera sentimientos de tristeza, rabia, rencor y abandono, y bloquea su capacidad para resolver problemas y continuar su aprendizaje.",
                 adminId.Value, questions[17].Id)
                 .WithTranslations(
                     "Do not hit them when they do something dangerous or inappropriate. Hitting your child provides a model of violent behaviour, affects self-esteem, and blocks their ability to solve problems.",
                     "Não bater quando faz algo perigoso ou inadequado. Bater no seu filho/filha oferece um modelo de comportamento violento, afeta a autoestima e bloqueia a capacidade de resolver problemas."),
-            new Recommendation("Manteneros firmes y no ceder a su(s) demanda(s) cuando coge una rabieta.",
+            new Advice("Manteneros firmes y no ceder a su(s) demanda(s) cuando coge una rabieta.",
                 adminId.Value, questions[18].Id)
                 .WithTranslations(
                     "Stay firm and do not give in to their demand(s) when they have a tantrum.",
                     "Ficar firme e não ceder às exigências quando tem uma birra."),
-            new Recommendation(
+            new Advice(
                 "Manifestarle cómo os sentís respecto a su buen comportamiento, lo cual reforzará su buena conducta (ej. lo has conseguido y estoy muy orgullosa/o de ti, se puede confiar en ti, que bien te has portado).",
                 adminId.Value, questions[19].Id)
                 .WithTranslations(
                     "Express how you feel about their good behaviour, which will reinforce it.",
                     "Expressar como se sentem em relação ao bom comportamento, o que reforçará a boa conduta."),
-            new Recommendation(
+            new Advice(
                 "Tener paciencia para no hacer las cosas en su lugar en aras de la rapidez. La única forma de aprender es \"haciendo\"; por lo tanto, no le prives de oportunidades de aprendizaje.",
                 adminId.Value, questions[20].Id)
                 .WithTranslations(
                     "Be patient and do not do things in their place for the sake of speed. The only way to learn is by doing.",
                     "Ter paciência e não fazer as coisas no lugar dele/dela em nome da rapidez. A única forma de aprender é fazendo."),
-            new Recommendation(
+            new Advice(
                 "Permitirle hacer cosas por sí mismo y asignarle alguna tarea (ej. permitirle comer por sí sólo/a, quitarse los calcetines, recoger juguetes, llevar el pan a la mesa, etc.). Esto le ayudará a ser más independiente, a tener más confianza en sí mismo/a, y reforzará su autoestima.",
                 adminId.Value, questions[21].Id)
                 .WithTranslations(
                     "Allow them to do things on their own and assign them a task. This will help them be more independent and strengthen their self-esteem.",
                     "Permitir fazer coisas sozinho/sozinha e atribuir alguma tarefa. Isso ajudará a ser mais independente e reforçará a autoestima."),
-            new Recommendation(
+            new Advice(
                 "Cultivar la relación positiva y de ayuda mutua con familiares: madres, padres, hermanos/as. Esto es saludable tanto para las personas adultas como para los niños y niñas.",
                 adminId.Value, questions[22].Id)
                 .WithTranslations(
                     "Cultivate a positive and mutually supportive relationship with family members: mothers, fathers, brothers/sisters.",
                     "Cultivar a relação positiva e de ajuda mútua com familiares: mães, pais, irmãos/irmãs."),
-            new Recommendation(
+            new Advice(
                 "Cultivar relaciones de confianza y ayuda mutua en las tareas de crianza con amigos/as. La disponibilidad y la ayuda de otras personas es importante para ayudarnos a disminuir el estrés relacionado con la gestión de las tareas de crianza.",
                 adminId.Value, questions[23].Id)
                 .WithTranslations(
                     "Cultivate trusting and mutually supportive relationships in parenting tasks with friends.",
                     "Cultivar relações de confiança e ajuda mútua nas tarefas de criação com amigos/amigas."),
-            new Recommendation(
+            new Advice(
                 "Mantener una relación de confianza con vuestro o vuestra pediatra. Es importante que os sintáis seguros y acompañados para resolver cualquier duda relacionada con la crianza y el desarrollo infantil.",
                 adminId.Value, questions[24].Id)
                 .WithTranslations(
                     "Maintain a trusting relationship with your paediatrician.",
                     "Manter uma relação de confiança com o/a pediatra."),
-            new Recommendation(
+            new Advice(
                 "Contactar con alguna persona profesional de confianza (ej. psicólogas, pedagogas, educadoras, etc.) que os oriente en las dudas sobre la crianza de vuestros hijo o hija.",
                 adminId.Value, questions[25].Id)
                 .WithTranslations(
                     "Contact a trusted professional who can guide you on doubts about raising your child.",
                     "Entrar em contato com algum profissional de confiança que oriente nas dúvidas sobre a criação do filho/filha."),
-            new Recommendation("Acudir habitualmente a las reuniones generales convocadas en la guardería.",
+            new Advice("Acudir habitualmente a las reuniones generales convocadas en la guardería.",
                 adminId.Value, questions[26].Id)
                 .WithTranslations(
                     "Regularly attend general meetings called at the nursery.",
                     "Participar habitualmente das reuniões gerais convocadas na creche."),
-            new Recommendation("Conocer con detalle lo que el/la bebé hace en la guardería.", adminId.Value,
+            new Advice("Conocer con detalle lo que el/la bebé hace en la guardería.", adminId.Value,
                 questions[27].Id)
                 .WithTranslations(
                     "Know in detail what the baby does at the nursery.",
                     "Conhecer detalhadamente o que o/a bebê faz na creche."),
-            new Recommendation(
+            new Advice(
                 "Consultar a personas expertas que os puedan orientar sobre vuestras dudas en relación a la crianza: educadoras, psicólogas, pedagogas, pediatras, etc.",
                 adminId.Value, questions[28].Id)
                 .WithTranslations(
                     "Consult experts who can guide you on your parenting doubts.",
                     "Consultar especialistas que possam orientar sobre dúvidas de criação."),
-            new Recommendation(
+            new Advice(
                 "Establecer rutinas en la vida diaria para que os aporten un sentimiento de seguridad y sirvan de referencia a vuestro hijo/hija.",
                 adminId.Value, questions[29].Id)
                 .WithTranslations(
                     "Establish daily routines to give you a sense of security and serve as a reference point for your child.",
                     "Estabelecer rotinas na vida diária para que ofereçam um sentimento de segurança."),
-            new Recommendation("Compartir las preocupaciones con la pareja, con amigos/as o personas de confianza.",
+            new Advice("Compartir las preocupaciones con la pareja, con amigos/as o personas de confianza.",
                 adminId.Value, questions[30].Id)
                 .WithTranslations(
                     "Share worries with your partner, friends, or trusted people.",
                     "Compartilhar as preocupações com o/a parceiro/a, amigos/amigas ou pessoas de confiança."),
-            new Recommendation(
+            new Advice(
                 "Asistir a grupos de apoyo para la crianza. El contacto con otros padres y madres y profesionales os permitirá compartir vuestras experiencias, frustraciones y preocupaciones. A la vez os ayudará a conocer otras estrategias para afrontar situaciones diarias.",
                 adminId.Value, questions[31].Id)
                 .WithTranslations(
                     "Attend parenting support groups. Contact with other parents will allow you to share experiences and discover other strategies.",
                     "Participar de grupos de apoio à criação. O contato com outros pais e mães permitirá compartilhar experiências e conhecer outras estratégias."),
-            new Recommendation(
+            new Advice(
                 "Dedicaros tiempo a vosotras y vosotros, buscando momentos diarios para disfrutar y desconectar de la rutina. Si os sentís tranquilos/as y relajados/as, también podréis disfrutar del tiempo con vuestro hijo o hija.",
                 adminId.Value, questions[32].Id)
                 .WithTranslations(
                     "Make time for yourselves, finding daily moments to enjoy and disconnect from routine.",
                     "Dedicar tempo a si mesmos/mesmas, buscando momentos diários para aproveitar e desconectar da rotina."),
-            new Recommendation("Evitar que las situaciones de estrés alteren las rutinas diarias de vuestro hijo/hija.",
+            new Advice("Evitar que las situaciones de estrés alteren las rutinas diarias de vuestro hijo/hija.",
                 adminId.Value, questions[33].Id)
                 .WithTranslations(
                     "Avoid stressful situations disrupting your child's daily routines.",
                     "Evitar que situações de estresse alterem as rotinas diárias do filho/filha."),
-            new Recommendation(
+            new Advice(
                 "Siempre que sea posible, asistir ambos o por turnos a las consultas médicas de vuestros hijos e hijas.",
                 adminId.Value, questions[34].Id)
                 .WithTranslations(
                     "Whenever possible, both attend or take turns attending your child's medical appointments.",
                     "Sempre que possível, ambos participarem ou se revezarem nas consultas médicas dos filhos/filhas."),
-            new Recommendation(
+            new Advice(
                 "Compartir de manera equilibrada las tareas domésticas y las tareas de cuidado diarias: juego, alimentación y baño. Esto mejorará vuestra relación de pareja, os ayudará a reducir el estrés y, por lo tanto, mejorará vuestro bienestar y el de vuestro/a hijo o hija.",
                 adminId.Value, questions[35].Id)
                 .WithTranslations(
                     "Share household and daily care tasks equally: play, feeding, and bathing.",
                     "Compartilhar de forma equilibrada as tarefas domésticas e as tarefas de cuidado diárias: brincadeiras, alimentação e banho."),
-            new Recommendation(
+            new Advice(
                 "Reconocer el esfuerzo del otro en la realización de las tareas domésticas y de crianza.",
                 adminId.Value, questions[36].Id)
                 .WithTranslations(
                     "Acknowledge each other's effort in carrying out household and parenting tasks.",
                     "Reconhecer o esforço do outro na realização das tarefas domésticas e de criação."),
-            new Recommendation(
+            new Advice(
                 "Evitar que vuestras discusiones alcancen las faltas de respeto. Expresar los sentimientos, sin culpar ni herir a nadie y razonando lo que se dice.",
                 adminId.Value, questions[37].Id)
                 .WithTranslations(
                     "Avoid your arguments turning into disrespect. Express feelings without blaming or hurting anyone.",
                     "Evitar que as discussões cheguem a faltas de respeito. Expressar os sentimentos sem culpar nem machucar ninguém."),
-            new Recommendation(
+            new Advice(
                 "Evitar, por encima de todo, discutir delante del/la bebé. Buscar espacios y momentos para hablar de los problemas, en los que el/la bebé no esté presente.",
                 adminId.Value, questions[38].Id)
                 .WithTranslations(
                     "Above all, avoid arguing in front of the baby. Find spaces and moments to discuss problems when the baby is not present.",
                     "Evitar acima de tudo discutir na frente do/da bebê. Buscar espaços e momentos para falar dos problemas quando o/a bebê não esteja presente."),
-            new Recommendation(
+            new Advice(
                 "Evitar la exposición a pantallas hasta los 24 meses. La Organización Mundial de la Salud (OMS) recomienda que no debe existir la exposición a pantallas (ej.: TV, Tablet, Móviles, etc.) entre los 0 y 2 años.",
                 adminId.Value, questions[39].Id)
                 .WithTranslations(
                     "Avoid screen exposure up to 24 months. The WHO recommends no screen exposure between 0 and 2 years.",
                     "Evitar a exposição a telas até os 24 meses. A OMS recomenda que não deve existir exposição a telas entre 0 e 2 anos."),
-            new Recommendation(
+            new Advice(
                 "Evitar el uso de pantallas para conseguir que nos haga caso y/o esté tranquilo/a. Mediante los juegos de interacción, cantándole y hablándole, también podremos captar su atención y desarrollar otras habilidades. Utilizar las pantallas como un distractor les crea dependencia y les impide desarrollar la tolerancia a la frustración.",
                 adminId.Value, questions[40].Id)
                 .WithTranslations(
                     "Avoid using screens to get them to behave. Through interactive games you can also capture their attention.",
                     "Evitar o uso de telas para conseguir que nos ouça. Por meio de jogos de interação também podemos captar sua atenção."),
-            new Recommendation(
+            new Advice(
                 "Hacer un uso responsable de dispositivos electrónicos ante la presencia de vuestro hijo/hija. Recordar que sois modelos de aprendizaje, todo lo que hagáis vuestro hijo o hija tenderá a repetirlo.",
                 adminId.Value, questions[41].Id)
                 .WithTranslations(
                     "Make responsible use of electronic devices in your child's presence. Remember that you are learning models.",
                     "Fazer uso responsável de dispositivos eletrônicos na presença do filho/filha. Lembrar que são modelos de aprendizado."),
-            new Recommendation(
+            new Advice(
                 "Recordar que los estudios muestran que no existen efectos positivos de la exposición a pantallas entre los 0 y 24 meses para el desarrollo de vuestro hijo o hija.",
                 adminId.Value, questions[42].Id)
                 .WithTranslations(
                     "Remember that studies show there are no positive effects of screen exposure between 0 and 24 months.",
                     "Lembrar que os estudos mostram que não há efeitos positivos da exposição a telas entre 0 e 24 meses."),
-            new Recommendation(
+            new Advice(
                 "Llevar a vuestra hija/o a eventos o espectáculos dirigidos a su edad (Teatro, cine, marionetas, parques, etc.).",
                 adminId.Value, questions[43].Id)
                 .WithTranslations(
                     "Take your child to events or shows aimed at their age (theatre, cinema, puppets, parks, etc.).",
                     "Levar a eventos ou espetáculos voltados para sua idade (teatro, cinema, fantoches, parques, etc.)."),
-            new Recommendation("Realizar habitualmente algún viaje o excursión en familia.", adminId.Value,
+            new Advice("Realizar habitualmente algún viaje o excursión en familia.", adminId.Value,
                 questions[44].Id)
                 .WithTranslations(
                     "Regularly go on family trips or outings.",
@@ -560,7 +560,7 @@ public static class QuestionRecommendationSeeder
         };
 
         context.Question.AddRange(questions);
-        context.Recommendation.AddRange(recommendations);
+        context.Advice.AddRange(advices);
         context.SaveChanges();
     }
 }

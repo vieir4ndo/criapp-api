@@ -34,11 +34,11 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<User?> GetByIdWithAwardsAndRecommendations(Guid id)
+    public async Task<User?> GetByIdWithAwardsAndAdvices(Guid id)
     {
         return await Context.User
             .Include(x => x.Awards)
-            .Include(x => x.Recommendations)
+            .Include(x => x.Advices)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -52,10 +52,10 @@ public class UserRepository : IUserRepository
     {
         return await Context.User
             .Include(x => x.Awards)
-            .Include(x => x.Recommendations)
+            .Include(x => x.Advices)
             .Include(x => x.Answers)
                 .ThenInclude(x=>x.Question)
-                    .ThenInclude(x=>x.Recommendations)
+                    .ThenInclude(x=>x.Advices)
             .AsSplitQuery()
             .ToListAsync();
     }

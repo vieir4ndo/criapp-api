@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CRIApp.Repository.Mappings;
 
-public class RecommendationMapping: IEntityTypeConfiguration<Recommendation>
+public class AdviceMapping: IEntityTypeConfiguration<Advice>
 {
-    public void Configure(EntityTypeBuilder<Recommendation> builder)
+    public void Configure(EntityTypeBuilder<Advice> builder)
     {
+        builder.ToTable("Advice");
+
         builder.Property(p => p.Id)
             .UseIdentityByDefaultColumn();
 
@@ -22,13 +24,21 @@ public class RecommendationMapping: IEntityTypeConfiguration<Recommendation>
             .HasColumnType("varchar(500)");
 
         builder.HasOne(x => x.Admin)
-            .WithMany(x => x.AdminRecommendations)
+            .WithMany(x => x.AdminAdvices)
             .HasForeignKey(x => x.AdminId);
 
         builder.HasMany(x => x.Users)
-            .WithMany(x => x.Recommendations)
-            .UsingEntity<UserRecommendation>(
+            .WithMany(x => x.Advices)
+            .UsingEntity<UserAdvice>(
                 l => l.HasOne(ur => ur.User).WithMany().HasForeignKey(ur => ur.UsersId),
-                r => r.HasOne(ur => ur.Recommendation).WithMany().HasForeignKey(ur => ur.RecommendationsId));
+                r => r.HasOne(ur => ur.Advice).WithMany().HasForeignKey(ur => ur.AdvicesId),
+                j =>
+                {
+                    j.ToTable("UserAdvice");
+                    j.Property(ur => ur.AdvicesId).HasColumnName("AdvicesId");
+                });
+
+        builder.Property(x => x.Id)
+            .HasColumnName("Id");
     }
 }

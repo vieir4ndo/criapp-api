@@ -15,7 +15,7 @@ public class Question : Entity
     public User Admin { get; private set; }
     public IList<FamilyType> ExcludedFamilyTypes { get; private set; }
     public QuestionScoringType ScoringType { get; private set; }
-    public IList<Recommendation>  Recommendations { get; private set; } = new List<Recommendation>();
+    public IList<Advice> Advices { get; private set; } = new List<Advice>();
 
     protected Question() {}
     

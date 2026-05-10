@@ -171,7 +171,7 @@ public class UserService : IUserService
 
     public async Task<IList<AwardDto>> GetAwards(Guid userId)
     {
-        var user = await _repository.GetByIdWithAwardsAndRecommendations(userId);
+        var user = await _repository.GetByIdWithAwardsAndAdvices(userId);
 
         if (user is null)
         {
@@ -182,17 +182,17 @@ public class UserService : IUserService
         return user.Awards.Select(a => new AwardDto(a)).ToList();
     }
 
-    public async Task<IList<RecommendationDto>> GetRecommendations(Guid userId)
+    public async Task<IList<AdviceDto>> GetAdvices(Guid userId)
     {
-        var user = await _repository.GetByIdWithAwardsAndRecommendations(userId);
+        var user = await _repository.GetByIdWithAwardsAndAdvices(userId);
 
         if (user is null)
         {
-            _logger.LogWarning("User {UserId} not found when fetching recommendations", userId);
+            _logger.LogWarning("User {UserId} not found when fetching advices", userId);
             throw new NotFoundException(_localizer["UserNotFound"]);
         }
 
-        return user.Recommendations.Select(r => new RecommendationDto(r)).ToList();
+        return user.Advices.Select(a => new AdviceDto(a)).ToList();
     }
 
     public async Task Deactivate(Guid userId)

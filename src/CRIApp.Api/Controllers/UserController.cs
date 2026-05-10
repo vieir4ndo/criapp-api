@@ -90,12 +90,12 @@ public class UserController : CriAppControllerBase
         return new ApiResponse<AwardDto>(true, awards);
     }
 
-    [HttpGet("recommendations")]
-    public async Task<ApiResponse<RecommendationDto>> GetRecommendations()
+    [HttpGet("advices")]
+    public async Task<ApiResponse<AdviceDto>> GetAdvices()
     {
-        var recommendations = await _service.GetRecommendations(GetUserId());
+        var advices = await _service.GetAdvices(GetUserId());
 
-        return new ApiResponse<RecommendationDto>(true, recommendations);
+        return new ApiResponse<AdviceDto>(true, advices);
     }
 
     [HttpDelete]

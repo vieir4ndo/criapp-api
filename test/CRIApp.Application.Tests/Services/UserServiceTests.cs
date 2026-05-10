@@ -285,7 +285,7 @@ public class UserServiceTests
     public async Task GetAwards_UserNotFound_ShouldThrowNotFoundException()
     {
         var userId = Guid.NewGuid();
-        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndAdvices(userId))
             .ReturnsAsync((User?)null);
 
         await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetAwards(userId));
@@ -296,7 +296,7 @@ public class UserServiceTests
     {
         var userId = Guid.NewGuid();
         var user = BuildUser();
-        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndAdvices(userId))
             .ReturnsAsync(user);
 
         var result = await _sut.GetAwards(userId);
@@ -311,7 +311,7 @@ public class UserServiceTests
         var user = BuildUser();
         user.AddAwardIfNeeded(AwardType.FirstSteps);
         user.AddAwardIfNeeded(AwardType.EngagedFamily);
-        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndAdvices(userId))
             .ReturnsAsync(user);
 
         var result = await _sut.GetAwards(userId);
@@ -322,24 +322,24 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task GetRecommendations_UserNotFound_ShouldThrowNotFoundException()
+    public async Task GetAdvices_UserNotFound_ShouldThrowNotFoundException()
     {
         var userId = Guid.NewGuid();
-        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndAdvices(userId))
             .ReturnsAsync((User?)null);
 
-        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetRecommendations(userId));
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetAdvices(userId));
     }
 
     [Fact]
-    public async Task GetRecommendations_UserWithNoRecommendations_ShouldReturnEmptyList()
+    public async Task GetAdvices_UserWithNoAdvices_ShouldReturnEmptyList()
     {
         var userId = Guid.NewGuid();
         var user = BuildUser();
-        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndRecommendations(userId))
+        _userRepositoryMock.Setup(r => r.GetByIdWithAwardsAndAdvices(userId))
             .ReturnsAsync(user);
 
-        var result = await _sut.GetRecommendations(userId);
+        var result = await _sut.GetAdvices(userId);
 
         Assert.Empty(result);
     }
