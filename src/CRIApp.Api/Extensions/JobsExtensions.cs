@@ -10,7 +10,7 @@ public static class JobsExtensions
     public static IServiceCollection AddJobServices(this IServiceCollection services)
     {
         services.AddTransient<NotifyUsersWithLessThanTenAnswersJob>();
-        services.AddTransient<UpdateUsersScoreJob>();
+        services.AddTransient<UpdateChildBookScoreJob>();
         services.AddTransient<SaveUsersAdvices>();
         services.AddTransient<CalculateAndSaveAwards>();
         services.AddTransient<CleanUserResetPasswordCodesJob>();
@@ -25,9 +25,9 @@ public static class JobsExtensions
             nameof(NotifyUsersWithLessThanTenAnswersJob),
             x => x.Run(),
             Cron.Daily);
-        recurringJobManager.RemoveIfExists(nameof(UpdateUsersScoreJob));
-        recurringJobManager.AddOrUpdate<UpdateUsersScoreJob>(
-            nameof(UpdateUsersScoreJob),
+        recurringJobManager.RemoveIfExists(nameof(UpdateChildBookScoreJob));
+        recurringJobManager.AddOrUpdate<UpdateChildBookScoreJob>(
+            nameof(UpdateChildBookScoreJob),
             x => x.Run(),
             Cron.Minutely);
         recurringJobManager.RemoveIfExists(nameof(SaveUsersAdvices));

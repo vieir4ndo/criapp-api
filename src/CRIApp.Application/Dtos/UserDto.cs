@@ -14,8 +14,6 @@ public class UserDto
     public int? NumberOfChildren { get; set; }
     public FamilyType? FamilyType { get; set; }
     public EducationalLevel? EducationalLevel { get; set; }
-    public int Score { get; set; }
-    public DateTime ScoreLastUpdatedAt { get; set; }
     public bool IsAdmin { get; set; }
 
     public UserDto(User user)
@@ -30,7 +28,5 @@ public class UserDto
         FamilyType = user.FamilyType;
         EducationalLevel = user.EducationalLevel;
         IsAdmin = user.IsAdmin;
-        Score = user.Score;
-        ScoreLastUpdatedAt = user.ScoreLastUpdatedAt;
     }
 }

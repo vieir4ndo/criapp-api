@@ -8,6 +8,7 @@ public class AdviceDto
     public int Id { get; set; }
     public string Text { get; set; }
     public Guid QuestionId { get; set; }
+    public string? Image { get; set; }
 
     public AdviceDto(Advice advice)
     {
@@ -20,5 +21,6 @@ public class AdviceDto
         };
         Id = advice.Id;
         QuestionId = advice.QuestionId;
+        Image = advice.Image != null ? Convert.ToBase64String(advice.Image) : null;
     }
 }

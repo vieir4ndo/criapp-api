@@ -16,6 +16,7 @@ namespace CRIApp.Application.Tests.Services;
 public class ChildServiceTests
 {
     private readonly Mock<IChildRepository> _childRepositoryMock;
+    private readonly Mock<IChildBookRepository> _childBookRepositoryMock;
     private readonly Mock<IUserService> _userServiceMock;
     private readonly Mock<IStringLocalizer<AppMessages>> _localizerMock;
     private readonly ChildService _sut;
@@ -23,9 +24,10 @@ public class ChildServiceTests
     public ChildServiceTests()
     {
         _childRepositoryMock = new Mock<IChildRepository>();
+        _childBookRepositoryMock = new Mock<IChildBookRepository>();
         _userServiceMock = new Mock<IUserService>();
         _localizerMock = new Mock<IStringLocalizer<AppMessages>>();
-        _sut = new ChildService(_childRepositoryMock.Object, _userServiceMock.Object, NullLogger<ChildService>.Instance, _localizerMock.Object);
+        _sut = new ChildService(_childRepositoryMock.Object, _childBookRepositoryMock.Object, _userServiceMock.Object, NullLogger<ChildService>.Instance, _localizerMock.Object);
     }
 
     private static User BuildUser()
@@ -51,10 +53,12 @@ public class ChildServiceTests
 
         _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
         _childRepositoryMock.Setup(r => r.Create(It.IsAny<Child>())).Returns(Task.CompletedTask);
+        _childBookRepositoryMock.Setup(r => r.Create(It.IsAny<ChildBook>())).Returns(Task.CompletedTask);
 
         await _sut.Create(dto);
 
         _childRepositoryMock.Verify(r => r.Create(It.IsAny<Child>()), Times.Once);
+        _childBookRepositoryMock.Verify(r => r.Create(It.IsAny<ChildBook>()), Times.Once);
     }
 
     [Fact]

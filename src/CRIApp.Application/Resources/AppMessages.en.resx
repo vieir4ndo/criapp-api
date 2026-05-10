@@ -12,6 +12,9 @@
   <data name="InvalidResetCode" xml:space="preserve">
     <value>Invalid or expired recovery code</value>
   </data>
+  <data name="ChildBookNotFound" xml:space="preserve">
+    <value>Child book not found</value>
+  </data>
   <data name="ChildNotFound" xml:space="preserve">
     <value>Child not found</value>
   </data>

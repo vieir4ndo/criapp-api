@@ -1,4 +1,5 @@
 using CRIApp.Domain.Data;
+using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using Microsoft.Extensions.Logging;
 
@@ -7,13 +8,13 @@ namespace CRIApp.Application.Jobs;
 public class CalculateAndSaveAwards : IRecurrentJob
 {
     private readonly ILogger<CalculateAndSaveAwards> _logger;
-    private readonly IUserRepository _userRepository;
+    private readonly IChildBookRepository _childBookRepository;
     private readonly IAwardRepository _awardRepository;
 
-    public CalculateAndSaveAwards(ILogger<CalculateAndSaveAwards> logger, IUserRepository userRepository, IAwardRepository awardRepository)
+    public CalculateAndSaveAwards(ILogger<CalculateAndSaveAwards> logger, IChildBookRepository childBookRepository, IAwardRepository awardRepository)
     {
         _logger = logger;
-        _userRepository = userRepository;
+        _childBookRepository = childBookRepository;
         _awardRepository = awardRepository;
     }
 
@@ -21,69 +22,83 @@ public class CalculateAndSaveAwards : IRecurrentJob
     {
         _logger.LogInformation("Job {JobName} started", nameof(CalculateAndSaveAwards));
 
-        var users = await _userRepository.GetAll();
+        var childBooks = await _childBookRepository.GetAll();
+        var awards = await _awardRepository.GetAll();
         var today = DateTime.UtcNow.Date;
         var yesterday = today.AddDays(-1);
         var dayBefore = today.AddDays(-2);
 
-        foreach (var user in users)
+        foreach (var childBook in childBooks)
         {
-            if (user.IsAdmin) continue;
+            var answers = childBook.Child.Answers;
+            var scoreYesterday = CalculateScore(answers.Where(a => a.CreatedAt.Date <= yesterday).ToList());
+            var scoreDayBefore = CalculateScore(answers.Where(a => a.CreatedAt.Date <= dayBefore).ToList());
 
-            var scoreYesterday = CalculateScore(user.Answers.Where(a => a.CreatedAt.Date <= yesterday).ToList());
-            var scoreDayBefore = CalculateScore(user.Answers.Where(a => a.CreatedAt.Date <= dayBefore).ToList());
+            var countBefore = childBook.Awards.Count;
 
-            var awardsBefore = user.Awards.Select(a => a.Id).ToHashSet();
+            EvaluateFirstSteps(childBook, answers, awards);
+            EvaluateEngagedFamily(childBook, answers, awards);
+            EvaluateOvercoming(childBook, scoreYesterday, scoreDayBefore, awards);
+            EvaluatePositiveEnvironment(childBook, awards);
+            EvaluateSmallProgress(childBook, scoreYesterday, scoreDayBefore, awards);
 
-            EvaluateFirstSteps(user);
-            EvaluateEngagedFamily(user);
-            EvaluateOvercoming(user, scoreYesterday, scoreDayBefore);
-            EvaluatePositiveEnvironment(user);
-            EvaluateSmallProgress(user, scoreYesterday, scoreDayBefore);
-
-            var newAwards = user.Awards.Where(a => !awardsBefore.Contains(a.Id)).ToList();
-            if (newAwards.Count > 0)
-                await _awardRepository.CreateRange(newAwards);
+            if (childBook.Awards.Count > countBefore)
+                await _childBookRepository.Update(childBook);
         }
 
         _logger.LogInformation("Job {JobName} completed", nameof(CalculateAndSaveAwards));
     }
 
-    private static void EvaluateFirstSteps(Domain.Entities.User user)
+    private static void EvaluateFirstSteps(ChildBook childBook, List<Answer> answers, IList<Award> awards)
     {
-        var distinctQuestionsAnswered = user.Answers.Select(a => a.QuestionId).Distinct().Count();
+        var distinctQuestionsAnswered = answers.Select(a => a.QuestionId).Distinct().Count();
         if (distinctQuestionsAnswered >= 5)
-            user.AddAwardIfNeeded(AwardType.FirstSteps);
+        {
+            var award = awards.FirstOrDefault(a => a.Type == AwardType.FirstSteps);
+            if (award != null) childBook.AddAwardIfNeeded(award);
+        }
     }
 
-    private static void EvaluateEngagedFamily(Domain.Entities.User user)
+    private static void EvaluateEngagedFamily(ChildBook childBook, List<Answer> answers, IList<Award> awards)
     {
-        var answerDates = user.Answers
+        var answerDates = answers
             .Select(a => a.CreatedAt.Date)
             .Distinct()
             .OrderBy(d => d)
             .ToList();
 
         if (HasThreeConsecutiveDays(answerDates))
-            user.AddAwardIfNeeded(AwardType.EngagedFamily);
+        {
+            var award = awards.FirstOrDefault(a => a.Type == AwardType.EngagedFamily);
+            if (award != null) childBook.AddAwardIfNeeded(award);
+        }
     }
 
-    private static void EvaluateOvercoming(Domain.Entities.User user, int scoreYesterday, int scoreDayBefore)
+    private static void EvaluateOvercoming(ChildBook childBook, int scoreYesterday, int scoreDayBefore, IList<Award> awards)
     {
         if (scoreDayBefore > 0 && scoreYesterday >= scoreDayBefore * 1.20)
-            user.AddAwardIfNeeded(AwardType.Overcoming);
+        {
+            var award = awards.FirstOrDefault(a => a.Type == AwardType.Overcoming);
+            if (award != null) childBook.AddAwardIfNeeded(award);
+        }
     }
 
-    private static void EvaluatePositiveEnvironment(Domain.Entities.User user)
+    private static void EvaluatePositiveEnvironment(ChildBook childBook, IList<Award> awards)
     {
-        if (user.Score > 80)
-            user.AddAwardIfNeeded(AwardType.PositiveEnvironment);
+        if (childBook.Score > 80)
+        {
+            var award = awards.FirstOrDefault(a => a.Type == AwardType.PositiveEnvironment);
+            if (award != null) childBook.AddAwardIfNeeded(award);
+        }
     }
 
-    private static void EvaluateSmallProgress(Domain.Entities.User user, int scoreYesterday, int scoreDayBefore)
+    private static void EvaluateSmallProgress(ChildBook childBook, int scoreYesterday, int scoreDayBefore, IList<Award> awards)
     {
         if (scoreYesterday > scoreDayBefore)
-            user.AddAwardIfNeeded(AwardType.SmallProgress);
+        {
+            var award = awards.FirstOrDefault(a => a.Type == AwardType.SmallProgress);
+            if (award != null) childBook.AddAwardIfNeeded(award);
+        }
     }
 
     private static bool HasThreeConsecutiveDays(List<DateTime> sortedDates)
@@ -97,7 +112,7 @@ public class CalculateAndSaveAwards : IRecurrentJob
         return false;
     }
 
-    private static int CalculateScore(List<Domain.Entities.Answer> answers)
+    private static int CalculateScore(List<Answer> answers)
     {
         if (answers.Count == 0) return 0;
 

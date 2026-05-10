@@ -5,15 +5,36 @@ namespace CRIApp.Domain.Entities;
 public class Award : Entity
 {
     public AwardType Type { get; private set; }
+    public string Text { get; private set; } = string.Empty;
+    public string? TextEn { get; private set; }
+    public string? TextPt { get; private set; }
+    public string? Description { get; private set; }
+    public string? DescriptionEn { get; private set; }
+    public string? DescriptionPt { get; private set; }
+    public byte[]? Image { get; private set; }
+    public List<ChildBook> ChildBooks { get; private set; } = new();
 
-    public Guid PrcId { get; private set; }
-    public User Prc { get; private set; }
+    protected Award() { }
 
-    protected Award() {}
-
-    public Award(AwardType type, Guid prcId)
+    public Award(AwardType type, string text)
     {
         Type = type;
-        PrcId = prcId;
+        Text = text;
+    }
+
+    public Award WithTranslations(string? textEn, string? textPt, string? description = null, string? descriptionEn = null, string? descriptionPt = null)
+    {
+        TextEn = textEn;
+        TextPt = textPt;
+        Description = description;
+        DescriptionEn = descriptionEn;
+        DescriptionPt = descriptionPt;
+        return this;
+    }
+
+    public Award WithImage(byte[]? image)
+    {
+        Image = image;
+        return this;
     }
 }

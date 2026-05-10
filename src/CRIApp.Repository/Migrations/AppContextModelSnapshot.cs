@@ -31,6 +31,9 @@ namespace CRIApp.Repository.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("bytea");
+
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uuid");
 
@@ -127,15 +130,32 @@ namespace CRIApp.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PrcId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Description")
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("DescriptionPt")
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("TextEn")
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("TextPt")
+                        .HasColumnType("varchar(500)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PrcId");
 
                     b.ToTable("Award");
                 });
@@ -171,6 +191,61 @@ namespace CRIApp.Repository.Migrations
                     b.HasIndex("PrcId");
 
                     b.ToTable("Child");
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.ChildBook", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ChildId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ScoreLastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChildId")
+                        .IsUnique();
+
+                    b.ToTable("ChildBook");
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.ChildBookAdvice", b =>
+                {
+                    b.Property<int>("AdvicesId")
+                        .HasColumnType("integer")
+                        .HasColumnName("AdvicesId");
+
+                    b.Property<Guid>("ChildBooksId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("AdvicesId", "ChildBooksId");
+
+                    b.HasIndex("ChildBooksId");
+
+                    b.ToTable("ChildBookAdvice", (string)null);
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.ChildBookAward", b =>
+                {
+                    b.Property<Guid>("AwardsId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("AwardsId");
+
+                    b.Property<Guid>("ChildBooksId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("AwardsId", "ChildBooksId");
+
+                    b.HasIndex("ChildBooksId");
+
+                    b.ToTable("ChildBookAward", (string)null);
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Comment", b =>
@@ -320,12 +395,6 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Score")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("ScoreLastUpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<int>("Sex")
                         .HasColumnType("integer");
 
@@ -340,22 +409,6 @@ namespace CRIApp.Repository.Migrations
                         .IsUnique();
 
                     b.ToTable("User");
-                });
-
-            modelBuilder.Entity("CRIApp.Domain.Entities.UserAdvice", b =>
-                {
-                    b.Property<int>("AdvicesId")
-                        .HasColumnType("integer")
-                        .HasColumnName("AdvicesId");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("AdvicesId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("UserAdvice", (string)null);
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.UserResetPasswordCode", b =>
@@ -422,17 +475,6 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("CRIApp.Domain.Entities.Award", b =>
-                {
-                    b.HasOne("CRIApp.Domain.Entities.User", "Prc")
-                        .WithMany("Awards")
-                        .HasForeignKey("PrcId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Prc");
-                });
-
             modelBuilder.Entity("CRIApp.Domain.Entities.Child", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.User", "Prc")
@@ -442,6 +484,55 @@ namespace CRIApp.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Prc");
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.ChildBook", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.Child", "Child")
+                        .WithOne("ChildBook")
+                        .HasForeignKey("CRIApp.Domain.Entities.ChildBook", "ChildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Child");
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.ChildBookAdvice", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.Advice", "Advice")
+                        .WithMany()
+                        .HasForeignKey("AdvicesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CRIApp.Domain.Entities.ChildBook", "ChildBook")
+                        .WithMany()
+                        .HasForeignKey("ChildBooksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Advice");
+
+                    b.Navigation("ChildBook");
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.ChildBookAward", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.Award", "Award")
+                        .WithMany()
+                        .HasForeignKey("AwardsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CRIApp.Domain.Entities.ChildBook", "ChildBook")
+                        .WithMany()
+                        .HasForeignKey("ChildBooksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Award");
+
+                    b.Navigation("ChildBook");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Comment", b =>
@@ -474,25 +565,6 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Prc");
                 });
 
-            modelBuilder.Entity("CRIApp.Domain.Entities.UserAdvice", b =>
-                {
-                    b.HasOne("CRIApp.Domain.Entities.Advice", "Advice")
-                        .WithMany()
-                        .HasForeignKey("AdvicesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CRIApp.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Advice");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("CRIApp.Domain.Entities.UserResetPasswordCode", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.User", "User")
@@ -507,6 +579,8 @@ namespace CRIApp.Repository.Migrations
             modelBuilder.Entity("CRIApp.Domain.Entities.Child", b =>
                 {
                     b.Navigation("Answers");
+
+                    b.Navigation("ChildBook");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Forum", b =>
@@ -524,8 +598,6 @@ namespace CRIApp.Repository.Migrations
             modelBuilder.Entity("CRIApp.Domain.Entities.User", b =>
                 {
                     b.Navigation("Answers");
-
-                    b.Navigation("Awards");
 
                     b.Navigation("Children");
 

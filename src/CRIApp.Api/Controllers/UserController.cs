@@ -82,22 +82,6 @@ public class UserController : CriAppControllerBase
         return new ApiResponse<object>(true);
     }
 
-    [HttpGet("awards")]
-    public async Task<ApiResponse<AwardDto>> GetAwards()
-    {
-        var awards = await _service.GetAwards(GetUserId());
-
-        return new ApiResponse<AwardDto>(true, awards);
-    }
-
-    [HttpGet("advices")]
-    public async Task<ApiResponse<AdviceDto>> GetAdvices()
-    {
-        var advices = await _service.GetAdvices(GetUserId());
-
-        return new ApiResponse<AdviceDto>(true, advices);
-    }
-
     [HttpDelete]
     public async Task<ApiResponse<object>> Deactivate()
     {

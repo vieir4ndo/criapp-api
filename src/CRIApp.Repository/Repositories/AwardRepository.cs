@@ -1,5 +1,6 @@
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CRIApp.Repository.Repositories;
 
@@ -12,9 +13,8 @@ public class AwardRepository : IAwardRepository
         Context = context;
     }
 
-    public async Task CreateRange(IEnumerable<Award> awards)
+    public async Task<IList<Award>> GetAll()
     {
-        await Context.Award.AddRangeAsync(awards);
-        await Context.SaveChangesAsync();
+        return await Context.Award.ToListAsync();
     }
 }

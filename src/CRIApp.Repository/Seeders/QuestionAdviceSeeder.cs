@@ -1,5 +1,6 @@
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
+using System.Reflection;
 
 namespace CRIApp.Repository.Seeders;
 
@@ -559,8 +560,21 @@ public static class QuestionAdviceSeeder
                     "Realizar habitualmente alguma viagem ou passeio em família."),
         };
 
+        for (var i = 0; i < advices.Count; i++)
+            advices[i].WithImage(LoadImage($"rec_{i + 1:D2}.png"));
+
         context.Question.AddRange(questions);
         context.Advice.AddRange(advices);
         context.SaveChanges();
+    }
+
+    private static byte[]? LoadImage(string fileName)
+    {
+        var resourceName = $"CRIApp.Repository.Seeders.Images.{fileName}";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        if (stream is null) return null;
+        using var ms = new MemoryStream();
+        stream.CopyTo(ms);
+        return ms.ToArray();
     }
 }

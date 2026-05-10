@@ -1,0 +1,48 @@
+using CRIApp.Domain.Data;
+using CRIApp.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace CRIApp.Repository.Repositories;
+
+public class ChildBookRepository : IChildBookRepository
+{
+    private readonly AppContext _context;
+
+    public ChildBookRepository(AppContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<ChildBook?> GetByChildId(Guid childId)
+    {
+        return await _context.ChildBook
+            .Include(x => x.Awards)
+            .Include(x => x.Advices)
+            .FirstOrDefaultAsync(x => x.ChildId == childId);
+    }
+
+    public async Task Create(ChildBook childBook)
+    {
+        await _context.ChildBook.AddAsync(childBook);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task Update(ChildBook childBook)
+    {
+        _context.ChildBook.Update(childBook);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<IList<ChildBook>> GetAll()
+    {
+        return await _context.ChildBook
+            .Include(x => x.Awards)
+            .Include(x => x.Advices)
+            .Include(x => x.Child)
+                .ThenInclude(c => c.Answers)
+                    .ThenInclude(a => a.Question)
+                        .ThenInclude(q => q.Advices)
+            .AsSplitQuery()
+            .ToListAsync();
+    }
+}

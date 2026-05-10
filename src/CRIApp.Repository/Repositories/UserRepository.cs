@@ -34,14 +34,6 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<User?> GetByIdWithAwardsAndAdvices(Guid id)
-    {
-        return await Context.User
-            .Include(x => x.Awards)
-            .Include(x => x.Advices)
-            .FirstOrDefaultAsync(x => x.Id == id);
-    }
-
     public async Task Update(User user)
     {
         Context.User.Update(user);
@@ -51,11 +43,8 @@ public class UserRepository : IUserRepository
     public async Task<IList<User>> GetAll()
     {
         return await Context.User
-            .Include(x => x.Awards)
-            .Include(x => x.Advices)
             .Include(x => x.Answers)
                 .ThenInclude(x=>x.Question)
-                    .ThenInclude(x=>x.Advices)
             .AsSplitQuery()
             .ToListAsync();
     }

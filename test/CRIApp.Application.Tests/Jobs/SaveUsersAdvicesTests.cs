@@ -4,25 +4,34 @@ using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using System.Reflection;
 using Xunit;
 
 namespace CRIApp.Application.Tests.Jobs;
 
 public class SaveUsersAdvicesTests
 {
-    private readonly Mock<IUserRepository> _repositoryMock;
+    private readonly Mock<IChildBookRepository> _repositoryMock;
     private readonly SaveUsersAdvices _sut;
 
     private static readonly Guid AdminId = Guid.NewGuid();
 
     public SaveUsersAdvicesTests()
     {
-        _repositoryMock = new Mock<IUserRepository>();
+        _repositoryMock = new Mock<IChildBookRepository>();
         _sut = new SaveUsersAdvices(NullLogger<SaveUsersAdvices>.Instance, _repositoryMock.Object);
     }
 
-    private static User BuildUser()
-        => new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123", FamilyType.HeterosexualCouple);
+    private static ChildBook BuildChildBook()
+    {
+        var prcId = Guid.NewGuid();
+        var child = new Child("Child", new DateTime(2020, 1, 1), Sex.Male, 6, prcId, false);
+        typeof(Child).GetProperty(nameof(Child.Answers))!.SetValue(child, new List<Answer>());
+
+        var childBook = new ChildBook(child.Id);
+        typeof(ChildBook).GetProperty(nameof(ChildBook.Child))!.SetValue(childBook, child);
+        return childBook;
+    }
 
     private static (Answer answer, Question question, Advice advice) BuildAnswerWithAdvice(
         int value, QuestionScoringType scoringType)
@@ -39,116 +48,116 @@ public class SaveUsersAdvicesTests
     }
 
     [Fact]
-    public async Task Run_NoUsers_ShouldNotCallUpdate()
+    public async Task Run_NoChildBooks_ShouldNotCallUpdate()
     {
-        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User>());
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook>());
 
         await _sut.Run();
 
-        _repositoryMock.Verify(r => r.Update(It.IsAny<User>()), Times.Never);
+        _repositoryMock.Verify(r => r.Update(It.IsAny<ChildBook>()), Times.Never);
     }
 
     [Fact]
-    public async Task Run_UserWithNoAnswers_ShouldNotCallUpdate()
+    public async Task Run_ChildBookWithNoAnswers_ShouldNotCallUpdate()
     {
-        var user = BuildUser();
-        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
+        var childBook = BuildChildBook();
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
 
         await _sut.Run();
 
-        _repositoryMock.Verify(r => r.Update(It.IsAny<User>()), Times.Never);
+        _repositoryMock.Verify(r => r.Update(It.IsAny<ChildBook>()), Times.Never);
     }
 
     [Fact]
     public async Task Run_AnswerWithBadDefaultScore_ShouldAddAdvice()
     {
-        var user = BuildUser();
+        var childBook = BuildChildBook();
         var (answer, _, advice) = BuildAnswerWithAdvice(5, QuestionScoringType.Default);
-        user.Answers.Add(answer);
+        childBook.Child.Answers.Add(answer);
 
-        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
 
         await _sut.Run();
 
-        Assert.Contains(advice, user.Advices);
+        Assert.Contains(advice, childBook.Advices);
     }
 
     [Fact]
     public async Task Run_AnswerWithGoodDefaultScore_ShouldNotAddAdvice()
     {
-        var user = BuildUser();
+        var childBook = BuildChildBook();
         var (answer, _, advice) = BuildAnswerWithAdvice(1, QuestionScoringType.Default);
-        user.Answers.Add(answer);
+        childBook.Child.Answers.Add(answer);
 
-        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
 
         await _sut.Run();
 
-        Assert.DoesNotContain(advice, user.Advices);
+        Assert.DoesNotContain(advice, childBook.Advices);
     }
 
     [Fact]
     public async Task Run_AnswerWithBadReversedScore_ShouldAddAdvice()
     {
-        var user = BuildUser();
+        var childBook = BuildChildBook();
         var (answer, _, advice) = BuildAnswerWithAdvice(1, QuestionScoringType.Reversed);
-        user.Answers.Add(answer);
+        childBook.Child.Answers.Add(answer);
 
-        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
 
         await _sut.Run();
 
-        Assert.Contains(advice, user.Advices);
+        Assert.Contains(advice, childBook.Advices);
     }
 
     [Fact]
     public async Task Run_AnswerWithGoodDefaultScore_ShouldNotCallUpdate()
     {
-        var user = BuildUser();
+        var childBook = BuildChildBook();
         var (answer, _, _) = BuildAnswerWithAdvice(1, QuestionScoringType.Default);
-        user.Answers.Add(answer);
+        childBook.Child.Answers.Add(answer);
 
-        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
 
         await _sut.Run();
 
-        _repositoryMock.Verify(r => r.Update(It.IsAny<User>()), Times.Never);
+        _repositoryMock.Verify(r => r.Update(It.IsAny<ChildBook>()), Times.Never);
     }
 
     [Fact]
     public async Task Run_AnswerWithGoodReversedScore_ShouldNotAddAdvice()
     {
-        var user = BuildUser();
+        var childBook = BuildChildBook();
         var (answer, _, advice) = BuildAnswerWithAdvice(5, QuestionScoringType.Reversed);
-        user.Answers.Add(answer);
+        childBook.Child.Answers.Add(answer);
 
-        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
 
         await _sut.Run();
 
-        Assert.DoesNotContain(advice, user.Advices);
+        Assert.DoesNotContain(advice, childBook.Advices);
     }
 
     [Fact]
-    public async Task Run_ShouldCallUpdateOncePerUser()
+    public async Task Run_ShouldCallUpdateOncePerChildBook()
     {
-        var user = BuildUser();
+        var childBook = BuildChildBook();
         var (answer1, _, _) = BuildAnswerWithAdvice(5, QuestionScoringType.Default);
         var (answer2, _, _) = BuildAnswerWithAdvice(5, QuestionScoringType.Default);
-        user.Answers.Add(answer1);
-        user.Answers.Add(answer2);
+        childBook.Child.Answers.Add(answer1);
+        childBook.Child.Answers.Add(answer2);
 
-        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
 
         await _sut.Run();
 
-        _repositoryMock.Verify(r => r.Update(user), Times.Once);
+        _repositoryMock.Verify(r => r.Update(childBook), Times.Once);
     }
 
     [Fact]
     public async Task Run_SameAdviceFromMultipleAnswers_ShouldNotDuplicate()
     {
-        var user = BuildUser();
+        var childBook = BuildChildBook();
         var advice = new Advice("Do this.", AdminId, Guid.NewGuid());
 
         var question = new Question("Q?", AdminId, QuestionType.Agreement, QuestionScoringType.Default);
@@ -159,13 +168,14 @@ public class SaveUsersAdvicesTests
         {
             var answer = new Answer(5, question.Id, Guid.NewGuid(), Guid.NewGuid());
             typeof(Answer).GetProperty(nameof(Answer.Question))!.SetValue(answer, question);
-            user.Answers.Add(answer);
+            childBook.Child.Answers.Add(answer);
         }
 
-        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<User> { user });
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
 
         await _sut.Run();
 
-        Assert.Single(user.Advices);
+        Assert.Single(childBook.Advices);
     }
 }
+
