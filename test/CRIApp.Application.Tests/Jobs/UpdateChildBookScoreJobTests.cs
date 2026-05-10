@@ -12,12 +12,20 @@ namespace CRIApp.Application.Tests.Jobs;
 public class UpdateChildBookScoreJobTests
 {
     private readonly Mock<IChildBookRepository> _childBookRepositoryMock;
+    private readonly Mock<IRecommendationCheckpointRepository> _checkpointRepositoryMock;
     private readonly UpdateChildBookScoreJob _sut;
 
     public UpdateChildBookScoreJobTests()
     {
         _childBookRepositoryMock = new Mock<IChildBookRepository>();
-        _sut = new UpdateChildBookScoreJob(NullLogger<UpdateChildBookScoreJob>.Instance, _childBookRepositoryMock.Object);
+        _checkpointRepositoryMock = new Mock<IRecommendationCheckpointRepository>();
+        _checkpointRepositoryMock
+            .Setup(r => r.GetByChildBookIdAndDate(It.IsAny<Guid>(), It.IsAny<DateTime>()))
+            .ReturnsAsync(new List<RecommendationCheckpoint>());
+        _sut = new UpdateChildBookScoreJob(
+            NullLogger<UpdateChildBookScoreJob>.Instance,
+            _childBookRepositoryMock.Object,
+            _checkpointRepositoryMock.Object);
     }
 
     private static ChildBook BuildChildBook()

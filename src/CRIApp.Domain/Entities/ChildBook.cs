@@ -20,7 +20,7 @@ public class ChildBook : Entity
         ScoreLastUpdatedAt = DateTime.UtcNow;
     }
 
-    public void UpdateScore(List<Answer> answers)
+    public void UpdateScore(List<Answer> answers, List<RecommendationCheckpoint> todayCheckpoints)
     {
         if (!answers.Any())
         {
@@ -43,7 +43,20 @@ public class ChildBook : Entity
                 points++;
         }
 
-        Score = points * 100 / answers.Count;
+        var answersRatio = (double)points / answers.Count;
+        var totalActiveRecommendations = Recommendations.Count;
+
+        if (totalActiveRecommendations == 0)
+        {
+            Score = (int)Math.Round(answersRatio * 100);
+        }
+        else
+        {
+            var completedToday = todayCheckpoints.Count(c => c.Completed);
+            var checkpointRatio = (double)completedToday / totalActiveRecommendations;
+            Score = (int)Math.Round(answersRatio * 70 + checkpointRatio * 30);
+        }
+
         ScoreLastUpdatedAt = DateTime.UtcNow;
     }
 

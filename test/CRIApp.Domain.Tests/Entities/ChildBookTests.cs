@@ -41,7 +41,7 @@ public class ChildBookTests
     {
         var childBook = CreateChildBook();
 
-        childBook.UpdateScore(childBook.Child.Answers);
+        childBook.UpdateScore(childBook.Child.Answers, []);
 
         Assert.Equal(0, childBook.Score);
     }
@@ -56,7 +56,7 @@ public class ChildBookTests
         var childBook = CreateChildBook();
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Default));
 
-        childBook.UpdateScore(childBook.Child.Answers);
+        childBook.UpdateScore(childBook.Child.Answers, []);
 
         Assert.Equal(100, childBook.Score);
     }
@@ -67,7 +67,7 @@ public class ChildBookTests
         var childBook = CreateChildBook();
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
 
-        childBook.UpdateScore(childBook.Child.Answers);
+        childBook.UpdateScore(childBook.Child.Answers, []);
 
         Assert.Equal(0, childBook.Score);
     }
@@ -78,7 +78,7 @@ public class ChildBookTests
         var childBook = CreateChildBook();
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Reversed));
 
-        childBook.UpdateScore(childBook.Child.Answers);
+        childBook.UpdateScore(childBook.Child.Answers, []);
 
         Assert.Equal(100, childBook.Score);
     }
@@ -93,7 +93,7 @@ public class ChildBookTests
         var childBook = CreateChildBook();
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Reversed));
 
-        childBook.UpdateScore(childBook.Child.Answers);
+        childBook.UpdateScore(childBook.Child.Answers, []);
 
         Assert.Equal(0, childBook.Score);
     }
@@ -107,7 +107,7 @@ public class ChildBookTests
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Reversed));
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(2, QuestionScoringType.Reversed));
 
-        childBook.UpdateScore(childBook.Child.Answers);
+        childBook.UpdateScore(childBook.Child.Answers, []);
 
         Assert.Equal(50, childBook.Score);
     }
@@ -118,9 +118,69 @@ public class ChildBookTests
         var childBook = CreateChildBook();
         var before = DateTime.UtcNow;
 
-        childBook.UpdateScore(childBook.Child.Answers);
+        childBook.UpdateScore(childBook.Child.Answers, []);
 
         Assert.True(childBook.ScoreLastUpdatedAt >= before);
+    }
+
+    private static Recommendation BuildRecommendation()
+    {
+        var rec = new Recommendation("Recommendation", AdminId, Guid.NewGuid());
+        typeof(Recommendation).GetProperty(nameof(Recommendation.ChildBooks))!.SetValue(rec, new List<ChildBook>());
+        return rec;
+    }
+
+    private static RecommendationCheckpoint BuildCheckpoint(int recommendationId, Guid childBookId, bool completed)
+        => new(recommendationId, childBookId, completed);
+
+    [Fact]
+    public void UpdateScore_NoRecommendations_ShouldApplyFullAnswersWeight()
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+
+        childBook.UpdateScore(childBook.Child.Answers, []);
+
+        Assert.Equal(100, childBook.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_WithRecommendationsAndNoCheckpoints_ShouldApply70AnswersWeight()
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.AddRecommendationsIfNeeded([BuildRecommendation()]);
+
+        childBook.UpdateScore(childBook.Child.Answers, []);
+
+        Assert.Equal(70, childBook.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_WithAllCheckpointsCompleted_ShouldScore100()
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.AddRecommendationsIfNeeded([BuildRecommendation()]);
+        var checkpoint = BuildCheckpoint(1, childBook.Id, completed: true);
+
+        childBook.UpdateScore(childBook.Child.Answers, [checkpoint]);
+
+        Assert.Equal(100, childBook.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_WithPartialCheckpoints_ShouldApplyPartialCheckpointWeight()
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.AddRecommendationsIfNeeded([BuildRecommendation(), BuildRecommendation()]);
+        var completedCheckpoint = BuildCheckpoint(1, childBook.Id, completed: true);
+        var incompleteCheckpoint = BuildCheckpoint(2, childBook.Id, completed: false);
+
+        childBook.UpdateScore(childBook.Child.Answers, [completedCheckpoint, incompleteCheckpoint]);
+
+        Assert.Equal(85, childBook.Score);
     }
 
     [Fact]
