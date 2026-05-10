@@ -12,13 +12,15 @@ namespace CRIApp.Application.Services;
 public class ChildService : IChildService
 {
     private readonly IChildRepository _childRepository;
+    private readonly IChildBookRepository _childBookRepository;
     private readonly IUserService _userService;
     private readonly ILogger<ChildService> _logger;
     private readonly IStringLocalizer<AppMessages> _localizer;
 
-    public ChildService(IChildRepository childRepository, IUserService userService, ILogger<ChildService> logger, IStringLocalizer<AppMessages> localizer)
+    public ChildService(IChildRepository childRepository, IChildBookRepository childBookRepository, IUserService userService, ILogger<ChildService> logger, IStringLocalizer<AppMessages> localizer)
     {
         _childRepository = childRepository;
+        _childBookRepository = childBookRepository;
         _userService = userService;
         _logger = logger;
         _localizer = localizer;
@@ -27,8 +29,10 @@ public class ChildService : IChildService
     public async Task Create(CreateChildDto dto)
     {
         _ = await _userService.GetAndValidateById(dto.PrcId);
-        
-        await _childRepository.Create(dto.ToDomainObject());
+
+        var child = dto.ToDomainObject();
+        await _childRepository.Create(child);
+        await _childBookRepository.Create(new ChildBook(child.Id));
     }
 
     public async Task<List<ChildDto>> GetAllById(Guid prcId)
