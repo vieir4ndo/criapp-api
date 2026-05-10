@@ -1,24 +1,54 @@
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Application.Resources;
 using CRIApp.Domain.Data;
+using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
+using Microsoft.Extensions.Localization;
 
 namespace CRIApp.Application.Services;
 
 public class NotificationService : INotificationService
 {
     private readonly INotificationRepository _notificationRepository;
+    private readonly IStringLocalizer<MessageTemplates> _localizer;
 
-    public NotificationService(INotificationRepository notificationRepository)
+    public NotificationService(
+        INotificationRepository notificationRepository,
+        IStringLocalizer<MessageTemplates> localizer)
     {
         _notificationRepository = notificationRepository;
+        _localizer = localizer;
     }
 
     public async Task<IList<NotificationDto>> GetPendingByUserId(Guid userId)
     {
         var notifications = await _notificationRepository.GetPendingByUserId(userId);
-        return notifications.Select(n => new NotificationDto(n)).ToList();
+        return notifications.Select(n =>
+        {
+            var childName = n.ChildBook?.Child?.Name ?? string.Empty;
+            var dto = new NotificationDto(n);
+            (dto.Title, dto.Body) = ResolveContent(n.Type, childName);
+            return dto;
+        }).ToList();
     }
+
+    private (string Title, string Body) ResolveContent(NotificationType type, string childName) => type switch
+    {
+        NotificationType.Motivational => (
+            _localizer["Notification_Motivational_Heading"].Value,
+            string.Format(_localizer["Notification_Motivational_Body"].Value, childName)
+        ),
+        NotificationType.PointsRisk => (
+            _localizer["Notification_PointsRisk_Heading"].Value,
+            string.Format(_localizer["Notification_PointsRisk_Body"].Value, childName)
+        ),
+        NotificationType.ReEvaluation => (
+            _localizer["Notification_ReEvaluation_Heading"].Value,
+            string.Format(_localizer["Notification_ReEvaluation_Body"].Value, childName)
+        ),
+        _ => (string.Empty, string.Empty)
+    };
 
     public async Task MarkAsDelivered(Guid notificationId)
     {
