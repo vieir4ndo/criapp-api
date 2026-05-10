@@ -1,3 +1,4 @@
+using CRIApp.Application.Abstractions;
 using CRIApp.Application.Jobs;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
@@ -12,6 +13,7 @@ namespace CRIApp.Application.Tests.Jobs;
 public class SaveUsersRecommendationsTests
 {
     private readonly Mock<IChildBookRepository> _repositoryMock;
+    private readonly Mock<INotificationService> _notificationServiceMock;
     private readonly SaveUsersRecommendations _sut;
 
     private static readonly Guid AdminId = Guid.NewGuid();
@@ -19,7 +21,11 @@ public class SaveUsersRecommendationsTests
     public SaveUsersRecommendationsTests()
     {
         _repositoryMock = new Mock<IChildBookRepository>();
-        _sut = new SaveUsersRecommendations(NullLogger<SaveUsersRecommendations>.Instance, _repositoryMock.Object);
+        _notificationServiceMock = new Mock<INotificationService>();
+        _sut = new SaveUsersRecommendations(
+            NullLogger<SaveUsersRecommendations>.Instance,
+            _repositoryMock.Object,
+            _notificationServiceMock.Object);
     }
 
     private static ChildBook BuildChildBook()
@@ -176,6 +182,36 @@ public class SaveUsersRecommendationsTests
         await _sut.Run();
 
         Assert.Single(childBook.Recommendations);
+    }
+
+    [Fact]
+    public async Task Run_NewRecommendationsAdded_ShouldCreateNewRecommendationsNotification()
+    {
+        var childBook = BuildChildBook();
+        var (answer, _, _) = BuildAnswerWithRecommendation(1, QuestionScoringType.Default);
+        childBook.Child.Answers.Add(answer);
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
+
+        await _sut.Run();
+
+        _notificationServiceMock.Verify(
+            r => r.CreateIfNotExists(It.IsAny<Guid>(), NotificationType.NewRecommendations),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Run_NoNewRecommendations_ShouldNotCreateNotification()
+    {
+        var childBook = BuildChildBook();
+        var (answer, _, _) = BuildAnswerWithRecommendation(5, QuestionScoringType.Default);
+        childBook.Child.Answers.Add(answer);
+        _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
+
+        await _sut.Run();
+
+        _notificationServiceMock.Verify(
+            r => r.CreateIfNotExists(It.IsAny<Guid>(), It.IsAny<NotificationType>()),
+            Times.Never);
     }
 }
 

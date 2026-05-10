@@ -1,3 +1,4 @@
+using CRIApp.Application.Abstractions;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Enums;
 using Microsoft.Extensions.Logging;
@@ -8,11 +9,16 @@ public class SaveUsersRecommendations : IRecurrentJob
 {
     private readonly ILogger<SaveUsersRecommendations> _logger;
     private readonly IChildBookRepository _repository;
+    private readonly INotificationService _notificationService;
 
-    public SaveUsersRecommendations(ILogger<SaveUsersRecommendations> logger, IChildBookRepository repository)
+    public SaveUsersRecommendations(
+        ILogger<SaveUsersRecommendations> logger,
+        IChildBookRepository repository,
+        INotificationService notificationService)
     {
         _logger = logger;
         _repository = repository;
+        _notificationService = notificationService;
     }
 
     public async Task Run()
@@ -43,6 +49,7 @@ public class SaveUsersRecommendations : IRecurrentJob
             if (childBook.Recommendations.Count != countBefore)
             {
                 await _repository.Update(childBook);
+                await _notificationService.CreateIfNotExists(childBook.Id, NotificationType.NewRecommendations);
             }
         }
 

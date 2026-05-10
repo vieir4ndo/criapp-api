@@ -94,5 +94,21 @@
   <data name="Notification_ReEvaluation_Body" xml:space="preserve">
     <value>You've had 7 days without any activity for {0}. We invite you to retake the questionnaire to refresh the parental guidance tailored to your current situation.</value>
   </data>
+
+  <!-- Notification: NewAward -->
+  <data name="Notification_NewAward_Heading" xml:space="preserve">
+    <value>New achievement for {0}!</value>
+  </data>
+  <data name="Notification_NewAward_Body" xml:space="preserve">
+    <value>Congratulations! {0} has earned a new recognition. Open the app to see it.</value>
+  </data>
+
+  <!-- Notification: NewRecommendations -->
+  <data name="Notification_NewRecommendations_Heading" xml:space="preserve">
+    <value>New guidance available</value>
+  </data>
+  <data name="Notification_NewRecommendations_Body" xml:space="preserve">
+    <value>New parental guidance has been added for {0}. Open the app to discover it.</value>
+  </data>
 </root>
 

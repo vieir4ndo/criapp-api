@@ -1,3 +1,4 @@
+using CRIApp.Application.Abstractions;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
@@ -9,16 +10,16 @@ public class SendReEvaluationNotificationJob : IRecurrentJob
 {
     private readonly ILogger<SendReEvaluationNotificationJob> _logger;
     private readonly IChildBookRepository _childBookRepository;
-    private readonly INotificationRepository _notificationRepository;
+    private readonly INotificationService _notificationService;
 
     public SendReEvaluationNotificationJob(
         ILogger<SendReEvaluationNotificationJob> logger,
         IChildBookRepository childBookRepository,
-        INotificationRepository notificationRepository)
+        INotificationService notificationService)
     {
         _logger = logger;
         _childBookRepository = childBookRepository;
-        _notificationRepository = notificationRepository;
+        _notificationService = notificationService;
     }
 
     public async Task Run()
@@ -32,10 +33,7 @@ public class SendReEvaluationNotificationJob : IRecurrentJob
         {
             if (!ShouldNotify(childBook, today)) continue;
 
-            var alreadyExists = await _notificationRepository.ExistsForToday(childBook.Id, NotificationType.ReEvaluation, today);
-            if (alreadyExists) continue;
-
-            await _notificationRepository.Create(new Notification(childBook.Id, NotificationType.ReEvaluation));
+            await _notificationService.CreateIfNotExists(childBook.Id, NotificationType.ReEvaluation);
 
             _logger.LogInformation("ReEvaluation notification created for ChildBook {ChildBookId}", childBook.Id);
         }
