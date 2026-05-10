@@ -29,8 +29,8 @@ public class SaveUsersRecommendations : IRecurrentJob
             {
                 List<int> values = answer.Question.ScoringType switch
                 {
-                    QuestionScoringType.Default => [1, 2, 3, 4],
-                    QuestionScoringType.Reversed => [5, 6],
+                    QuestionScoringType.Default => [5, 6],
+                    QuestionScoringType.Reversed => [1, 2],
                     _ => throw new ArgumentOutOfRangeException()
                 };
 

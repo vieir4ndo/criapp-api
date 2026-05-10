@@ -47,36 +47,12 @@ public class ChildBookTests
     }
 
     [Theory]
-    [InlineData(1)]
-    [InlineData(2)]
-    [InlineData(3)]
-    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
     public void UpdateScore_DefaultScoringWithCountableValue_ShouldScore100(int value)
     {
         var childBook = CreateChildBook();
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Default));
-
-        childBook.UpdateScore(childBook.Child.Answers, []);
-
-        Assert.Equal(100, childBook.Score);
-    }
-
-    [Fact]
-    public void UpdateScore_DefaultScoringWithValue5_ShouldNotCount()
-    {
-        var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
-
-        childBook.UpdateScore(childBook.Child.Answers, []);
-
-        Assert.Equal(0, childBook.Score);
-    }
-
-    [Fact]
-    public void UpdateScore_ReversedScoringWithValue5_ShouldScore100()
-    {
-        var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Reversed));
 
         childBook.UpdateScore(childBook.Child.Answers, []);
 
@@ -88,7 +64,35 @@ public class ChildBookTests
     [InlineData(2)]
     [InlineData(3)]
     [InlineData(4)]
-    public void UpdateScore_ReversedScoringWithLowValue_ShouldNotCount(int value)
+    public void UpdateScore_DefaultScoringWithLowValue_ShouldNotCount(int value)
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Default));
+
+        childBook.UpdateScore(childBook.Child.Answers, []);
+
+        Assert.Equal(0, childBook.Score);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void UpdateScore_ReversedScoringWithLowValue_ShouldScore100(int value)
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Reversed));
+
+        childBook.UpdateScore(childBook.Child.Answers, []);
+
+        Assert.Equal(100, childBook.Score);
+    }
+
+    [Theory]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    public void UpdateScore_ReversedScoringWithHighValue_ShouldNotCount(int value)
     {
         var childBook = CreateChildBook();
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Reversed));
@@ -137,7 +141,7 @@ public class ChildBookTests
     public void UpdateScore_NoRecommendations_ShouldApplyFullAnswersWeight()
     {
         var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
 
         childBook.UpdateScore(childBook.Child.Answers, []);
 
@@ -148,7 +152,7 @@ public class ChildBookTests
     public void UpdateScore_WithRecommendationsAndNoCheckpoints_ShouldApply70AnswersWeight()
     {
         var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
         childBook.AddRecommendationsIfNeeded([BuildRecommendation()]);
 
         childBook.UpdateScore(childBook.Child.Answers, []);
@@ -160,7 +164,7 @@ public class ChildBookTests
     public void UpdateScore_WithAllCheckpointsCompleted_ShouldScore100()
     {
         var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
         childBook.AddRecommendationsIfNeeded([BuildRecommendation()]);
         var checkpoint = BuildCheckpoint(1, childBook.Id, completed: true);
 
@@ -173,7 +177,7 @@ public class ChildBookTests
     public void UpdateScore_WithPartialCheckpoints_ShouldApplyPartialCheckpointWeight()
     {
         var childBook = CreateChildBook();
-        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
         childBook.AddRecommendationsIfNeeded([BuildRecommendation(), BuildRecommendation()]);
         var completedCheckpoint = BuildCheckpoint(1, childBook.Id, completed: true);
         var incompleteCheckpoint = BuildCheckpoint(2, childBook.Id, completed: false);
