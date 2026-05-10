@@ -173,27 +173,27 @@ public class ChildBookTests
     }
 
     [Fact]
-    public void AddAdvicesIfNeeded_NewAdvice_ShouldAddIt()
+    public void AddRecommendationsIfNeeded_NewRecommendation_ShouldAddIt()
     {
         var childBook = CreateChildBook();
-        var advice = new Advice("Some advice", AdminId, Guid.NewGuid());
-        typeof(Advice).GetProperty(nameof(Advice.ChildBooks))!.SetValue(advice, new List<ChildBook>());
+        var recommendation = new Recommendation("Some recommendation", AdminId, Guid.NewGuid());
+        typeof(Recommendation).GetProperty(nameof(Recommendation.ChildBooks))!.SetValue(recommendation, new List<ChildBook>());
 
-        childBook.AddAdvicesIfNeeded(new List<Advice> { advice });
+        childBook.AddRecommendationsIfNeeded(new List<Recommendation> { recommendation });
 
-        Assert.Single(childBook.Advices);
+        Assert.Single(childBook.Recommendations);
     }
 
     [Fact]
-    public void AddAdvicesIfNeeded_SameAdviceTwice_ShouldNotDuplicate()
+    public void AddRecommendationsIfNeeded_SameRecommendationTwice_ShouldNotDuplicate()
     {
         var childBook = CreateChildBook();
-        var advice = new Advice("Some advice", AdminId, Guid.NewGuid());
-        typeof(Advice).GetProperty(nameof(Advice.ChildBooks))!.SetValue(advice, new List<ChildBook>());
+        var recommendation = new Recommendation("Some recommendation", AdminId, Guid.NewGuid());
+        typeof(Recommendation).GetProperty(nameof(Recommendation.ChildBooks))!.SetValue(recommendation, new List<ChildBook>());
 
-        childBook.AddAdvicesIfNeeded(new List<Advice> { advice });
-        childBook.AddAdvicesIfNeeded(new List<Advice> { advice });
+        childBook.AddRecommendationsIfNeeded(new List<Recommendation> { recommendation });
+        childBook.AddRecommendationsIfNeeded(new List<Recommendation> { recommendation });
 
-        Assert.Single(childBook.Advices);
+        Assert.Single(childBook.Recommendations);
     }
 }

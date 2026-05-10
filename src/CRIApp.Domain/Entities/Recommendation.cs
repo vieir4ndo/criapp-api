@@ -2,7 +2,7 @@ using CRIApp.Domain.Extensions;
 
 namespace CRIApp.Domain.Entities;
 
-public class Advice
+public class Recommendation
 {
     public int Id { get; set; }
     public string Text { get; private set; }
@@ -14,11 +14,11 @@ public class Advice
     public List<ChildBook> ChildBooks { get; private set; }
     public int ReferenceNumber { get; private set; }
 
-    protected Advice()
+    protected Recommendation()
     {
     }
 
-    public Advice(string text, Guid adminId, Guid questionId)
+    public Recommendation(string text, Guid adminId, Guid questionId)
     {
         Text = text;
         QuestionId = questionId;
@@ -26,14 +26,14 @@ public class Advice
         Validate();
     }
 
-    public Advice WithTranslations(string? textEn, string? textPt)
+    public Recommendation WithTranslations(string? textEn, string? textPt)
     {
         TextEn = textEn;
         TextPt = textPt;
         return this;
     }
 
-    public Advice WithImage(byte[]? image)
+    public Recommendation WithImage(byte[]? image)
     {
         Image = image;
         return this;
@@ -41,7 +41,7 @@ public class Advice
 
     private void Validate()
     {
-        Text.IsNullOrEmpty("An advice cannot have a null or empty text");
-        QuestionId.IsEmptyGuid("An advice has to have a question associated");
+        Text.IsNullOrEmpty("A recommendation cannot have a null or empty text");
+        QuestionId.IsEmptyGuid("A recommendation has to have a question associated");
     }
 }

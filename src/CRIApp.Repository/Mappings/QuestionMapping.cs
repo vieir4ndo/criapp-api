@@ -36,7 +36,7 @@ public class QuestionMapping : IEntityTypeConfiguration<Question>
             .WithOne(x => x.Question)
             .HasForeignKey(x => x.QuestionId);
         
-        builder.HasMany(x => x.Advices)
+        builder.HasMany(x => x.Recommendations)
             .WithOne(x => x.Question)
             .HasForeignKey(x => x.QuestionId);
     }

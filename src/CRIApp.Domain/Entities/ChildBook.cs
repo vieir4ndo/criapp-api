@@ -9,7 +9,7 @@ public class ChildBook : Entity
     public int Score { get; private set; }
     public DateTime ScoreLastUpdatedAt { get; private set; }
     public List<Award> Awards { get; private set; } = new();
-    public List<Advice> Advices { get; private set; } = new();
+    public List<Recommendation> Recommendations { get; private set; } = new();
 
     protected ChildBook() { }
 
@@ -53,12 +53,12 @@ public class ChildBook : Entity
             Awards.Add(award);
     }
 
-    public void AddAdvicesIfNeeded(IList<Advice> advices)
+    public void AddRecommendationsIfNeeded(IList<Recommendation> recommendations)
     {
-        foreach (var advice in advices)
+        foreach (var recommendation in recommendations)
         {
-            if (!Advices.Contains(advice))
-                Advices.Add(advice);
+            if (!Recommendations.Contains(recommendation))
+                Recommendations.Add(recommendation);
         }
     }
 }
