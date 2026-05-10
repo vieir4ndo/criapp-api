@@ -12,9 +12,5 @@ public interface IUserService
     Task Update(Guid userId, UpdateUserDto dto);
     Task ForgotPassword(string username);
     Task ResetPassword(ResetPasswordDto dto);
-    Task UpdateScore(User user);
-    Task<IList<User>> GetAllUsers();
-    Task<IList<AwardDto>> GetAwards(Guid userId);
-    Task<IList<AdviceDto>> GetAdvices(Guid userId);
     Task Deactivate(Guid userId);
 }

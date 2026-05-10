@@ -23,15 +23,15 @@ public class AdviceMapping: IEntityTypeConfiguration<Advice>
         builder.Property(x => x.TextPt)
             .HasColumnType("varchar(500)");
 
-        builder.HasMany(x => x.Users)
+        builder.HasMany(x => x.ChildBooks)
             .WithMany(x => x.Advices)
-            .UsingEntity<UserAdvice>(
-                l => l.HasOne(ur => ur.User).WithMany().HasForeignKey(ur => ur.UsersId),
-                r => r.HasOne(ur => ur.Advice).WithMany().HasForeignKey(ur => ur.AdvicesId),
+            .UsingEntity<ChildBookAdvice>(
+                l => l.HasOne(cb => cb.ChildBook).WithMany().HasForeignKey(cb => cb.ChildBooksId),
+                r => r.HasOne(cb => cb.Advice).WithMany().HasForeignKey(cb => cb.AdvicesId),
                 j =>
                 {
-                    j.ToTable("UserAdvice");
-                    j.Property(ur => ur.AdvicesId).HasColumnName("AdvicesId");
+                    j.ToTable("ChildBookAdvice");
+                    j.Property(cb => cb.AdvicesId).HasColumnName("AdvicesId");
                 });
 
         builder.Property(x => x.Id)

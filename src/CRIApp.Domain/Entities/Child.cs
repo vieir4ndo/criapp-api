@@ -13,6 +13,7 @@ public class Child : Entity
     public User Prc { get; private set; }
     public bool IsPremature { get; private set; }
     public List<Answer> Answers { get; private set; }
+    public ChildBook? ChildBook { get; private set; }
 
     public Child(string name, DateTime birthDate, Sex sex, int monthsOfBreastFeeding, Guid prcId, bool isPremature)
     {

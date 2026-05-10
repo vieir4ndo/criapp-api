@@ -7,9 +7,9 @@ namespace CRIApp.Application.Jobs;
 public class SaveUsersAdvices : IRecurrentJob
 {
     private readonly ILogger<SaveUsersAdvices> _logger;
-    private readonly IUserRepository _repository;
+    private readonly IChildBookRepository _repository;
 
-    public SaveUsersAdvices(ILogger<SaveUsersAdvices> logger, IUserRepository repository)
+    public SaveUsersAdvices(ILogger<SaveUsersAdvices> logger, IChildBookRepository repository)
     {
         _logger = logger;
         _repository = repository;
@@ -19,13 +19,13 @@ public class SaveUsersAdvices : IRecurrentJob
     {
         _logger.LogInformation("Job {JobName} started", nameof(SaveUsersAdvices));
 
-        var users = await _repository.GetAll();
+        var childBooks = await _repository.GetAll();
 
-        foreach (var user in users)
+        foreach (var childBook in childBooks)
         {
-            var countBefore = user.Advices.Count;
+            var countBefore = childBook.Advices.Count;
 
-            foreach (var answer in user.Answers)
+            foreach (var answer in childBook.Child.Answers)
             {
                 List<int> values = answer.Question.ScoringType switch
                 {
@@ -36,13 +36,13 @@ public class SaveUsersAdvices : IRecurrentJob
 
                 if (!values.Contains(answer.Value))
                 {
-                    user.AddAdvicesIfNeeded(answer.Question.Advices);
+                    childBook.AddAdvicesIfNeeded(answer.Question.Advices);
                 }
             }
 
-            if (user.Advices.Count != countBefore)
+            if (childBook.Advices.Count != countBefore)
             {
-                await _repository.Update(user);
+                await _repository.Update(childBook);
             }
         }
 

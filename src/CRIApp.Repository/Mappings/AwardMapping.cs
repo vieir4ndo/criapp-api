@@ -13,8 +13,8 @@ public class AwardMapping : IEntityTypeConfiguration<Award>
         builder.Property(x => x.Type)
             .IsRequired();
         
-        builder.HasOne(x => x.Prc)
+        builder.HasOne(x => x.ChildBook)
             .WithMany(x => x.Awards)
-            .HasForeignKey(x => x.PrcId);
+            .HasForeignKey(x => x.ChildBookId);
     }
 }

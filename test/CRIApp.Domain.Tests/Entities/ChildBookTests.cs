@@ -1,0 +1,197 @@
+using CRIApp.Domain.Entities;
+using CRIApp.Domain.Enums;
+using System.Reflection;
+using Xunit;
+
+namespace CRIApp.Domain.Tests.Entities;
+
+public class ChildBookTests
+{
+    private static readonly Guid AdminId = Guid.NewGuid();
+
+    private static ChildBook CreateChildBook()
+    {
+        var prcId = Guid.NewGuid();
+        var child = new Child("Child", new DateTime(2020, 1, 1), Sex.Male, 6, prcId, false);
+        typeof(Child).GetProperty(nameof(Child.Answers))!.SetValue(child, new List<Answer>());
+
+        var childBook = new ChildBook(child.Id);
+        typeof(ChildBook).GetProperty(nameof(ChildBook.Child))!.SetValue(childBook, child);
+        return childBook;
+    }
+
+    private static Answer BuildAnswerWithQuestion(int value, QuestionScoringType scoringType)
+    {
+        var question = new Question("Sample question?", AdminId, QuestionType.Agreement, scoringType);
+        var answer = new Answer(value, question.Id, Guid.NewGuid(), Guid.NewGuid());
+        typeof(Answer).GetProperty(nameof(Answer.Question))!.SetValue(answer, question);
+        return answer;
+    }
+
+    [Fact]
+    public void Create_ShouldInitializeScoreToZero()
+    {
+        var childBook = CreateChildBook();
+
+        Assert.Equal(0, childBook.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_NoAnswers_ShouldSetScoreToZero()
+    {
+        var childBook = CreateChildBook();
+
+        childBook.UpdateScore(childBook.Child.Answers);
+
+        Assert.Equal(0, childBook.Score);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public void UpdateScore_DefaultScoringWithCountableValue_ShouldScore100(int value)
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Default));
+
+        childBook.UpdateScore(childBook.Child.Answers);
+
+        Assert.Equal(100, childBook.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_DefaultScoringWithValue5_ShouldNotCount()
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
+
+        childBook.UpdateScore(childBook.Child.Answers);
+
+        Assert.Equal(0, childBook.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_ReversedScoringWithValue5_ShouldScore100()
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Reversed));
+
+        childBook.UpdateScore(childBook.Child.Answers);
+
+        Assert.Equal(100, childBook.Score);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public void UpdateScore_ReversedScoringWithLowValue_ShouldNotCount(int value)
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(value, QuestionScoringType.Reversed));
+
+        childBook.UpdateScore(childBook.Child.Answers);
+
+        Assert.Equal(0, childBook.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_MixedScoringTypes_ShouldCountCorrectly()
+    {
+        var childBook = CreateChildBook();
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(3, QuestionScoringType.Default));
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Reversed));
+        childBook.Child.Answers.Add(BuildAnswerWithQuestion(2, QuestionScoringType.Reversed));
+
+        childBook.UpdateScore(childBook.Child.Answers);
+
+        Assert.Equal(50, childBook.Score);
+    }
+
+    [Fact]
+    public void UpdateScore_ShouldUpdateScoreLastUpdatedAt()
+    {
+        var childBook = CreateChildBook();
+        var before = DateTime.UtcNow;
+
+        childBook.UpdateScore(childBook.Child.Answers);
+
+        Assert.True(childBook.ScoreLastUpdatedAt >= before);
+    }
+
+    [Fact]
+    public void AddAwardIfNeeded_NewAwardType_ShouldAddAward()
+    {
+        var childBook = CreateChildBook();
+
+        childBook.AddAwardIfNeeded(AwardType.FirstSteps);
+
+        Assert.Single(childBook.Awards);
+        Assert.Equal(AwardType.FirstSteps, childBook.Awards[0].Type);
+    }
+
+    [Fact]
+    public void AddAwardIfNeeded_SameAwardTypeTwice_ShouldNotDuplicate()
+    {
+        var childBook = CreateChildBook();
+
+        childBook.AddAwardIfNeeded(AwardType.FirstSteps);
+        childBook.AddAwardIfNeeded(AwardType.FirstSteps);
+
+        Assert.Single(childBook.Awards);
+    }
+
+    [Fact]
+    public void AddAwardIfNeeded_DifferentAwardTypes_ShouldAddBoth()
+    {
+        var childBook = CreateChildBook();
+
+        childBook.AddAwardIfNeeded(AwardType.FirstSteps);
+        childBook.AddAwardIfNeeded(AwardType.EngagedFamily);
+
+        Assert.Equal(2, childBook.Awards.Count);
+    }
+
+    [Fact]
+    public void AddAwardIfNeeded_AllFiveTypes_ShouldAddAllFive()
+    {
+        var childBook = CreateChildBook();
+
+        childBook.AddAwardIfNeeded(AwardType.FirstSteps);
+        childBook.AddAwardIfNeeded(AwardType.EngagedFamily);
+        childBook.AddAwardIfNeeded(AwardType.Overcoming);
+        childBook.AddAwardIfNeeded(AwardType.PositiveEnvironment);
+        childBook.AddAwardIfNeeded(AwardType.SmallProgress);
+
+        Assert.Equal(5, childBook.Awards.Count);
+    }
+
+    [Fact]
+    public void AddAdvicesIfNeeded_NewAdvice_ShouldAddIt()
+    {
+        var childBook = CreateChildBook();
+        var advice = new Advice("Some advice", AdminId, Guid.NewGuid());
+        typeof(Advice).GetProperty(nameof(Advice.ChildBooks))!.SetValue(advice, new List<ChildBook>());
+
+        childBook.AddAdvicesIfNeeded(new List<Advice> { advice });
+
+        Assert.Single(childBook.Advices);
+    }
+
+    [Fact]
+    public void AddAdvicesIfNeeded_SameAdviceTwice_ShouldNotDuplicate()
+    {
+        var childBook = CreateChildBook();
+        var advice = new Advice("Some advice", AdminId, Guid.NewGuid());
+        typeof(Advice).GetProperty(nameof(Advice.ChildBooks))!.SetValue(advice, new List<ChildBook>());
+
+        childBook.AddAdvicesIfNeeded(new List<Advice> { advice });
+        childBook.AddAdvicesIfNeeded(new List<Advice> { advice });
+
+        Assert.Single(childBook.Advices);
+    }
+}

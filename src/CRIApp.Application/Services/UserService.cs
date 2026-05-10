@@ -158,43 +158,6 @@ public class UserService : IUserService
         await _repository.Update(user);
     }
 
-    public async Task UpdateScore(User user)
-    {
-        user.UpdateScore();
-        await _repository.Update(user);
-    }
-    
-    public async Task<IList<User>> GetAllUsers()
-    {
-        return await _repository.GetAll();
-    }
-
-    public async Task<IList<AwardDto>> GetAwards(Guid userId)
-    {
-        var user = await _repository.GetByIdWithAwardsAndAdvices(userId);
-
-        if (user is null)
-        {
-            _logger.LogWarning("User {UserId} not found when fetching awards", userId);
-            throw new NotFoundException(_localizer["UserNotFound"]);
-        }
-
-        return user.Awards.Select(a => new AwardDto(a)).ToList();
-    }
-
-    public async Task<IList<AdviceDto>> GetAdvices(Guid userId)
-    {
-        var user = await _repository.GetByIdWithAwardsAndAdvices(userId);
-
-        if (user is null)
-        {
-            _logger.LogWarning("User {UserId} not found when fetching advices", userId);
-            throw new NotFoundException(_localizer["UserNotFound"]);
-        }
-
-        return user.Advices.Select(a => new AdviceDto(a)).ToList();
-    }
-
     public async Task Deactivate(Guid userId)
     {
         var user = await GetAndValidateById(userId);

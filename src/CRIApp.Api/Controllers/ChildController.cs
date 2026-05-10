@@ -14,10 +14,12 @@ namespace CRIApp.Api.Controllers;
 public class ChildController : CriAppControllerBase
 {
     private readonly IChildService _service;
+    private readonly IChildBookService _childBookService;
 
-    public ChildController(IChildService service, ILogger<ChildController> logger) : base(logger)
+    public ChildController(IChildService service, IChildBookService childBookService, ILogger<ChildController> logger) : base(logger)
     {
         _service = service;
+        _childBookService = childBookService;
     }
     
     [HttpPost]
@@ -54,5 +56,13 @@ public class ChildController : CriAppControllerBase
         var child = await _service.GetAndValidateById(childId, GetUserId());
 
         return new ApiResponse<ChildDto>(true, new ChildDto(child));
+    }
+
+    [HttpGet("{childId}/book")]
+    public async Task<ApiResponse<ChildBookDto>> GetBook([FromRoute] Guid childId)
+    {
+        var childBook = await _childBookService.GetByChildId(childId, GetUserId());
+
+        return new ApiResponse<ChildBookDto>(true, childBook);
     }
 }

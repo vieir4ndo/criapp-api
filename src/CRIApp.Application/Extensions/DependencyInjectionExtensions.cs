@@ -24,6 +24,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IForumService, ForumService>();
         services.AddScoped<ICommentService, CommentService>();
         services.AddScoped<IAudiovisualResourceService, AudiovisualResourceService>();
+        services.AddScoped<IChildBookService, ChildBookService>();
     }
 
     public static void AddRepositories(this IServiceCollection services)
@@ -32,6 +33,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IQuestionRepository, QuestionRepository>();
         services.AddScoped<IAnswerRepository, AnswerRepository>();
         services.AddScoped<IChildRepository, ChildRepository>();
+        services.AddScoped<IChildBookRepository, ChildBookRepository>();
         services.AddScoped<IUserResetPasswordCodeRepository, UserResetPasswordCodeRepository>();
         services.AddScoped<IFaqRepository, FaqRepository>();
         services.AddScoped<IForumRepository, ForumRepository>();

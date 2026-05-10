@@ -6,14 +6,14 @@ public class Award : Entity
 {
     public AwardType Type { get; private set; }
 
-    public Guid PrcId { get; private set; }
-    public User Prc { get; private set; }
+    public Guid ChildBookId { get; private set; }
+    public ChildBook ChildBook { get; private set; } = null!;
 
     protected Award() {}
 
-    public Award(AwardType type, Guid prcId)
+    public Award(AwardType type, Guid childBookId)
     {
         Type = type;
-        PrcId = prcId;
+        ChildBookId = childBookId;
     }
 }

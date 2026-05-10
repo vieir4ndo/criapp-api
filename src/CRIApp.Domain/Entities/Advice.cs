@@ -10,7 +10,7 @@ public class Advice
     public string? TextPt { get; private set; }
     public Question Question { get; private set; }
     public Guid QuestionId { get; private set; }
-    public List<User> Users { get; private set; }
+    public List<ChildBook> ChildBooks { get; private set; }
     public int ReferenceNumber { get; private set; }
 
     protected Advice()
