@@ -11,7 +11,7 @@ public static class JobsExtensions
     {
         services.AddTransient<NotifyUsersWithLessThanTenAnswersJob>();
         services.AddTransient<UpdateChildBookScoreJob>();
-        services.AddTransient<SaveUsersAdvices>();
+        services.AddTransient<SaveUsersRecommendations>();
         services.AddTransient<CalculateAndSaveAwards>();
         services.AddTransient<CleanUserResetPasswordCodesJob>();
         return services;
@@ -30,9 +30,9 @@ public static class JobsExtensions
             nameof(UpdateChildBookScoreJob),
             x => x.Run(),
             Cron.Minutely);
-        recurringJobManager.RemoveIfExists(nameof(SaveUsersAdvices));
-        recurringJobManager.AddOrUpdate<SaveUsersAdvices>(
-            nameof(SaveUsersAdvices),
+        recurringJobManager.RemoveIfExists(nameof(SaveUsersRecommendations));
+        recurringJobManager.AddOrUpdate<SaveUsersRecommendations>(
+            nameof(SaveUsersRecommendations),
             x => x.Run(),
             Cron.Hourly);
         recurringJobManager.RemoveIfExists(nameof(CalculateAndSaveAwards));

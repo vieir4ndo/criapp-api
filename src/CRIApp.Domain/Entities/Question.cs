@@ -13,7 +13,7 @@ public class Question : Entity
     public IList<Answer> Answers { get; private set; }
     public IList<FamilyType> ExcludedFamilyTypes { get; private set; }
     public QuestionScoringType ScoringType { get; private set; }
-    public IList<Advice> Advices { get; private set; } = new List<Advice>();
+    public IList<Recommendation> Recommendations { get; private set; } = new List<Recommendation>();
 
     protected Question() {}
     

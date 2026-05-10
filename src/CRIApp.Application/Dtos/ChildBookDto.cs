@@ -9,7 +9,7 @@ public class ChildBookDto
     public int Score { get; set; }
     public DateTime ScoreLastUpdatedAt { get; set; }
     public List<AwardDto> Awards { get; set; }
-    public List<AdviceDto> Advices { get; set; }
+    public List<RecommendationDto> Recommendations { get; set; }
 
     public ChildBookDto(ChildBook childBook)
     {
@@ -18,6 +18,6 @@ public class ChildBookDto
         Score = childBook.Score;
         ScoreLastUpdatedAt = childBook.ScoreLastUpdatedAt;
         Awards = childBook.Awards.Select(a => new AwardDto(a)).ToList();
-        Advices = childBook.Advices.Select(a => new AdviceDto(a)).ToList();
+        Recommendations = childBook.Recommendations.Select(r => new RecommendationDto(r)).ToList();
     }
 }

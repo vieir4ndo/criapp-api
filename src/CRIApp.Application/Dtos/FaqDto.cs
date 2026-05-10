@@ -5,7 +5,7 @@ namespace CRIApp.Application.Dtos;
 
 public class FaqDto
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public string Question { get; private set; }
     public string Answer { get; private set; }
 

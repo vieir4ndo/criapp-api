@@ -1,8 +1,9 @@
 namespace CRIApp.Domain.Entities;
 using Extensions;
 
-public class Faq : Entity
+public class Faq
 {
+    public int Id { get; private set; }
     public string Question { get; private set; }
     public string Answer { get; private set; }
     public string? QuestionEn { get; private set; }

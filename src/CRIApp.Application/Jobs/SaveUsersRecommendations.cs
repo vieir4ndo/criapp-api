@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Application.Jobs;
 
-public class SaveUsersAdvices : IRecurrentJob
+public class SaveUsersRecommendations : IRecurrentJob
 {
-    private readonly ILogger<SaveUsersAdvices> _logger;
+    private readonly ILogger<SaveUsersRecommendations> _logger;
     private readonly IChildBookRepository _repository;
 
-    public SaveUsersAdvices(ILogger<SaveUsersAdvices> logger, IChildBookRepository repository)
+    public SaveUsersRecommendations(ILogger<SaveUsersRecommendations> logger, IChildBookRepository repository)
     {
         _logger = logger;
         _repository = repository;
@@ -17,13 +17,13 @@ public class SaveUsersAdvices : IRecurrentJob
 
     public async Task Run()
     {
-        _logger.LogInformation("Job {JobName} started", nameof(SaveUsersAdvices));
+        _logger.LogInformation("Job {JobName} started", nameof(SaveUsersRecommendations));
 
         var childBooks = await _repository.GetAll();
 
         foreach (var childBook in childBooks)
         {
-            var countBefore = childBook.Advices.Count;
+            var countBefore = childBook.Recommendations.Count;
 
             foreach (var answer in childBook.Child.Answers)
             {
@@ -36,16 +36,16 @@ public class SaveUsersAdvices : IRecurrentJob
 
                 if (!values.Contains(answer.Value))
                 {
-                    childBook.AddAdvicesIfNeeded(answer.Question.Advices);
+                    childBook.AddRecommendationsIfNeeded(answer.Question.Recommendations);
                 }
             }
 
-            if (childBook.Advices.Count != countBefore)
+            if (childBook.Recommendations.Count != countBefore)
             {
                 await _repository.Update(childBook);
             }
         }
 
-        _logger.LogInformation("Job {JobName} completed", nameof(SaveUsersAdvices));
+        _logger.LogInformation("Job {JobName} completed", nameof(SaveUsersRecommendations));
     }
 }

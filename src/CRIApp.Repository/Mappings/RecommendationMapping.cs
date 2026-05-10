@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CRIApp.Repository.Mappings;
 
-public class AdviceMapping: IEntityTypeConfiguration<Advice>
+public class RecommendationMapping: IEntityTypeConfiguration<Recommendation>
 {
-    public void Configure(EntityTypeBuilder<Advice> builder)
+    public void Configure(EntityTypeBuilder<Recommendation> builder)
     {
-        builder.ToTable("Advice");
+        builder.ToTable("Recommendation");
 
         builder.Property(p => p.Id)
             .UseIdentityByDefaultColumn();
@@ -26,17 +26,14 @@ public class AdviceMapping: IEntityTypeConfiguration<Advice>
         builder.Property(x => x.Image);
 
         builder.HasMany(x => x.ChildBooks)
-            .WithMany(x => x.Advices)
-            .UsingEntity<ChildBookAdvice>(
+            .WithMany(x => x.Recommendations)
+            .UsingEntity<ChildBookRecommendation>(
                 l => l.HasOne(cb => cb.ChildBook).WithMany().HasForeignKey(cb => cb.ChildBooksId),
-                r => r.HasOne(cb => cb.Advice).WithMany().HasForeignKey(cb => cb.AdvicesId),
+                r => r.HasOne(cb => cb.Recommendation).WithMany().HasForeignKey(cb => cb.RecommendationsId),
                 j =>
                 {
-                    j.ToTable("ChildBookAdvice");
-                    j.Property(cb => cb.AdvicesId).HasColumnName("AdvicesId");
+                    j.ToTable("ChildBookRecommendation");
+                    j.Property(cb => cb.RecommendationsId).HasColumnName("RecommendationsId");
                 });
-
-        builder.Property(x => x.Id)
-            .HasColumnName("Id");
     }
 }
