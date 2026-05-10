@@ -1,3 +1,4 @@
+using CRIApp.Application.Abstractions;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
@@ -9,16 +10,16 @@ public class SendMotivationalNotificationJob : IRecurrentJob
 {
     private readonly ILogger<SendMotivationalNotificationJob> _logger;
     private readonly IChildBookRepository _childBookRepository;
-    private readonly INotificationRepository _notificationRepository;
+    private readonly INotificationService _notificationService;
 
     public SendMotivationalNotificationJob(
         ILogger<SendMotivationalNotificationJob> logger,
         IChildBookRepository childBookRepository,
-        INotificationRepository notificationRepository)
+        INotificationService notificationService)
     {
         _logger = logger;
         _childBookRepository = childBookRepository;
-        _notificationRepository = notificationRepository;
+        _notificationService = notificationService;
     }
 
     public async Task Run()
@@ -32,10 +33,7 @@ public class SendMotivationalNotificationJob : IRecurrentJob
         {
             if (!ShouldNotify(childBook, today)) continue;
 
-            var alreadyExists = await _notificationRepository.ExistsForToday(childBook.Id, NotificationType.Motivational, today);
-            if (alreadyExists) continue;
-
-            await _notificationRepository.Create(new Notification(childBook.Id, NotificationType.Motivational));
+            await _notificationService.CreateIfNotExists(childBook.Id, NotificationType.Motivational);
 
             _logger.LogInformation("Motivational notification created for ChildBook {ChildBookId}", childBook.Id);
         }

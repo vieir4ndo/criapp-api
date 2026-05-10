@@ -1,3 +1,4 @@
+using CRIApp.Application.Abstractions;
 using CRIApp.Application.Jobs;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
@@ -14,6 +15,7 @@ public class UpdateAndAwardChildBookJobTests
     private readonly Mock<IChildBookRepository> _childBookRepositoryMock;
     private readonly Mock<IRecommendationCheckpointRepository> _checkpointRepositoryMock;
     private readonly Mock<IAwardRepository> _awardRepositoryMock;
+    private readonly Mock<INotificationService> _notificationServiceMock;
     private readonly UpdateAndAwardChildBookJob _sut;
 
     private static readonly Guid AdminId = Guid.NewGuid();
@@ -38,11 +40,13 @@ public class UpdateAndAwardChildBookJobTests
             .ReturnsAsync(new List<RecommendationCheckpoint>());
         _awardRepositoryMock = new Mock<IAwardRepository>();
         _awardRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(CreateAllAwards());
+        _notificationServiceMock = new Mock<INotificationService>();
         _sut = new UpdateAndAwardChildBookJob(
             NullLogger<UpdateAndAwardChildBookJob>.Instance,
             _childBookRepositoryMock.Object,
             _checkpointRepositoryMock.Object,
-            _awardRepositoryMock.Object);
+            _awardRepositoryMock.Object,
+            _notificationServiceMock.Object);
     }
 
     private static ChildBook BuildChildBook()
@@ -303,5 +307,34 @@ public class UpdateAndAwardChildBookJobTests
         await _sut.Run();
 
         Assert.Single(childBook.Awards.Where(a => a.Type == AwardType.ConsistentParent));
+    }
+
+    [Fact]
+    public async Task Run_NewAwardGranted_ShouldCreateNewAwardNotification()
+    {
+        var childBook = BuildChildBook();
+        var today = DateTime.UtcNow.Date;
+        for (var i = 1; i <= 7; i++)
+            childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-i)));
+        _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
+
+        await _sut.Run();
+
+        _notificationServiceMock.Verify(
+            r => r.CreateIfNotExists(It.IsAny<Guid>(), NotificationType.NewAward),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Run_NoNewAwards_ShouldNotCreateNewAwardNotification()
+    {
+        var childBook = BuildChildBook();
+        _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
+
+        await _sut.Run();
+
+        _notificationServiceMock.Verify(
+            r => r.CreateIfNotExists(It.IsAny<Guid>(), NotificationType.NewAward),
+            Times.Never);
     }
 }

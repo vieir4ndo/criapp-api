@@ -1,3 +1,4 @@
+using CRIApp.Application.Abstractions;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
@@ -11,17 +12,20 @@ public class UpdateAndAwardChildBookJob : IRecurrentJob
     private readonly IChildBookRepository _childBookRepository;
     private readonly IRecommendationCheckpointRepository _checkpointRepository;
     private readonly IAwardRepository _awardRepository;
+    private readonly INotificationService _notificationService;
 
     public UpdateAndAwardChildBookJob(
         ILogger<UpdateAndAwardChildBookJob> logger,
         IChildBookRepository childBookRepository,
         IRecommendationCheckpointRepository checkpointRepository,
-        IAwardRepository awardRepository)
+        IAwardRepository awardRepository,
+        INotificationService notificationService)
     {
         _logger = logger;
         _childBookRepository = childBookRepository;
         _checkpointRepository = checkpointRepository;
         _awardRepository = awardRepository;
+        _notificationService = notificationService;
     }
 
     public async Task Run()
@@ -49,6 +53,9 @@ public class UpdateAndAwardChildBookJob : IRecurrentJob
             EvaluateGoldMedal(childBook, awards);
 
             await _childBookRepository.Update(childBook);
+
+            if (childBook.Awards.Count > awardCountBefore)
+                await _notificationService.CreateIfNotExists(childBook.Id, NotificationType.NewAward);
         }
 
         _logger.LogInformation("Job {JobName} completed", nameof(UpdateAndAwardChildBookJob));

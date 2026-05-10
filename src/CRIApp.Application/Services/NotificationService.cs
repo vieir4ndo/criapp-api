@@ -2,6 +2,7 @@ using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
 using CRIApp.Application.Resources;
 using CRIApp.Domain.Data;
+using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
 using Microsoft.Extensions.Localization;
@@ -47,6 +48,14 @@ public class NotificationService : INotificationService
             _localizer["Notification_ReEvaluation_Heading"].Value,
             string.Format(_localizer["Notification_ReEvaluation_Body"].Value, childName)
         ),
+        NotificationType.NewAward => (
+            _localizer["Notification_NewAward_Heading"].Value,
+            string.Format(_localizer["Notification_NewAward_Body"].Value, childName)
+        ),
+        NotificationType.NewRecommendations => (
+            _localizer["Notification_NewRecommendations_Heading"].Value,
+            string.Format(_localizer["Notification_NewRecommendations_Body"].Value, childName)
+        ),
         _ => (string.Empty, string.Empty)
     };
 
@@ -66,5 +75,13 @@ public class NotificationService : INotificationService
 
         notification.MarkAsRead();
         await _notificationRepository.Update(notification);
+    }
+
+    public async Task CreateIfNotExists(Guid childBookId, NotificationType type)
+    {
+        var today = DateTime.UtcNow.Date;
+        var alreadyExists = await _notificationRepository.ExistsForToday(childBookId, type, today);
+        if (!alreadyExists)
+            await _notificationRepository.Create(new Notification(childBookId, type));
     }
 }
