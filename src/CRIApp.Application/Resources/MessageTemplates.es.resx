@@ -59,7 +59,40 @@
     <value>Bienvenido a CRIApp</value>
   </data>
   <data name="Sms_ForgotPassword" xml:space="preserve">
-    <value>Tu codigo de recuperacion es: {0}</value>
+    <value>Tu código de recuperación es: {0}</value>
+  </data>
+
+  <!-- Notification: Motivational (2 days without checkpoint) -->
+  <data name="Notification_Motivational_Subject" xml:space="preserve">
+    <value>¡Sigue adelante con las rutinas de {0}!</value>
+  </data>
+  <data name="Notification_Motivational_Heading" xml:space="preserve">
+    <value>¡No te rindas!</value>
+  </data>
+  <data name="Notification_Motivational_Body" xml:space="preserve">
+    <value>Llevas 2 días sin registrar las rutinas de {0}. Cada pequeño paso cuenta en el desarrollo de tu hijo/a. ¡Abre la app y marca tus orientaciones de hoy!</value>
+  </data>
+
+  <!-- Notification: PointsRisk (3 days without checkpoint) -->
+  <data name="Notification_PointsRisk_Subject" xml:space="preserve">
+    <value>Tus puntos están en riesgo — {0}</value>
+  </data>
+  <data name="Notification_PointsRisk_Heading" xml:space="preserve">
+    <value>¡Atención! Riesgo de pérdida de puntos</value>
+  </data>
+  <data name="Notification_PointsRisk_Body" xml:space="preserve">
+    <value>Han pasado 3 días sin que registres las rutinas de {0}. Tu puntuación puede verse afectada. Accede ahora y mantén tu progreso.</value>
+  </data>
+
+  <!-- Notification: ReEvaluation (7 days without any activity) -->
+  <data name="Notification_ReEvaluation_Subject" xml:space="preserve">
+    <value>Es momento de reevaluar a {0}</value>
+  </data>
+  <data name="Notification_ReEvaluation_Heading" xml:space="preserve">
+    <value>¿Quieres actualizar las orientaciones?</value>
+  </data>
+  <data name="Notification_ReEvaluation_Body" xml:space="preserve">
+    <value>Llevas 7 días sin actividad para {0}. Te invitamos a realizar una nueva evaluación del cuestionario para actualizar las orientaciones parentales adaptadas a tu situación actual.</value>
   </data>
 </root>
 

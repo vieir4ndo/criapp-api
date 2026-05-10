@@ -61,5 +61,38 @@
   <data name="Sms_ForgotPassword" xml:space="preserve">
     <value>Seu código de recuperação é: {0}</value>
   </data>
+
+  <!-- Notification: Motivational (2 days without checkpoint) -->
+  <data name="Notification_Motivational_Subject" xml:space="preserve">
+    <value>Continue com as rotinas de {0}!</value>
+  </data>
+  <data name="Notification_Motivational_Heading" xml:space="preserve">
+    <value>Não desista!</value>
+  </data>
+  <data name="Notification_Motivational_Body" xml:space="preserve">
+    <value>Faz 2 dias que você não registra as rotinas de {0}. Cada pequeno passo importa no desenvolvimento do seu filho/a. Abra o app e marque as orientações de hoje!</value>
+  </data>
+
+  <!-- Notification: PointsRisk (3 days without checkpoint) -->
+  <data name="Notification_PointsRisk_Subject" xml:space="preserve">
+    <value>Seus pontos estão em risco — {0}</value>
+  </data>
+  <data name="Notification_PointsRisk_Heading" xml:space="preserve">
+    <value>Atenção! Risco de perda de pontos</value>
+  </data>
+  <data name="Notification_PointsRisk_Body" xml:space="preserve">
+    <value>Já se passaram 3 dias sem registrar as rotinas de {0}. Sua pontuação pode ser afetada. Acesse agora e mantenha seu progresso.</value>
+  </data>
+
+  <!-- Notification: ReEvaluation (7 days without any activity) -->
+  <data name="Notification_ReEvaluation_Subject" xml:space="preserve">
+    <value>É hora de reavaliar {0}</value>
+  </data>
+  <data name="Notification_ReEvaluation_Heading" xml:space="preserve">
+    <value>Deseja atualizar as orientações?</value>
+  </data>
+  <data name="Notification_ReEvaluation_Body" xml:space="preserve">
+    <value>Você ficou 7 dias sem nenhuma atividade para {0}. Convidamos você a refazer o questionário para atualizar as orientações parentais adaptadas à sua situação atual.</value>
+  </data>
 </root>
 

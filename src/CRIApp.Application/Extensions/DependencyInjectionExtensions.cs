@@ -25,6 +25,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<ICommentService, CommentService>();
         services.AddScoped<IAudiovisualResourceService, AudiovisualResourceService>();
         services.AddScoped<IChildBookService, ChildBookService>();
+        services.AddScoped<INotificationService, NotificationService>();
     }
 
     public static void AddRepositories(this IServiceCollection services)
@@ -41,5 +42,6 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IAudiovisualResourceRepository, AudiovisualResourceRepository>();
         services.AddScoped<IAwardRepository, AwardRepository>();
         services.AddScoped<IRecommendationCheckpointRepository, RecommendationCheckpointRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
     }
 }
