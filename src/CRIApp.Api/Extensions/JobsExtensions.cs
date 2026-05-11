@@ -44,7 +44,7 @@ public static class JobsExtensions
         recurringJobManager.AddOrUpdate<UpdateAndAwardChildBookJob>(
             nameof(UpdateAndAwardChildBookJob),
             x => x.Run(),
-            Cron.Minutely);
+            Cron.Daily);
 
         recurringJobManager.RemoveIfExists(nameof(SaveUsersRecommendations));
         recurringJobManager.AddOrUpdate<SaveUsersRecommendations>(
@@ -56,7 +56,7 @@ public static class JobsExtensions
         recurringJobManager.AddOrUpdate<CleanUserResetPasswordCodesJob>(
             nameof(CleanUserResetPasswordCodesJob),
             x => x.Run(),
-            Cron.Minutely);
+            Cron.Daily);
 
         return app;
     }
