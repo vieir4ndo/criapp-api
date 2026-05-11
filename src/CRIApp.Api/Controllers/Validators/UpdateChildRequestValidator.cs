@@ -14,8 +14,8 @@ public class UpdateChildRequestValidator : AbstractValidator<UpdateChildRequest>
 
         RuleFor(x => x.BirthDate)
             .Must(ValidationExtensions.BeValidIso8601Date)
-            .WithMessage("BirthDate must be in format ISO 8601 (YYYY-MM-DD).")
-            .When(x => x.BirthDate != null);;
+            .WithMessage(_ => ValidationMessages.BirthDateFormat)
+            .When(x => x.BirthDate != null);
         
         RuleFor(x => x.Sex)
             .NotEmpty()

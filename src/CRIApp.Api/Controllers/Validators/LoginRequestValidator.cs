@@ -16,12 +16,12 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
         RuleFor(x => x.Username)
             .Must(ValidationExtensions.IsValidUsername)
             .When(_ => FeatureSettings.Current.PhoneNumberUsernameEnabled)
-            .WithMessage("Username must be a valid email address or phone number.");
+            .WithMessage(_ => ValidationMessages.UsernameEmailOrPhone);
 
         RuleFor(x => x.Username)
             .Must(ValidationExtensions.IsValidUsernameEmail)
             .When(_ => !FeatureSettings.Current.PhoneNumberUsernameEnabled)
-            .WithMessage("Username must be a valid email address.");
+            .WithMessage(_ => ValidationMessages.UsernameEmail);
         
         RuleFor(x => x.Password)
             .NotEmpty()

@@ -15,7 +15,7 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 
         RuleFor(x => x.BirthDate)
             .Must(ValidationExtensions.BeValidIso8601Date)
-            .WithMessage("BirthDate must be in format ISO 8601 (YYYY-MM-DD).");
+            .WithMessage(_ => ValidationMessages.BirthDateFormat);
 
         RuleFor(x => x.Sex)
             .NotEmpty()
@@ -29,12 +29,12 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
         RuleFor(x => x.Username)
             .Must(ValidationExtensions.IsValidUsername)
             .When(_ => FeatureSettings.Current.PhoneNumberUsernameEnabled)
-            .WithMessage("Username must be a valid email address or phone number.");
+            .WithMessage(_ => ValidationMessages.UsernameEmailOrPhone);
 
         RuleFor(x => x.Username)
             .Must(ValidationExtensions.IsValidUsernameEmail)
             .When(_ => !FeatureSettings.Current.PhoneNumberUsernameEnabled)
-            .WithMessage("Username must be a valid email address.");
+            .WithMessage(_ => ValidationMessages.UsernameEmail);
 
         RuleFor(x => x.Password)
             .NotEmpty()
@@ -42,7 +42,7 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 
         RuleFor(x => x.Password)
             .Must(ValidationExtensions.IsStrongPassword)
-            .WithMessage("Password must be at least 8 characters and contain uppercase, lowercase, digit and special character.")
+            .WithMessage(_ => ValidationMessages.PasswordStrength)
             .When(x => !string.IsNullOrEmpty(x.Password));
 
         RuleFor(x => x.FamilyType)

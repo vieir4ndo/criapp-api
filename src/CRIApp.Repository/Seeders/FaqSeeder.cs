@@ -67,7 +67,7 @@ public static class FaqSeeder
 
             new Faq(
                 "¿Puedo registrar más de un hijo?",
-                "Sí, puedes añadir varios hijos en la sección 'Crianças'. Cada perfil de niño es independiente, lo que te permite hacer un seguimiento individual del desarrollo de cada uno.",
+                "Sí, puedes añadir varios hijos en la sección 'Niños'. Cada perfil de niño es independiente, lo que te permite hacer un seguimiento individual del desarrollo de cada uno.",
                 adminId.Value
             ).WithTranslations(
                 "Can I register more than one child?",

@@ -16,12 +16,12 @@ public class ResetPasswordRequestValidator : AbstractValidator<ResetPasswordRequ
         RuleFor(x => x.Username)
             .Must(ValidationExtensions.IsValidUsername)
             .When(_ => FeatureSettings.Current.PhoneNumberUsernameEnabled)
-            .WithMessage("Username must be a valid email address or phone number.");
+            .WithMessage(_ => ValidationMessages.UsernameEmailOrPhone);
 
         RuleFor(x => x.Username)
             .Must(ValidationExtensions.IsValidUsernameEmail)
             .When(_ => !FeatureSettings.Current.PhoneNumberUsernameEnabled)
-            .WithMessage("Username must be a valid email address.");
+            .WithMessage(_ => ValidationMessages.UsernameEmail);
         
         RuleFor(x => x.Code)
             .NotEmpty()
@@ -33,7 +33,7 @@ public class ResetPasswordRequestValidator : AbstractValidator<ResetPasswordRequ
 
         RuleFor(x => x.NewPassword)
             .Must(ValidationExtensions.IsStrongPassword)
-            .WithMessage("Password must be at least 8 characters and contain uppercase, lowercase, digit and special character.")
+            .WithMessage(_ => ValidationMessages.PasswordStrength)
             .When(x => !string.IsNullOrEmpty(x.NewPassword));
     }
 }
