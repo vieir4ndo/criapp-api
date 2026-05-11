@@ -75,19 +75,19 @@ public class ChildController : CriAppControllerBase
     }
 
     [HttpGet("{childId}/book/awards")]
-    public async Task<ApiResponse<List<AwardDto>>> GetBookAwards([FromRoute] Guid childId)
+    public async Task<ApiResponse<AwardDto>> GetBookAwards([FromRoute] Guid childId)
     {
         var awards = await _childBookService.GetAwardsByChildId(childId, GetUserId());
 
-        return new ApiResponse<List<AwardDto>>(true, awards);
+        return new ApiResponse<AwardDto>(true, awards);
     }
 
     [HttpGet("{childId}/book/recommendations")]
-    public async Task<ApiResponse<List<RecommendationDto>>> GetBookRecommendations([FromRoute] Guid childId)
+    public async Task<ApiResponse<RecommendationDto>> GetBookRecommendations([FromRoute] Guid childId)
     {
         var recommendations = await _childBookService.GetRecommendationsByChildId(childId, GetUserId());
 
-        return new ApiResponse<List<RecommendationDto>>(true, recommendations);
+        return new ApiResponse<RecommendationDto>(true, recommendations);
     }
 
     [HttpPost("{childId}/book/recommendations/{recommendationId}/checkpoint")]
