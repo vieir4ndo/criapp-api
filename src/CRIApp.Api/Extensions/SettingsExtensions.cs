@@ -10,6 +10,7 @@ public static class SettingsExtensions
     {
         services.Configure<TwilioSettings>(configuration.GetSection(TwilioSettings.SectionName));
         services.Configure<MailjetSettings>(configuration.GetSection(MailjetSettings.SectionName));
+        services.Configure<FeatureSettings>(configuration.GetSection(FeatureSettings.SectionName));
         return services;
     }
 }

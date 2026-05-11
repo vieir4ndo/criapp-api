@@ -63,7 +63,7 @@ public static class ErrorHandlerExtensions
                                 context.Request.Path);
 
                             ApiResponse<object> response;
-                            if (env.IsDevelopment() || env.IsStaging())
+                            if (env.IsDevelopment())
                             {
                                 response = new ApiResponse<object>(exceptionHandlerFeature.Error.Message);
                                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

@@ -1,9 +1,11 @@
 using CRIApp.Api.Extensions;
 using CRIApp.Api.Middlewares;
 using CRIApp.Application.Extensions;
+using CRIApp.Domain.Settings;
 using CRIApp.Repository.Seeders;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using AppContext = CRIApp.Repository.AppContext;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +35,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppContext>();
+    var featureSettings = scope.ServiceProvider.GetRequiredService<IOptions<FeatureSettings>>().Value;
+    FeatureSettings.Initialize(featureSettings);
 
     var adminId = UserSeeder.Execute(context);
     QuestionRecommendationSeeder.Execute(context, adminId);

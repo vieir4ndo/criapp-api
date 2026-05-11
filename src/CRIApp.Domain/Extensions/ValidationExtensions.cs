@@ -76,4 +76,19 @@ public static class ValidationExtensions
     {
         return new EmailAddressAttribute().IsValid(username) || new PhoneAttribute().IsValid(username);
     }
+
+    public static bool IsValidUsernameEmail(string username)
+    {
+        return new EmailAddressAttribute().IsValid(username);
+    }
+
+    public static bool IsStrongPassword(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
+            return false;
+        return password.Any(char.IsUpper)
+            && password.Any(char.IsLower)
+            && password.Any(char.IsDigit)
+            && password.Any(c => !char.IsLetterOrDigit(c));
+    }
 }

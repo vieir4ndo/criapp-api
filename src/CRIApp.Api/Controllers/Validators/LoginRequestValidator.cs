@@ -1,5 +1,6 @@
 using CRIApp.Api.Controllers.Requests;
 using CRIApp.Domain.Extensions;
+using CRIApp.Domain.Settings;
 using FluentValidation;
 
 namespace CRIApp.Api.Controllers.Validators;
@@ -14,7 +15,13 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
         
         RuleFor(x => x.Username)
             .Must(ValidationExtensions.IsValidUsername)
-            .When(_ => true);
+            .When(_ => FeatureSettings.Current.PhoneNumberUsernameEnabled)
+            .WithMessage("Username must be a valid email address or phone number.");
+
+        RuleFor(x => x.Username)
+            .Must(ValidationExtensions.IsValidUsernameEmail)
+            .When(_ => !FeatureSettings.Current.PhoneNumberUsernameEnabled)
+            .WithMessage("Username must be a valid email address.");
         
         RuleFor(x => x.Password)
             .NotEmpty()
