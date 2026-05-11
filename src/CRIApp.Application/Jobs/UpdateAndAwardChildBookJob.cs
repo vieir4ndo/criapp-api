@@ -13,19 +13,22 @@ public class UpdateAndAwardChildBookJob : IRecurrentJob
     private readonly IRecommendationCheckpointRepository _checkpointRepository;
     private readonly IAwardRepository _awardRepository;
     private readonly INotificationService _notificationService;
+    private readonly IQuestionService  _questionService;
 
     public UpdateAndAwardChildBookJob(
         ILogger<UpdateAndAwardChildBookJob> logger,
         IChildBookRepository childBookRepository,
         IRecommendationCheckpointRepository checkpointRepository,
         IAwardRepository awardRepository,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IQuestionService questionService)
     {
         _logger = logger;
         _childBookRepository = childBookRepository;
         _checkpointRepository = checkpointRepository;
         _awardRepository = awardRepository;
         _notificationService = notificationService;
+        _questionService = questionService;
     }
 
     public async Task Run()
@@ -35,6 +38,13 @@ public class UpdateAndAwardChildBookJob : IRecurrentJob
         var today = DateTime.UtcNow.Date;
         var childBooks = await _childBookRepository.GetAll();
         var awards = await _awardRepository.GetAll();
+
+        var questionsByGroup = new Dictionary<QuestionGroup, int>();
+        foreach (QuestionGroup group in Enum.GetValues(typeof(QuestionGroup)))
+        {
+            var questions = await _questionService.GetByGroup(group);
+            questionsByGroup[group] = questions.Count();
+        }
 
         foreach (var childBook in childBooks)
         {
@@ -46,10 +56,10 @@ public class UpdateAndAwardChildBookJob : IRecurrentJob
 
             EvaluateHabitBuilder(childBook, awards);
             EvaluateConsistentParent(childBook, awards);
-            EvaluateSilverMedal(childBook, answers, QuestionGroup.CognitiveDevelopment, AwardType.SilverCognitiveDevelopment, awards);
-            EvaluateSilverMedal(childBook, answers, QuestionGroup.EmotionalBonding, AwardType.SilverEmotionalBonding, awards);
-            EvaluateSilverMedal(childBook, answers, QuestionGroup.DailyRoutines, AwardType.SilverDailyRoutines, awards);
-            EvaluateSilverMedal(childBook, answers, QuestionGroup.SocialInteraction, AwardType.SilverSocialInteraction, awards);
+            EvaluateSilverMedal(childBook, answers, QuestionGroup.CognitiveDevelopment, AwardType.SilverCognitiveDevelopment, awards, questionsByGroup[QuestionGroup.CognitiveDevelopment]);
+            EvaluateSilverMedal(childBook, answers, QuestionGroup.EmotionalBonding, AwardType.SilverEmotionalBonding, awards, questionsByGroup[QuestionGroup.EmotionalBonding]);
+            EvaluateSilverMedal(childBook, answers, QuestionGroup.DailyRoutines, AwardType.SilverDailyRoutines, awards, questionsByGroup[QuestionGroup.DailyRoutines]);
+            EvaluateSilverMedal(childBook, answers, QuestionGroup.SocialInteraction, AwardType.SilverSocialInteraction, awards, questionsByGroup[QuestionGroup.SocialInteraction]);
             EvaluateGoldMedal(childBook, awards);
 
             await _childBookRepository.Update(childBook);
@@ -95,10 +105,11 @@ public class UpdateAndAwardChildBookJob : IRecurrentJob
         }
     }
 
-    private static void EvaluateSilverMedal(ChildBook childBook, IList<Answer> answers, QuestionGroup group, AwardType awardType, IList<Award> awards)
+    private static void EvaluateSilverMedal(ChildBook childBook, IList<Answer> answers, QuestionGroup group, AwardType awardType, IList<Award> awards, int totalQuestionsInGroup)
     {
         var groupAnswers = answers.Where(a => a.Question.Group == group).ToList();
-        if (!groupAnswers.Any()) return;
+
+        if (totalQuestionsInGroup == 0 || groupAnswers.Count < totalQuestionsInGroup) return;
 
         if (CalculateGroupScore(groupAnswers) == 100)
         {

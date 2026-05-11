@@ -147,4 +147,9 @@ public class QuestionService : IQuestionService
 
         return question;
     }
+
+    public async Task<IEnumerable<Question>> GetByGroup(QuestionGroup group)
+    {
+        return await _questionRepository.GetFiltered(q => q.Active && q.Group == group);
+    }
 }

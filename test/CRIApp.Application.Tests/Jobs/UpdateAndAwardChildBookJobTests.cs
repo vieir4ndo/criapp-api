@@ -14,6 +14,7 @@ public class UpdateAndAwardChildBookJobTests
 {
     private readonly Mock<IChildBookRepository> _childBookRepositoryMock;
     private readonly Mock<INotificationService> _notificationServiceMock;
+    private readonly Mock<IQuestionService> _questionServiceMock;
     private readonly UpdateAndAwardChildBookJob _sut;
 
     private static IList<Award> CreateAllAwards() =>
@@ -37,12 +38,17 @@ public class UpdateAndAwardChildBookJobTests
         var awardRepositoryMock = new Mock<IAwardRepository>();
         awardRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(CreateAllAwards());
         _notificationServiceMock = new Mock<INotificationService>();
+        _questionServiceMock = new Mock<IQuestionService>();
+        _questionServiceMock
+            .Setup(s => s.GetByGroup(It.IsAny<QuestionGroup>()))
+            .ReturnsAsync(new List<Question>());
         _sut = new UpdateAndAwardChildBookJob(
             NullLogger<UpdateAndAwardChildBookJob>.Instance,
             _childBookRepositoryMock.Object,
             checkpointRepositoryMock.Object,
             awardRepositoryMock.Object,
-            _notificationServiceMock.Object);
+            _notificationServiceMock.Object,
+            _questionServiceMock.Object);
     }
 
     private static ChildBook BuildChildBook()
@@ -218,6 +224,9 @@ public class UpdateAndAwardChildBookJobTests
         var childBook = BuildChildBook();
         for (var i = 0; i < 3; i++)
             childBook.Child.Answers.Add(BuildAnswer(Guid.NewGuid(), 5, QuestionScoringType.Default));
+        _questionServiceMock
+            .Setup(s => s.GetByGroup(QuestionGroup.CognitiveDevelopment))
+            .ReturnsAsync(Enumerable.Range(0, 3).Select(_ => new Question("Q", QuestionType.Agreement)).ToList());
         _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
 
         await _sut.Run();
