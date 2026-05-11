@@ -31,6 +31,59 @@ public class ChildBookService : IChildBookService
         _localizer = localizer;
     }
 
+    public async Task<ChildBookSummaryDto> GetSummaryByChildId(Guid childId, Guid prcId)
+    {
+        _ = await _childService.GetAndValidateById(childId, prcId);
+
+        var childBook = await _childBookRepository.GetByChildId(childId);
+
+        if (childBook is null)
+        {
+            _logger.LogWarning("ChildBook for child {ChildId} not found", childId);
+            throw new NotFoundException(_localizer["ChildBookNotFound"]);
+        }
+
+        return new ChildBookSummaryDto(childBook);
+    }
+
+    public async Task<List<AwardDto>> GetAwardsByChildId(Guid childId, Guid prcId)
+    {
+        _ = await _childService.GetAndValidateById(childId, prcId);
+
+        var childBook = await _childBookRepository.GetByChildId(childId);
+
+        if (childBook is null)
+        {
+            _logger.LogWarning("ChildBook for child {ChildId} not found", childId);
+            throw new NotFoundException(_localizer["ChildBookNotFound"]);
+        }
+
+        return childBook.Awards.Select(a => new AwardDto(a)).ToList();
+    }
+
+    public async Task<List<RecommendationDto>> GetRecommendationsByChildId(Guid childId, Guid prcId)
+    {
+        _ = await _childService.GetAndValidateById(childId, prcId);
+
+        var childBook = await _childBookRepository.GetByChildId(childId);
+
+        if (childBook is null)
+        {
+            _logger.LogWarning("ChildBook for child {ChildId} not found", childId);
+            throw new NotFoundException(_localizer["ChildBookNotFound"]);
+        }
+
+        var today = DateTime.UtcNow.Date;
+        var todayCheckpoints = await _checkpointRepository.GetByChildBookIdAndDate(childBook.Id, today);
+
+        var checkpointMap = todayCheckpoints.ToDictionary(c => c.RecommendationId, c => (bool?)c.Completed);
+        return childBook.Recommendations.Select(r =>
+        {
+            checkpointMap.TryGetValue(r.Id, out var todayCompleted);
+            return new RecommendationDto(r, todayCompleted);
+        }).ToList();
+    }
+
     public async Task<ChildBookDto> GetByChildId(Guid childId, Guid prcId)
     {
         _ = await _childService.GetAndValidateById(childId, prcId);
