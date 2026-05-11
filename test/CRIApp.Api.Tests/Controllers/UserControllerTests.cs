@@ -40,7 +40,7 @@ public class UserControllerTests
             BirthDate = "1990-01-01",
             Sex = Sex.Male,
             Username = "newuser@domain.com",
-            Password = "password123"
+            Password = "Password1!"
         };
         _serviceMock.Setup(s => s.Create(It.IsAny<CreateUserDto>())).Returns(Task.CompletedTask);
 
@@ -151,7 +151,7 @@ public class UserControllerTests
         {
             Username = "user@domain.com",
             Code = "ABC12",
-            NewPassword = "newpass"
+            NewPassword = "NewPass1!"
         };
         _serviceMock.Setup(s => s.ResetPassword(It.IsAny<ResetPasswordDto>())).Returns(Task.CompletedTask);
 

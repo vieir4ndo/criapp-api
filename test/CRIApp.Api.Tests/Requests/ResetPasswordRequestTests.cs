@@ -10,7 +10,7 @@ public class ResetPasswordRequestTests
     {
         Username = "user@domain.com",
         Code = "ABC12",
-        NewPassword = "newpassword"
+        NewPassword = "NewPassword1!"
     };
 
     [Fact]

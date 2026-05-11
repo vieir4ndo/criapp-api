@@ -1,11 +1,17 @@
 using CRIApp.Api.Controllers.Requests;
 using CRIApp.Domain.Exceptions;
+using CRIApp.Domain.Settings;
 using Xunit;
 
 namespace CRIApp.Api.Tests.Requests;
 
 public class LoginRequestTests
 {
+    public LoginRequestTests()
+    {
+        FeatureSettings.Initialize(new FeatureSettings { PhoneNumberUsernameEnabled = true });
+    }
+
     [Fact]
     public void ValidRequest_WithEmail_ShouldNotThrow()
     {

@@ -1,19 +1,25 @@
 using CRIApp.Api.Controllers.Requests;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
+using CRIApp.Domain.Settings;
 using Xunit;
 
 namespace CRIApp.Api.Tests.Requests;
 
 public class CreateUserRequestTests
 {
+    public CreateUserRequestTests()
+    {
+        FeatureSettings.Initialize(new FeatureSettings { PhoneNumberUsernameEnabled = true });
+    }
+
     private static CreateUserRequest ValidRequest() => new CreateUserRequest
     {
         Name = "Test User",
         BirthDate = "1990-06-15",
         Sex = Sex.Male,
         Username = "user@domain.com",
-        Password = "password123"
+        Password = "Password1!"
     };
 
     [Fact]
