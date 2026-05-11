@@ -28,9 +28,9 @@ public class NotificationService : INotificationService
         return MapToDtos(notifications);
     }
 
-    public async Task<IList<NotificationDto>> GetHistoryByUserId(Guid userId)
+    public async Task<IList<NotificationDto>> GetHistoryByUserId(Guid userId, int page, int pageSize)
     {
-        var notifications = await _notificationRepository.GetHistoryByUserId(userId);
+        var notifications = await _notificationRepository.GetHistoryByUserId(userId, page, pageSize);
         return MapToDtos(notifications);
     }
 

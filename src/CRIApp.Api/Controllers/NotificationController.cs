@@ -29,9 +29,9 @@ public class NotificationController : CriAppControllerBase
     }
 
     [HttpGet("history")]
-    public async Task<ApiResponse<NotificationDto>> GetHistory()
+    public async Task<ApiResponse<NotificationDto>> GetHistory([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
     {
-        var notifications = await _notificationService.GetHistoryByUserId(GetUserId());
+        var notifications = await _notificationService.GetHistoryByUserId(GetUserId(), page, pageSize);
         return new ApiResponse<NotificationDto>(true, notifications);
     }
 
