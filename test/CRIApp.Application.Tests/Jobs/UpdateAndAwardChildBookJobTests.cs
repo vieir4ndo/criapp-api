@@ -13,12 +13,8 @@ namespace CRIApp.Application.Tests.Jobs;
 public class UpdateAndAwardChildBookJobTests
 {
     private readonly Mock<IChildBookRepository> _childBookRepositoryMock;
-    private readonly Mock<IRecommendationCheckpointRepository> _checkpointRepositoryMock;
-    private readonly Mock<IAwardRepository> _awardRepositoryMock;
     private readonly Mock<INotificationService> _notificationServiceMock;
     private readonly UpdateAndAwardChildBookJob _sut;
-
-    private static readonly Guid AdminId = Guid.NewGuid();
 
     private static IList<Award> CreateAllAwards() =>
     [
@@ -34,18 +30,18 @@ public class UpdateAndAwardChildBookJobTests
     public UpdateAndAwardChildBookJobTests()
     {
         _childBookRepositoryMock = new Mock<IChildBookRepository>();
-        _checkpointRepositoryMock = new Mock<IRecommendationCheckpointRepository>();
-        _checkpointRepositoryMock
+        var checkpointRepositoryMock = new Mock<IRecommendationCheckpointRepository>();
+        checkpointRepositoryMock
             .Setup(r => r.GetByChildBookIdAndDate(It.IsAny<Guid>(), It.IsAny<DateTime>()))
             .ReturnsAsync(new List<RecommendationCheckpoint>());
-        _awardRepositoryMock = new Mock<IAwardRepository>();
-        _awardRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(CreateAllAwards());
+        var awardRepositoryMock = new Mock<IAwardRepository>();
+        awardRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(CreateAllAwards());
         _notificationServiceMock = new Mock<INotificationService>();
         _sut = new UpdateAndAwardChildBookJob(
             NullLogger<UpdateAndAwardChildBookJob>.Instance,
             _childBookRepositoryMock.Object,
-            _checkpointRepositoryMock.Object,
-            _awardRepositoryMock.Object,
+            checkpointRepositoryMock.Object,
+            awardRepositoryMock.Object,
             _notificationServiceMock.Object);
     }
 
@@ -64,7 +60,7 @@ public class UpdateAndAwardChildBookJobTests
 
     private static Answer BuildAnswer(Guid questionId, int value, QuestionScoringType scoringType, QuestionGroup group = QuestionGroup.CognitiveDevelopment)
     {
-        var question = new Question("Q?", AdminId, QuestionType.Agreement, scoringType, group: group);
+        var question = new Question("Q?", QuestionType.Agreement, scoringType, group: group);
         var answer = new Answer(value, questionId, Guid.NewGuid(), Guid.NewGuid());
         typeof(Answer).GetProperty(nameof(Answer.Question))!.SetValue(answer, question);
         return answer;
@@ -221,7 +217,7 @@ public class UpdateAndAwardChildBookJobTests
     {
         var childBook = BuildChildBook();
         for (var i = 0; i < 3; i++)
-            childBook.Child.Answers.Add(BuildAnswer(Guid.NewGuid(), 5, QuestionScoringType.Default, QuestionGroup.CognitiveDevelopment));
+            childBook.Child.Answers.Add(BuildAnswer(Guid.NewGuid(), 5, QuestionScoringType.Default));
         _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
 
         await _sut.Run();
@@ -233,8 +229,8 @@ public class UpdateAndAwardChildBookJobTests
     public async Task Run_NotAllGroupAnswersPositive_ShouldNotGrantSilverCognitiveDevelopment()
     {
         var childBook = BuildChildBook();
-        childBook.Child.Answers.Add(BuildAnswer(Guid.NewGuid(), 5, QuestionScoringType.Default, QuestionGroup.CognitiveDevelopment));
-        childBook.Child.Answers.Add(BuildAnswer(Guid.NewGuid(), 1, QuestionScoringType.Default, QuestionGroup.CognitiveDevelopment));
+        childBook.Child.Answers.Add(BuildAnswer(Guid.NewGuid(), 5, QuestionScoringType.Default));
+        childBook.Child.Answers.Add(BuildAnswer(Guid.NewGuid(), 1, QuestionScoringType.Default));
         _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
 
         await _sut.Run();

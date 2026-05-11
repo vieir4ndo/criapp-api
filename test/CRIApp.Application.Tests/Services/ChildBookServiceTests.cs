@@ -8,7 +8,6 @@ using CRIApp.Domain.Exceptions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using System.Reflection;
 using Xunit;
 
 namespace CRIApp.Application.Tests.Services;
@@ -18,25 +17,22 @@ public class ChildBookServiceTests
     private readonly Mock<IChildBookRepository> _childBookRepositoryMock;
     private readonly Mock<IRecommendationCheckpointRepository> _checkpointRepositoryMock;
     private readonly Mock<IChildService> _childServiceMock;
-    private readonly Mock<IStringLocalizer<AppMessages>> _localizerMock;
     private readonly ChildBookService _sut;
-
-    private static readonly Guid AdminId = Guid.NewGuid();
 
     public ChildBookServiceTests()
     {
         _childBookRepositoryMock = new Mock<IChildBookRepository>();
         _checkpointRepositoryMock = new Mock<IRecommendationCheckpointRepository>();
         _childServiceMock = new Mock<IChildService>();
-        _localizerMock = new Mock<IStringLocalizer<AppMessages>>();
+        var localizerMock = new Mock<IStringLocalizer<AppMessages>>();
         _sut = new ChildBookService(
             _childBookRepositoryMock.Object,
             _checkpointRepositoryMock.Object,
             _childServiceMock.Object,
             NullLogger<ChildBookService>.Instance,
-            _localizerMock.Object);
+            localizerMock.Object);
 
-        _localizerMock.Setup(l => l[It.IsAny<string>()]).Returns<string>(k => new LocalizedString(k, k));
+        localizerMock.Setup(l => l[It.IsAny<string>()]).Returns<string>(k => new LocalizedString(k, k));
     }
 
     private static ChildBook BuildChildBook(Guid childId)
@@ -47,7 +43,7 @@ public class ChildBookServiceTests
 
     private static Recommendation BuildRecommendation(int id)
     {
-        var recommendation = new Recommendation("Do this.", AdminId, Guid.NewGuid());
+        var recommendation = new Recommendation("Do this.", Guid.NewGuid());
         typeof(Recommendation).GetProperty(nameof(Recommendation.Id))!.SetValue(recommendation, id);
         return recommendation;
     }

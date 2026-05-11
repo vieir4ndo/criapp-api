@@ -18,7 +18,7 @@ public class Question : Entity
 
     protected Question() {}
     
-    public Question(string text, Guid adminId, QuestionType type, QuestionScoringType scoringType = QuestionScoringType.Default, IList<FamilyType>? excludedFamilyTypes = null, QuestionGroup group = QuestionGroup.CognitiveDevelopment)
+    public Question(string text, QuestionType type, QuestionScoringType scoringType = QuestionScoringType.Default, IList<FamilyType>? excludedFamilyTypes = null, QuestionGroup group = QuestionGroup.CognitiveDevelopment)
     {
         Text = text;
         Answers = new List<Answer>();

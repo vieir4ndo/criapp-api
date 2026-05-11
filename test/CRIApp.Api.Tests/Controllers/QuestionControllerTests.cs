@@ -13,15 +13,14 @@ namespace CRIApp.Api.Tests.Controllers;
 public class QuestionControllerTests
 {
     private readonly Mock<IQuestionService> _serviceMock;
-    private readonly Mock<ILogger<QuestionController>> _loggerMock;
     private readonly QuestionController _sut;
     private readonly Guid _userId = Guid.NewGuid();
 
     public QuestionControllerTests()
     {
         _serviceMock = new Mock<IQuestionService>();
-        _loggerMock = new Mock<ILogger<QuestionController>>();
-        _sut = new QuestionController(_serviceMock.Object, _loggerMock.Object)
+        var loggerMock = new Mock<ILogger<QuestionController>>();
+        _sut = new QuestionController(_serviceMock.Object, loggerMock.Object)
         {
             ControllerContext = ControllerContextFactory.CreateAuthenticated(_userId)
         };
@@ -31,11 +30,10 @@ public class QuestionControllerTests
     public async Task GetQuestionsToReply_ValidRequest_ShouldReturnQuestions()
     {
         var childId = Guid.NewGuid();
-        var adminId = Guid.NewGuid();
         var questions = new List<QuestionDto>
         {
-            new QuestionDto(new Domain.Entities.Question("Question 1?", adminId, QuestionType.Agreement)),
-            new QuestionDto(new Domain.Entities.Question("Question 2?", adminId, QuestionType.Frequency))
+            new QuestionDto(new Domain.Entities.Question("Question 1?", QuestionType.Agreement)),
+            new QuestionDto(new Domain.Entities.Question("Question 2?", QuestionType.Frequency))
         };
         var request = new GetQuestionsToReplyRequest { ChildId = childId };
         _serviceMock.Setup(s => s.GetQuestionsToReply(_userId, childId)).ReturnsAsync(questions);

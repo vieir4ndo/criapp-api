@@ -7,10 +7,8 @@ namespace CRIApp.Domain.Tests.Entities;
 
 public class QuestionTests
 {
-    private static readonly Guid ValidAdminId = Guid.NewGuid();
-
     private static Question CreateValidQuestion(string text = "Does your child sleep well?")
-        => new Question(text, ValidAdminId, QuestionType.Agreement);
+        => new Question(text, QuestionType.Agreement);
 
     [Fact]
     public void Create_ValidQuestion_ShouldSucceed()
@@ -27,14 +25,14 @@ public class QuestionTests
     public void Create_WithEmptyText_ShouldThrowDomainException()
     {
         Assert.Throws<DomainException>(() =>
-            new Question("", ValidAdminId, QuestionType.Agreement));
+            new Question("", QuestionType.Agreement));
     }
 
     [Fact]
     public void Create_WithNullText_ShouldThrowDomainException()
     {
         Assert.Throws<DomainException>(() =>
-            new Question(null!, ValidAdminId, QuestionType.Agreement));
+            new Question(null!, QuestionType.Agreement));
     }
 
     [Fact]
@@ -79,7 +77,7 @@ public class QuestionTests
     [Fact]
     public void Create_WithFrequencyType_ShouldSetTypeCorrectly()
     {
-        var question = new Question("How often?", ValidAdminId, QuestionType.Frequency);
+        var question = new Question("How often?", QuestionType.Frequency);
 
         Assert.Equal(QuestionType.Frequency, question.Type);
     }
@@ -95,7 +93,7 @@ public class QuestionTests
     [Fact]
     public void Create_WithReversedScoringType_ShouldSetScoringTypeCorrectly()
     {
-        var question = new Question("Does your child avoid sweets?", ValidAdminId, QuestionType.Agreement, QuestionScoringType.Reversed);
+        var question = new Question("Does your child avoid sweets?", QuestionType.Agreement, QuestionScoringType.Reversed);
 
         Assert.Equal(QuestionScoringType.Reversed, question.ScoringType);
     }
@@ -104,7 +102,7 @@ public class QuestionTests
     public void Create_WithInvalidScoringType_ShouldThrowDomainException()
     {
         Assert.Throws<DomainException>(() =>
-            new Question("Valid text?", ValidAdminId, QuestionType.Agreement, (QuestionScoringType)99));
+            new Question("Valid text?", QuestionType.Agreement, (QuestionScoringType)99));
     }
 
     [Fact]
@@ -121,7 +119,7 @@ public class QuestionTests
     {
         var excluded = new List<FamilyType> { FamilyType.FemaleSingleParent, FamilyType.MaleSingleParent };
 
-        var question = new Question("Valid text?", ValidAdminId, QuestionType.Agreement, excludedFamilyTypes: excluded);
+        var question = new Question("Valid text?", QuestionType.Agreement, excludedFamilyTypes: excluded);
 
         Assert.Equal(excluded, question.ExcludedFamilyTypes);
     }

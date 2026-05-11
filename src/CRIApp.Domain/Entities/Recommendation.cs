@@ -18,7 +18,7 @@ public class Recommendation
     {
     }
 
-    public Recommendation(string text, Guid adminId, Guid questionId)
+    public Recommendation(string text, Guid questionId)
     {
         Text = text;
         QuestionId = questionId;

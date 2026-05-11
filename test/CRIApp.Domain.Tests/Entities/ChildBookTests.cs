@@ -1,14 +1,11 @@
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
-using System.Reflection;
 using Xunit;
 
 namespace CRIApp.Domain.Tests.Entities;
 
 public class ChildBookTests
 {
-    private static readonly Guid AdminId = Guid.NewGuid();
-
     private static ChildBook CreateChildBook()
     {
         var prcId = Guid.NewGuid();
@@ -22,7 +19,7 @@ public class ChildBookTests
 
     private static Answer BuildAnswerWithQuestion(int value, QuestionScoringType scoringType)
     {
-        var question = new Question("Sample question?", AdminId, QuestionType.Agreement, scoringType);
+        var question = new Question("Sample question?", QuestionType.Agreement, scoringType);
         var answer = new Answer(value, question.Id, Guid.NewGuid(), Guid.NewGuid());
         typeof(Answer).GetProperty(nameof(Answer.Question))!.SetValue(answer, question);
         return answer;
@@ -129,7 +126,7 @@ public class ChildBookTests
 
     private static Recommendation BuildRecommendation()
     {
-        var rec = new Recommendation("Recommendation", AdminId, Guid.NewGuid());
+        var rec = new Recommendation("Recommendation", Guid.NewGuid());
         typeof(Recommendation).GetProperty(nameof(Recommendation.ChildBooks))!.SetValue(rec, new List<ChildBook>());
         return rec;
     }
@@ -242,7 +239,7 @@ public class ChildBookTests
     public void AddRecommendationsIfNeeded_NewRecommendation_ShouldAddIt()
     {
         var childBook = CreateChildBook();
-        var recommendation = new Recommendation("Some recommendation", AdminId, Guid.NewGuid());
+        var recommendation = new Recommendation("Some recommendation", Guid.NewGuid());
         typeof(Recommendation).GetProperty(nameof(Recommendation.ChildBooks))!.SetValue(recommendation, new List<ChildBook>());
 
         childBook.AddRecommendationsIfNeeded(new List<Recommendation> { recommendation });
@@ -254,7 +251,7 @@ public class ChildBookTests
     public void AddRecommendationsIfNeeded_SameRecommendationTwice_ShouldNotDuplicate()
     {
         var childBook = CreateChildBook();
-        var recommendation = new Recommendation("Some recommendation", AdminId, Guid.NewGuid());
+        var recommendation = new Recommendation("Some recommendation", Guid.NewGuid());
         typeof(Recommendation).GetProperty(nameof(Recommendation.ChildBooks))!.SetValue(recommendation, new List<ChildBook>());
 
         childBook.AddRecommendationsIfNeeded(new List<Recommendation> { recommendation });

@@ -2,7 +2,6 @@ using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
 using Xunit;
-using System.Reflection;
 
 namespace CRIApp.Domain.Tests.Entities;
 
@@ -10,16 +9,6 @@ public class UserTests
 {
     private static User CreateValidUser(string username = "test@example.com")
         => new User("Test User", new DateTime(1990, 1, 1), Sex.Male, username, "password123");
-
-    private static readonly Guid AdminId = Guid.NewGuid();
-
-    private static Answer BuildAnswerWithQuestion(int value, QuestionScoringType scoringType)
-    {
-        var question = new Question("Sample question?", AdminId, QuestionType.Agreement, scoringType);
-        var answer = new Answer(value, question.Id, Guid.NewGuid(), Guid.NewGuid());
-        typeof(Answer).GetProperty(nameof(Answer.Question))!.SetValue(answer, question);
-        return answer;
-    }
 
     [Fact]
     public void Create_ValidUserWithEmail_ShouldSucceed()

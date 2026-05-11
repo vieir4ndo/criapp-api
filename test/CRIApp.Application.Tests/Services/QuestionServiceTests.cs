@@ -17,19 +17,18 @@ public class QuestionServiceTests
 {
     private readonly Mock<IQuestionRepository> _questionRepositoryMock;
     private readonly Mock<IUserService> _userServiceMock;
-    private readonly Mock<IStringLocalizer<AppMessages>> _localizerMock;
     private readonly QuestionService _sut;
 
     public QuestionServiceTests()
     {
         _questionRepositoryMock = new Mock<IQuestionRepository>();
         _userServiceMock = new Mock<IUserService>();
-        _localizerMock = new Mock<IStringLocalizer<AppMessages>>();
-        _sut = new QuestionService(_questionRepositoryMock.Object, _userServiceMock.Object, NullLogger<QuestionService>.Instance, _localizerMock.Object);
+        var localizerMock = new Mock<IStringLocalizer<AppMessages>>();
+        _sut = new QuestionService(_questionRepositoryMock.Object, _userServiceMock.Object, NullLogger<QuestionService>.Instance, localizerMock.Object);
     }
 
     private static Question BuildQuestion(QuestionGroup group = QuestionGroup.CognitiveDevelopment)
-        => new Question("Is your child eating well?", Guid.NewGuid(), QuestionType.Agreement, group: group);
+        => new Question("Is your child eating well?",  QuestionType.Agreement, group: group);
 
     private static User BuildUser(FamilyType? familyType = FamilyType.HeterosexualCouple)
         => new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123", familyType);
@@ -212,8 +211,8 @@ public class QuestionServiceTests
 
         var preferred = new List<Question>
         {
-            BuildQuestion(QuestionGroup.CognitiveDevelopment),
-            BuildQuestion(QuestionGroup.CognitiveDevelopment),
+            BuildQuestion(),
+            BuildQuestion(),
             BuildQuestion(QuestionGroup.EmotionalBonding),
             BuildQuestion(QuestionGroup.EmotionalBonding),
             BuildQuestion(QuestionGroup.DailyRoutines),
@@ -244,7 +243,7 @@ public class QuestionServiceTests
 
         var preferred = new List<Question>
         {
-            BuildQuestion(QuestionGroup.CognitiveDevelopment),
+            BuildQuestion(),
             BuildQuestion(QuestionGroup.EmotionalBonding),
             BuildQuestion(QuestionGroup.DailyRoutines),
             BuildQuestion(QuestionGroup.SocialInteraction),
@@ -269,7 +268,7 @@ public class QuestionServiceTests
 
         var preferred = new List<Question>
         {
-            BuildQuestion(QuestionGroup.CognitiveDevelopment),
+            BuildQuestion(),
             BuildQuestion(QuestionGroup.EmotionalBonding),
             BuildQuestion(QuestionGroup.DailyRoutines),
         };

@@ -18,7 +18,6 @@ public class AnswerServiceTests
     private readonly Mock<IAnswerRepository> _repositoryMock;
     private readonly Mock<IQuestionService> _questionServiceMock;
     private readonly Mock<IUserService> _userServiceMock;
-    private readonly Mock<IStringLocalizer<AppMessages>> _localizerMock;
     private readonly AnswerService _sut;
 
     public AnswerServiceTests()
@@ -26,12 +25,12 @@ public class AnswerServiceTests
         _repositoryMock = new Mock<IAnswerRepository>();
         _questionServiceMock = new Mock<IQuestionService>();
         _userServiceMock = new Mock<IUserService>();
-        _localizerMock = new Mock<IStringLocalizer<AppMessages>>();
-        _sut = new AnswerService(_repositoryMock.Object, _questionServiceMock.Object, _userServiceMock.Object, NullLogger<AnswerService>.Instance, _localizerMock.Object);
+        var localizerMock = new Mock<IStringLocalizer<AppMessages>>();
+        _sut = new AnswerService(_repositoryMock.Object, _questionServiceMock.Object, _userServiceMock.Object, NullLogger<AnswerService>.Instance, localizerMock.Object);
     }
 
     private static Question BuildQuestion()
-        => new Question("Does your child sleep well?", Guid.NewGuid(), QuestionType.Agreement);
+        => new Question("Does your child sleep well?", QuestionType.Agreement);
 
     private static User BuildUserWithChild(out Guid childId)
     {
