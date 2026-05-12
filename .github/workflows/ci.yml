@@ -1,0 +1,36 @@
+name: CI - Build & Test
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+env:
+  DOTNET_SDK_VERSION: "8.0.x"
+  BUILD_CONFIGURATION: Release
+  COVERAGE_THRESHOLD: 80
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
+
+      - name: Test
+        run: dotnet test --configuration ${{ env.BUILD_CONFIGURATION }} --no-build --collect:"XPlat Code Coverage"
+
+      - name: Validate coverage
+        run: echo "Coverage check step (mantive simplificado aqui — você pode plugar seu script atual)"

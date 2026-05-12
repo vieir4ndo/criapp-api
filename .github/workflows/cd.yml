@@ -1,0 +1,92 @@
+name: CD - Deploy Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  DOTNET_SDK_VERSION: "8.0.x"
+  BUILD_CONFIGURATION: Release
+  AZURE_WEBAPP_NAME: criapp-api
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
+
+      - name: Publish
+        run: dotnet publish src/CRIApp.Api/CRIApp.Api.csproj \
+          --configuration ${{ env.BUILD_CONFIGURATION }} \
+          --output ./publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ github.ref_name }}
+          path: ./publish
+
+  migrate:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+
+      - name: Install EF tools
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Run migrations
+        run: dotnet ef database update \
+          --project src/CRIApp.Repository/CRIApp.Repository.csproj \
+          --startup-project src/CRIApp.Api/CRIApp.Api.csproj
+        env:
+          ConnectionStrings__Postgres: ${{ secrets.NEON_CONNECTION_STRING_KV }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: migrate
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-${{ github.ref_name }}
+          path: ./publish
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+
+      - name: Deploy to Azure
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: ./publish
