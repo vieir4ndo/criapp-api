@@ -12,7 +12,8 @@ public static class JobsExtensions
         services.AddTransient<SendMotivationalNotificationJob>();
         services.AddTransient<SendPointsRiskNotificationJob>();
         services.AddTransient<SendReEvaluationNotificationJob>();
-        services.AddTransient<UpdateAndAwardChildBookJob>();
+        services.AddTransient<UpdateChildBookScoreJob>();
+        services.AddTransient<AwardChildBookJob>();
         services.AddTransient<SaveUsersRecommendations>();
         services.AddTransient<CleanUserResetPasswordCodesJob>();
         return services;
@@ -40,9 +41,15 @@ public static class JobsExtensions
             x => x.Run(),
             Cron.Daily);
 
-        recurringJobManager.RemoveIfExists(nameof(UpdateAndAwardChildBookJob));
-        recurringJobManager.AddOrUpdate<UpdateAndAwardChildBookJob>(
-            nameof(UpdateAndAwardChildBookJob),
+        recurringJobManager.RemoveIfExists(nameof(UpdateChildBookScoreJob));
+        recurringJobManager.AddOrUpdate<UpdateChildBookScoreJob>(
+            nameof(UpdateChildBookScoreJob),
+            x => x.Run(),
+            Cron.Hourly);
+
+        recurringJobManager.RemoveIfExists(nameof(AwardChildBookJob));
+        recurringJobManager.AddOrUpdate<AwardChildBookJob>(
+            nameof(AwardChildBookJob),
             x => x.Run(),
             Cron.Daily);
 
@@ -56,7 +63,7 @@ public static class JobsExtensions
         recurringJobManager.AddOrUpdate<CleanUserResetPasswordCodesJob>(
             nameof(CleanUserResetPasswordCodesJob),
             x => x.Run(),
-            Cron.Daily);
+            "*/10 * * * *");
 
         return app;
     }

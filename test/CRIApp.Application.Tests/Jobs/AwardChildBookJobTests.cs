@@ -10,12 +10,12 @@ using Xunit;
 
 namespace CRIApp.Application.Tests.Jobs;
 
-public class UpdateAndAwardChildBookJobTests
+public class AwardChildBookJobTests
 {
     private readonly Mock<IChildBookRepository> _childBookRepositoryMock;
     private readonly Mock<INotificationService> _notificationServiceMock;
     private readonly Mock<IQuestionService> _questionServiceMock;
-    private readonly UpdateAndAwardChildBookJob _sut;
+    private readonly AwardChildBookJob _sut;
 
     private static IList<Award> CreateAllAwards() =>
     [
@@ -28,13 +28,9 @@ public class UpdateAndAwardChildBookJobTests
         new Award(AwardType.GoldParent, "Gold Parent"),
     ];
 
-    public UpdateAndAwardChildBookJobTests()
+    public AwardChildBookJobTests()
     {
         _childBookRepositoryMock = new Mock<IChildBookRepository>();
-        var checkpointRepositoryMock = new Mock<IRecommendationCheckpointRepository>();
-        checkpointRepositoryMock
-            .Setup(r => r.GetByChildBookIdAndDate(It.IsAny<Guid>(), It.IsAny<DateTime>()))
-            .ReturnsAsync(new List<RecommendationCheckpoint>());
         var awardRepositoryMock = new Mock<IAwardRepository>();
         awardRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(CreateAllAwards());
         _notificationServiceMock = new Mock<INotificationService>();
@@ -42,10 +38,9 @@ public class UpdateAndAwardChildBookJobTests
         _questionServiceMock
             .Setup(s => s.GetByGroup(It.IsAny<QuestionGroup>()))
             .ReturnsAsync(new List<Question>());
-        _sut = new UpdateAndAwardChildBookJob(
-            NullLogger<UpdateAndAwardChildBookJob>.Instance,
+        _sut = new AwardChildBookJob(
+            NullLogger<AwardChildBookJob>.Instance,
             _childBookRepositoryMock.Object,
-            checkpointRepositoryMock.Object,
             awardRepositoryMock.Object,
             _notificationServiceMock.Object,
             _questionServiceMock.Object);
@@ -80,52 +75,6 @@ public class UpdateAndAwardChildBookJobTests
             .SetValue(checkpoint, date);
         return checkpoint;
     }
-
-    // --- Score update tests ---
-
-    [Fact]
-    public async Task Run_NoChildBooks_ShouldNotCallUpdate()
-    {
-        _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook>());
-
-        await _sut.Run();
-
-        _childBookRepositoryMock.Verify(r => r.Update(It.IsAny<ChildBook>()), Times.Never);
-    }
-
-    [Fact]
-    public async Task Run_WithChildBooks_ShouldCallUpdateForEach()
-    {
-        var childBooks = new List<ChildBook> { BuildChildBook(), BuildChildBook(), BuildChildBook() };
-        _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(childBooks);
-
-        await _sut.Run();
-
-        _childBookRepositoryMock.Verify(r => r.Update(It.IsAny<ChildBook>()), Times.Exactly(3));
-    }
-
-    [Fact]
-    public async Task Run_ShouldCallGetAllOnce()
-    {
-        _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { BuildChildBook() });
-
-        await _sut.Run();
-
-        _childBookRepositoryMock.Verify(r => r.GetAll(), Times.Once);
-    }
-
-    [Fact]
-    public async Task Run_ShouldCallUpdateWithCorrectChildBook()
-    {
-        var childBook = BuildChildBook();
-        _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<ChildBook> { childBook });
-
-        await _sut.Run();
-
-        _childBookRepositoryMock.Verify(r => r.Update(childBook), Times.Once);
-    }
-
-    // --- Award tests ---
 
     [Fact]
     public async Task Run_FourDistinctCompletedDaysInSevenDayWindow_ShouldGrantHabitBuilder()

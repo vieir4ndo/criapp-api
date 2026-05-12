@@ -6,26 +6,23 @@ using Microsoft.Extensions.Logging;
 
 namespace CRIApp.Application.Jobs;
 
-public class UpdateAndAwardChildBookJob : IRecurrentJob
+public class AwardChildBookJob : IRecurrentJob
 {
-    private readonly ILogger<UpdateAndAwardChildBookJob> _logger;
+    private readonly ILogger<AwardChildBookJob> _logger;
     private readonly IChildBookRepository _childBookRepository;
-    private readonly IRecommendationCheckpointRepository _checkpointRepository;
     private readonly IAwardRepository _awardRepository;
     private readonly INotificationService _notificationService;
-    private readonly IQuestionService  _questionService;
+    private readonly IQuestionService _questionService;
 
-    public UpdateAndAwardChildBookJob(
-        ILogger<UpdateAndAwardChildBookJob> logger,
+    public AwardChildBookJob(
+        ILogger<AwardChildBookJob> logger,
         IChildBookRepository childBookRepository,
-        IRecommendationCheckpointRepository checkpointRepository,
         IAwardRepository awardRepository,
         INotificationService notificationService,
         IQuestionService questionService)
     {
         _logger = logger;
         _childBookRepository = childBookRepository;
-        _checkpointRepository = checkpointRepository;
         _awardRepository = awardRepository;
         _notificationService = notificationService;
         _questionService = questionService;
@@ -33,9 +30,8 @@ public class UpdateAndAwardChildBookJob : IRecurrentJob
 
     public async Task Run()
     {
-        _logger.LogInformation("Job {JobName} started", nameof(UpdateAndAwardChildBookJob));
+        _logger.LogInformation("Job {JobName} started", nameof(AwardChildBookJob));
 
-        var today = DateTime.UtcNow.Date;
         var childBooks = await _childBookRepository.GetAll();
         var awards = await _awardRepository.GetAll();
 
@@ -48,9 +44,6 @@ public class UpdateAndAwardChildBookJob : IRecurrentJob
 
         foreach (var childBook in childBooks)
         {
-            var todayCheckpoints = await _checkpointRepository.GetByChildBookIdAndDate(childBook.Id, today);
-            childBook.UpdateScore(childBook.Child.Answers, todayCheckpoints.ToList());
-
             var awardCountBefore = childBook.Awards.Count;
             var answers = childBook.Child.Answers;
 
@@ -68,7 +61,7 @@ public class UpdateAndAwardChildBookJob : IRecurrentJob
                 await _notificationService.CreateIfNotExists(childBook.Id, NotificationType.NewAward);
         }
 
-        _logger.LogInformation("Job {JobName} completed", nameof(UpdateAndAwardChildBookJob));
+        _logger.LogInformation("Job {JobName} completed", nameof(AwardChildBookJob));
     }
 
     private static void EvaluateHabitBuilder(ChildBook childBook, IList<Award> awards)
