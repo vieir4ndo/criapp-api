@@ -14,12 +14,14 @@ public class ForumRepository : IForumRepository
     }
     public async Task<Forum?> GetById(Guid id)
     {
-        return await _context.Forum
+        var forum = await _context.Forum
             .Where(x => x.Id == id)
             .Include(x =>x.Prc)
             .Include(x => x.Comments)
             .ThenInclude(x=>x.Prc)
             .FirstOrDefaultAsync();
+        forum?.OrderCommentsByCreatedAt();
+        return forum;
     }
 
     public async Task Create(Forum forum)

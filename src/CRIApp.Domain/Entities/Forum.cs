@@ -27,4 +27,9 @@ public class Forum : Entity
         Name = name ?? Name;
         Description = description ?? Description;
     }
+
+    public void OrderCommentsByCreatedAt()
+    {
+        Comments = Comments.OrderBy(c => c.CreatedAt).ToList();
+    }
 }

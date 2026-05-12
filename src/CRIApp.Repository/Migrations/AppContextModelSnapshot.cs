@@ -219,6 +219,11 @@ namespace CRIApp.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValue(new DateTime(2026, 5, 12, 11, 24, 49, 477, DateTimeKind.Utc).AddTicks(8790));
+
                     b.Property<Guid>("ForumId")
                         .HasColumnType("uuid");
 

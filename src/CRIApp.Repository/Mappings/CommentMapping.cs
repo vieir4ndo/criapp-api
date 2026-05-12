@@ -12,6 +12,10 @@ public class CommentMapping : IEntityTypeConfiguration<Comment>
 
         builder.Property(x => x.Text)
             .IsRequired();
+        
+        builder.Property(x => x.CreatedAt)
+            .IsRequired()
+            .HasDefaultValue(DateTime.UtcNow);
 
         builder.HasOne(x => x.Forum)
             .WithMany(x => x.Comments)
