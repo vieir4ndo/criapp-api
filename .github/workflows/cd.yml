@@ -57,9 +57,7 @@ jobs:
         run: dotnet tool install --global dotnet-ef
 
       - name: Run migrations
-        run: dotnet ef database update \
-          --project src/CRIApp.Repository/CRIApp.Repository.csproj \
-          --startup-project src/CRIApp.Api/CRIApp.Api.csproj
+        run: dotnet ef database update --project src/CRIApp.Repository/CRIApp.Repository.csproj --startup-project src/CRIApp.Api/CRIApp.Api.csproj
         env:
           ConnectionStrings__Postgres: ${{ secrets.NEON_CONNECTION_STRING_KV }}
 
