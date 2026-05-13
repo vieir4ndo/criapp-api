@@ -1,3 +1,4 @@
+using Azure.Monitor.OpenTelemetry.Exporter;
 using CRIApp.Api.Extensions;
 using CRIApp.Api.Middlewares;
 using CRIApp.Application.Extensions;
@@ -6,11 +7,32 @@ using CRIApp.Repository.Seeders;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using AppContext = CRIApp.Repository.AppContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddSource("Criapp")
+            .AddAzureMonitorTraceExporter();
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddProcessInstrumentation()
+            .AddMeter("Criapp")
+            .AddAzureMonitorMetricExporter();
+    });
 
 builder.Services.AddSettingsConfiguration(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
