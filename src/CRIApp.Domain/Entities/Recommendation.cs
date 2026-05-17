@@ -12,7 +12,6 @@ public class Recommendation
     public Guid QuestionId { get; private set; }
     public byte[]? Image { get; private set; }
     public List<ChildBook> ChildBooks { get; private set; }
-    public int ReferenceNumber { get; private set; }
 
     protected Recommendation()
     {

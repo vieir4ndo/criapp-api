@@ -222,7 +222,7 @@ namespace CRIApp.Repository.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2026, 5, 12, 11, 24, 49, 477, DateTimeKind.Utc).AddTicks(8790));
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<Guid>("ForumId")
                         .HasColumnType("uuid");
@@ -379,9 +379,6 @@ namespace CRIApp.Repository.Migrations
 
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("ReferenceNumber")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Text")
                         .IsRequired()
