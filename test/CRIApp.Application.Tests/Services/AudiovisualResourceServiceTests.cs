@@ -60,6 +60,6 @@ public class AudiovisualResourceServiceTests
         Assert.Equal(resource.Id, dto.Id);
         Assert.Equal("Tutorial", dto.Name);
         Assert.Equal("Learn CRI", dto.Description);
-        Assert.Equal("<iframe src='url'/>", dto.Iframe);
+        Assert.Equal("<iframe src='url'/>", dto.Link);
     }
 }

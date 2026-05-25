@@ -8,7 +8,7 @@ public class AudiovisualResourceDto
     public Guid Id { get; private set; }
     public string Name { get; private set; }
     public string Description { get; private set; }
-    public string Iframe { get; private set; }
+    public string Link { get; private set; }
 
     public AudiovisualResourceDto(AudiovisualResource audiovisualResource)
     {
@@ -26,6 +26,6 @@ public class AudiovisualResourceDto
             "pt" => audiovisualResource.DescriptionPt ?? audiovisualResource.Description,
             _ => audiovisualResource.Description
         };
-        Iframe = audiovisualResource.Iframe;
+        Link = audiovisualResource.Link;
     }
 }

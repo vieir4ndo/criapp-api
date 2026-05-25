@@ -31,19 +31,9 @@ public class SaveUsersRecommendations : IRecurrentJob
         {
             var countBefore = childBook.Recommendations.Count;
 
-            foreach (var answer in childBook.Child.Answers)
+            foreach (var answer in childBook.Child.Answers.Where(answer => !answer.IsCorrect()))
             {
-                List<int> values = answer.Question.ScoringType switch
-                {
-                    QuestionScoringType.Default => [5, 6],
-                    QuestionScoringType.Reversed => [1, 2],
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-
-                if (!values.Contains(answer.Value))
-                {
-                    childBook.AddRecommendationsIfNeeded(answer.Question.Recommendations);
-                }
+                childBook.AddRecommendationsIfNeeded(answer.Question.Recommendations);
             }
 
             if (childBook.Recommendations.Count != countBefore)

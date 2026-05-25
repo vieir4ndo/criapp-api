@@ -23,7 +23,7 @@ public class AudiovisualResourceMapping : IEntityTypeConfiguration<AudiovisualRe
         builder.Property(x => x.DescriptionEn);
         builder.Property(x => x.DescriptionPt);
         
-        builder.Property(x => x.Iframe)
+        builder.Property(x => x.Link)
             .IsRequired();
     }
 }

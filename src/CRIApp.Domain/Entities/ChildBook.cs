@@ -23,26 +23,14 @@ public class ChildBook : Entity
 
     public void UpdateScore(List<Answer> answers, List<RecommendationCheckpoint> todayCheckpoints)
     {
-        if (!answers.Any())
+        if (answers.Count == 0)
         {
             Score = 0;
             ScoreLastUpdatedAt = DateTime.UtcNow;
             return;
         }
 
-        var points = 0;
-        foreach (var answer in answers)
-        {
-            List<int> values = answer.Question.ScoringType switch
-            {
-                QuestionScoringType.Default => [5, 6],
-                QuestionScoringType.Reversed => [1, 2],
-                _ => throw new ArgumentOutOfRangeException()
-            };
-
-            if (values.Contains(answer.Value))
-                points++;
-        }
+        var points = answers.Count(answer => answer.IsCorrect());
 
         var answersRatio = (double)points / answers.Count;
         var totalActiveRecommendations = Recommendations.Count;

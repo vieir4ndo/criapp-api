@@ -19,7 +19,7 @@ public class AudiovisualResourceTests
         Assert.NotNull(resource);
         Assert.Equal("Video 1", resource.Name);
         Assert.Equal("A helpful video", resource.Description);
-        Assert.Equal("<iframe src='...'/>", resource.Iframe);
+        Assert.Equal("<iframe src='...'/>", resource.Link);
     }
 
     [Fact]

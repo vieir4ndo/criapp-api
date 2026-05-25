@@ -130,16 +130,7 @@ public class AwardChildBookJob : IRecurrentJob
 
     private static int CalculateGroupScore(List<Answer> groupAnswers)
     {
-        var points = groupAnswers.Count(a =>
-        {
-            var valid = a.Question.ScoringType switch
-            {
-                QuestionScoringType.Default => new[] { 5, 6 },
-                QuestionScoringType.Reversed => new[] { 1, 2 },
-                _ => Array.Empty<int>(),
-            };
-            return valid.Contains(a.Value);
-        });
+        var points = groupAnswers.Count(a => a.IsCorrect());
 
         return points * 100 / groupAnswers.Count;
     }

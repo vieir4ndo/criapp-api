@@ -1,4 +1,5 @@
 
+using CRIApp.Domain.Enums;
 using CRIApp.Domain.Extensions;
 
 namespace CRIApp.Domain.Entities;
@@ -37,5 +38,17 @@ public class Answer : Entity
         QuestionId.IsEmptyGuid("An answer has to refer to a question");
         PrcId.IsEmptyGuid("An answer has to have a Prc associated");
         PrcId.IsEmptyGuid("An answer has to have a Child associated");
+    }
+
+    public bool IsCorrect()
+    {
+        List<int> correctAnswers = Question.ScoringType switch
+        {
+            QuestionScoringType.Default => [5, 6],
+            QuestionScoringType.Reversed => [1, 2],
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        return correctAnswers.Contains(Value);
     }
 }

@@ -70,7 +70,7 @@ namespace CRIApp.Repository.Migrations
                     b.Property<string>("DescriptionPt")
                         .HasColumnType("text");
 
-                    b.Property<string>("Iframe")
+                    b.Property<string>("Link")
                         .IsRequired()
                         .HasColumnType("text");
 
