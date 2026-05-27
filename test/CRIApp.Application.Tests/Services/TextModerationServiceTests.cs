@@ -13,6 +13,15 @@ public class TextModerationServiceTests
     [InlineData("this is shit")]
     [InlineData("hijo de puta")]
     [InlineData("filho da puta")]
+    [InlineData("what the hell")]
+    [InlineData("que joda")]
+    [InlineData("isso foi no cu")]
+    [InlineData("seu viado")]
+    [InlineData("seu viadinho")]
+    [InlineData("isso e viadagem")]
+    [InlineData("isso foi cuzinho")]
+    [InlineData("que maricon")]
+    [InlineData("you are a faggot")]
     [InlineData("go to hell")]
     [InlineData("vai tomar no cu")]
     [InlineData("vete a la mierda")]
@@ -37,6 +46,14 @@ public class TextModerationServiceTests
     public void ContainsBlockedContent_WithCleanMultilingualText_ShouldReturnFalse()
     {
         var result = _sut.ContainsBlockedContent("Consejos para mejorar la rutina familiar y el vínculo emocional");
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void ContainsBlockedContent_WithViaduto_ShouldReturnFalse()
+    {
+        var result = _sut.ContainsBlockedContent("O viaduto central foi reformado ontem");
 
         Assert.False(result);
     }
