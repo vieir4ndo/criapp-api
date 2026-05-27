@@ -23,6 +23,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IFaqService, FaqService>();
         services.AddScoped<IForumService, ForumService>();
         services.AddScoped<ICommentService, CommentService>();
+        services.AddScoped<ITextModerationService, TextModerationService>();
         services.AddScoped<IAudiovisualResourceService, AudiovisualResourceService>();
         services.AddScoped<IChildBookService, ChildBookService>();
         services.AddScoped<INotificationService, NotificationService>();

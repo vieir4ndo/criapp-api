@@ -18,6 +18,7 @@ public class CommentServiceTests
     private readonly Mock<IForumService> _forumServiceMock;
     private readonly Mock<IUserService> _userServiceMock;
     private readonly Mock<ICommentRepository> _commentRepositoryMock;
+    private readonly Mock<ITextModerationService> _textModerationServiceMock;
     private readonly Mock<IStringLocalizer<AppMessages>> _localizerMock;
     private readonly CommentService _sut;
 
@@ -26,8 +27,9 @@ public class CommentServiceTests
         _forumServiceMock = new Mock<IForumService>();
         _userServiceMock = new Mock<IUserService>();
         _commentRepositoryMock = new Mock<ICommentRepository>();
+        _textModerationServiceMock = new Mock<ITextModerationService>();
         _localizerMock = new Mock<IStringLocalizer<AppMessages>>();
-        _sut = new CommentService(_forumServiceMock.Object, _userServiceMock.Object, _commentRepositoryMock.Object, NullLogger<CommentService>.Instance, _localizerMock.Object);
+        _sut = new CommentService(_forumServiceMock.Object, _userServiceMock.Object, _commentRepositoryMock.Object, _textModerationServiceMock.Object, NullLogger<CommentService>.Instance, _localizerMock.Object);
     }
 
     private static User BuildUser()
@@ -47,11 +49,65 @@ public class CommentServiceTests
 
         _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
         _forumServiceMock.Setup(s => s.GetById(forumId)).ReturnsAsync(forumDto);
+        _commentRepositoryMock.Setup(r => r.GetLastCreatedAtByPrcAndForum(prcId, forumId)).ReturnsAsync((DateTime?)null);
+        _commentRepositoryMock.Setup(r => r.CountByPrcAndForumSince(prcId, forumId, It.IsAny<DateTime>())).ReturnsAsync(0);
         _commentRepositoryMock.Setup(r => r.Create(It.IsAny<Comment>())).Returns(Task.CompletedTask);
 
         await _sut.Create(dto);
 
         _commentRepositoryMock.Verify(r => r.Create(It.IsAny<Comment>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Create_WithBadWords_ShouldThrowValidationException()
+    {
+        var prcId = Guid.NewGuid();
+        var forumId = Guid.NewGuid();
+        var user = BuildUser();
+        var forumDto = new ForumDto { Id = forumId, Name = "Forum", Description = "Desc", Comments = new() };
+        var dto = new CreateCommentDto { Text = "bad text", PrcId = prcId, ForumId = forumId };
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
+        _forumServiceMock.Setup(s => s.GetById(forumId)).ReturnsAsync(forumDto);
+        _textModerationServiceMock.Setup(x => x.ContainsBlockedContent(dto.Text)).Returns(true);
+
+        await Assert.ThrowsAsync<ValidationException>(() => _sut.Create(dto));
+        _commentRepositoryMock.Verify(r => r.Create(It.IsAny<Comment>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Create_TooFrequent_ShouldThrowValidationException()
+    {
+        var prcId = Guid.NewGuid();
+        var forumId = Guid.NewGuid();
+        var user = BuildUser();
+        var forumDto = new ForumDto { Id = forumId, Name = "Forum", Description = "Desc", Comments = new() };
+        var dto = new CreateCommentDto { Text = "Hello", PrcId = prcId, ForumId = forumId };
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
+        _forumServiceMock.Setup(s => s.GetById(forumId)).ReturnsAsync(forumDto);
+        _commentRepositoryMock.Setup(r => r.GetLastCreatedAtByPrcAndForum(prcId, forumId)).ReturnsAsync(DateTime.UtcNow.AddSeconds(-2));
+
+        await Assert.ThrowsAsync<ValidationException>(() => _sut.Create(dto));
+        _commentRepositoryMock.Verify(r => r.Create(It.IsAny<Comment>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Create_TooManyRequests_ShouldThrowValidationException()
+    {
+        var prcId = Guid.NewGuid();
+        var forumId = Guid.NewGuid();
+        var user = BuildUser();
+        var forumDto = new ForumDto { Id = forumId, Name = "Forum", Description = "Desc", Comments = new() };
+        var dto = new CreateCommentDto { Text = "Hello", PrcId = prcId, ForumId = forumId };
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
+        _forumServiceMock.Setup(s => s.GetById(forumId)).ReturnsAsync(forumDto);
+        _commentRepositoryMock.Setup(r => r.GetLastCreatedAtByPrcAndForum(prcId, forumId)).ReturnsAsync(DateTime.UtcNow.AddMinutes(-2));
+        _commentRepositoryMock.Setup(r => r.CountByPrcAndForumSince(prcId, forumId, It.IsAny<DateTime>())).ReturnsAsync(5);
+
+        await Assert.ThrowsAsync<ValidationException>(() => _sut.Create(dto));
+        _commentRepositoryMock.Verify(r => r.Create(It.IsAny<Comment>()), Times.Never);
     }
 
     [Fact]

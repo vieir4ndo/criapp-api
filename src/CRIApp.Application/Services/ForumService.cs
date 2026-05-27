@@ -12,13 +12,20 @@ public class ForumService : IForumService
 {
     private readonly IForumRepository _forumRepository;
     private readonly IUserService _userService;
+    private readonly ITextModerationService _textModerationService;
     private readonly ILogger<ForumService> _logger;
     private readonly IStringLocalizer<AppMessages> _localizer;
 
-    public ForumService(IForumRepository forumRepository, IUserService userService, ILogger<ForumService> logger, IStringLocalizer<AppMessages> localizer)
+    public ForumService(
+        IForumRepository forumRepository,
+        IUserService userService,
+        ITextModerationService textModerationService,
+        ILogger<ForumService> logger,
+        IStringLocalizer<AppMessages> localizer)
     {
         _forumRepository = forumRepository;
         _userService = userService;
+        _textModerationService = textModerationService;
         _logger = logger;
         _localizer = localizer;
     }
@@ -26,6 +33,8 @@ public class ForumService : IForumService
     public async Task Create(CreateForumDto dto)
     {
         _ = await _userService.GetAndValidateById(dto.PrcId);
+
+        ValidateTextContent(dto.Name, dto.Description);
 
         await _forumRepository.Create(dto.ToDomainObject());
     }
@@ -72,8 +81,19 @@ public class ForumService : IForumService
             throw new ValidationException(_localizer["ForumNotBelongsToUser"]);
         }
 
+        ValidateTextContent(dto.Name, dto.Description);
+
         forum.Update(dto.Name, dto.Description);
         
         await _forumRepository.Update(forum);
+    }
+
+    private void ValidateTextContent(string? name, string? description)
+    {
+        if (name is not null && _textModerationService.ContainsBlockedContent(name))
+            throw new ValidationException(_localizer["ForumContentContainsBadWords"]);
+
+        if (description is not null && _textModerationService.ContainsBlockedContent(description))
+            throw new ValidationException(_localizer["ForumContentContainsBadWords"]);
     }
 }

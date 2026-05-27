@@ -1,5 +1,6 @@
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CRIApp.Repository.Repositories;
 
@@ -27,5 +28,20 @@ public class CommentRepository : ICommentRepository
     {
         _context.Comment.Remove(comment);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<DateTime?> GetLastCreatedAtByPrcAndForum(Guid prcId, Guid forumId)
+    {
+        return await _context.Comment
+            .Where(x => x.PrcId == prcId && x.ForumId == forumId)
+            .OrderByDescending(x => x.CreatedAt)
+            .Select(x => (DateTime?)x.CreatedAt)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<int> CountByPrcAndForumSince(Guid prcId, Guid forumId, DateTime sinceUtc)
+    {
+        return await _context.Comment
+            .CountAsync(x => x.PrcId == prcId && x.ForumId == forumId && x.CreatedAt >= sinceUtc);
     }
 }

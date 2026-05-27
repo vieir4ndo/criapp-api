@@ -36,6 +36,18 @@
   <data name="CommentNotFound" xml:space="preserve">
     <value>Comentário não encontrado</value>
   </data>
+  <data name="ForumContentContainsBadWords" xml:space="preserve">
+    <value>O fórum contém palavras não permitidas</value>
+  </data>
+  <data name="CommentContainsBadWords" xml:space="preserve">
+    <value>O comentário contém palavras não permitidas</value>
+  </data>
+  <data name="CommentTooFrequent" xml:space="preserve">
+    <value>Você está comentando muito rápido. Aguarde alguns segundos e tente novamente</value>
+  </data>
+  <data name="CommentTooManyRequests" xml:space="preserve">
+    <value>Você enviou muitos comentários em pouco tempo. Tente novamente em um minuto</value>
+  </data>
   <data name="CheckpointAlreadyExists" xml:space="preserve">
     <value>Já existe um checkpoint para esta recomendação hoje</value>
   </data>

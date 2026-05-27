@@ -17,6 +17,7 @@ public class ForumServiceTests
 {
     private readonly Mock<IForumRepository> _forumRepositoryMock;
     private readonly Mock<IUserService> _userServiceMock;
+    private readonly Mock<ITextModerationService> _textModerationServiceMock;
     private readonly Mock<IStringLocalizer<AppMessages>> _localizerMock;
     private readonly ForumService _sut;
 
@@ -24,8 +25,9 @@ public class ForumServiceTests
     {
         _forumRepositoryMock = new Mock<IForumRepository>();
         _userServiceMock = new Mock<IUserService>();
+        _textModerationServiceMock = new Mock<ITextModerationService>();
         _localizerMock = new Mock<IStringLocalizer<AppMessages>>();
-        _sut = new ForumService(_forumRepositoryMock.Object, _userServiceMock.Object, NullLogger<ForumService>.Instance, _localizerMock.Object);
+        _sut = new ForumService(_forumRepositoryMock.Object, _userServiceMock.Object, _textModerationServiceMock.Object, NullLogger<ForumService>.Instance, _localizerMock.Object);
     }
 
     private static User BuildUser()
@@ -52,6 +54,20 @@ public class ForumServiceTests
         await _sut.Create(dto);
 
         _forumRepositoryMock.Verify(r => r.Create(It.IsAny<Forum>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Create_WithBadWords_ShouldThrowValidationException()
+    {
+        var prcId = Guid.NewGuid();
+        var user = BuildUser();
+        var dto = new CreateForumDto { Name = "bad", Description = "Desc", PrcId = prcId };
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
+        _textModerationServiceMock.Setup(x => x.ContainsBlockedContent(dto.Name)).Returns(true);
+
+        await Assert.ThrowsAsync<ValidationException>(() => _sut.Create(dto));
+        _forumRepositoryMock.Verify(r => r.Create(It.IsAny<Forum>()), Times.Never);
     }
 
     [Fact]
@@ -162,5 +178,22 @@ public class ForumServiceTests
         _forumRepositoryMock.Setup(r => r.GetById(forumId)).ReturnsAsync(forum);
 
         await Assert.ThrowsAsync<ValidationException>(() => _sut.Update(forumId, dto));
+    }
+
+    [Fact]
+    public async Task Update_WithBadWordsInDescription_ShouldThrowValidationException()
+    {
+        var forumId = Guid.NewGuid();
+        var prcId = Guid.NewGuid();
+        var user = BuildUser();
+        var forum = BuildForumWithPrc(prcId);
+        var dto = new UpdateForumDto { PrcId = prcId, Description = "bad text" };
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
+        _forumRepositoryMock.Setup(r => r.GetById(forumId)).ReturnsAsync(forum);
+        _textModerationServiceMock.Setup(x => x.ContainsBlockedContent(dto.Description!)).Returns(true);
+
+        await Assert.ThrowsAsync<ValidationException>(() => _sut.Update(forumId, dto));
+        _forumRepositoryMock.Verify(r => r.Update(It.IsAny<Forum>()), Times.Never);
     }
 }
