@@ -31,17 +31,6 @@ public class UserController : CriAppControllerBase
         return new ApiResponse<object>(true);
     }
 
-    [AllowAnonymous]
-    [HttpPost("login")]
-    public async Task<ApiResponse<TokenDto>> Login(LoginRequest request)
-    {
-        ValidateAndLog(request);
-
-        var tokenDto = await _service.Login(request.ToDto());
-
-        return new ApiResponse<TokenDto>(true, tokenDto);
-    }
-
     [HttpGet]
     public async Task<ApiResponse<UserDto>> Get()
     {
@@ -49,35 +38,13 @@ public class UserController : CriAppControllerBase
 
         return new ApiResponse<UserDto>(true, new UserDto(user));
     }
-    
+
     [HttpPatch]
     public async Task<ApiResponse<object>> Update(UpdateUserRequest request)
     {
         ValidateAndLog(request);
 
         await _service.Update(GetUserId(), request.ToDto());
-
-        return new ApiResponse<object>(true);
-    }
-    
-    [AllowAnonymous]
-    [HttpPost("forgot-password")]
-    public async Task<ApiResponse<object>> ForgotPassword(ForgotPasswordRequest request)
-    {
-        ValidateAndLog(request);
-        
-        await _service.ForgotPassword(request.Username);
-        
-        return new ApiResponse<object>(true);
-    }
-
-    [AllowAnonymous]
-    [HttpPost("reset-password")]
-    public async Task<ApiResponse<object>> ResetPassword(ResetPasswordRequest request)
-    {
-        ValidateAndLog(request);
-
-        await _service.ResetPassword(request.ToDto());
 
         return new ApiResponse<object>(true);
     }

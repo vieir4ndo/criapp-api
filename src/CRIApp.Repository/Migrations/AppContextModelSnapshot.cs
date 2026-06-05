@@ -425,6 +425,35 @@ namespace CRIApp.Repository.Migrations
                     b.ToTable("RecommendationCheckpoint", (string)null);
                 });
 
+            modelBuilder.Entity("CRIApp.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshToken");
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -658,6 +687,17 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Recommendation");
                 });
 
+            modelBuilder.Entity("CRIApp.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CRIApp.Domain.Entities.UserResetPasswordCode", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.User", "User")
@@ -702,6 +742,8 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Forums");
+
+                    b.Navigation("RefreshTokens");
 
                     b.Navigation("UserResetPasswordCodes");
                 });

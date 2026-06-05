@@ -18,7 +18,8 @@ public class SettingsTests
         {
             Key = "supersecretkey",
             Issuer = "criapp",
-            ExpiresInMinutes = 5
+            ExpiresInMinutes = 5,
+            RefreshTokenExpiresInDays = 30
         };
 
         Assert.Equal("supersecretkey", settings.Key);

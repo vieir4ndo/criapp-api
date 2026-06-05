@@ -1,50 +1,41 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
 using CRIApp.Application.Resources;
 using CRIApp.Domain.Data;
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Exceptions;
-using CRIApp.Domain.Extensions;
-using CRIApp.Domain.Settings;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CRIApp.Application.Services;
 
 public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
-    private readonly JwtTokenSettings _jwtTokenSettings;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IMessageUser _messageUser;
-    private readonly IUserResetPasswordCodeRepository _userResetPasswordCodeRepository;
     private readonly ILogger<UserService> _logger;
     private readonly IStringLocalizer<AppMessages> _localizer;
 
-    public UserService(IUserRepository repository,
-        IOptions<JwtTokenSettings> jwtTokenSettings,
+    public UserService(
+        IUserRepository repository,
+        IRefreshTokenRepository refreshTokenRepository,
         IMessageUser messageUser,
-        IUserResetPasswordCodeRepository userResetPasswordCodeRepository,
         ILogger<UserService> logger,
         IStringLocalizer<AppMessages> localizer)
     {
         _repository = repository;
-        _jwtTokenSettings = jwtTokenSettings.Value;
+        _refreshTokenRepository = refreshTokenRepository;
         _messageUser = messageUser;
-        _userResetPasswordCodeRepository = userResetPasswordCodeRepository;
         _logger = logger;
         _localizer = localizer;
     }
 
     public async Task Create(CreateUserDto dto)
     {
-        var userExisting = await _repository.GetByUsername(dto.Username);
+        var existing = await _repository.GetByUsername(dto.Username);
 
-        if (userExisting is not null)
+        if (existing is not null)
         {
             _logger.LogWarning("Registration attempt with already existing username {Username}", dto.Username);
             throw new ValidationException(_localizer["UserAlreadyExists"]);
@@ -53,44 +44,6 @@ public class UserService : IUserService
         var user = dto.ToDomainObject();
         await _repository.Create(user);
         await _messageUser.NotifyAccountCreation(user);
-    }
-
-    public async Task<TokenDto> Login(LoginDto dto)
-    {
-        var user = await GetByUsername(dto.Username);
-
-        if (user is not null && user.Active && user.VerifyPassword(dto.Password))
-        {
-            return GenerateToken(user);
-        }
-
-        _logger.LogWarning("Failed login attempt for username {Username}", dto.Username);
-        throw new ValidationException(_localizer["InvalidCredentials"]);
-    }
-
-    private TokenDto GenerateToken(User user)
-    {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtTokenSettings.Key));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-        var expiresIn = DateTime.Now.AddMinutes(_jwtTokenSettings.ExpiresInMinutes);
-
-        var claims = new List<Claim>()
-        {
-            new("id", user.Id.ToString())
-        };
-
-        var sectoken = new JwtSecurityToken(_jwtTokenSettings.Issuer,
-            _jwtTokenSettings.Issuer,
-            claims,
-            expires: expiresIn,
-            signingCredentials: credentials);
-
-        return new TokenDto()
-        {
-            Token = new JwtSecurityTokenHandler().WriteToken(sectoken),
-            ExpiresIn = expiresIn,
-            User = new UserDto(user)
-        };
     }
 
     public async Task<User?> GetByUsername(string username)
@@ -114,56 +67,22 @@ public class UserService : IUserService
     public async Task Update(Guid userId, UpdateUserDto dto)
     {
         var user = await GetAndValidateById(userId);
-
         user.Update(dto.Name, dto.BirthDate, dto.Sex, dto.EducationalLevel, dto.FamilyType, dto.NumberOfChildren);
-        
         await _repository.Update(user);
     }
 
-    public async Task ForgotPassword(string username)
+    public async Task UpdatePassword(Guid userId, string newPassword)
     {
-        var user = await GetByUsername(username);
-        
-        if (user is null)
-        {
-            _logger.LogWarning("Forgot password requested for unknown username {Username}", username);
-            throw new ValidationException(_localizer["UserNotFound"]);
-        }
-
-        //TODO: Extract this to settings
-        var code = RandomExtensions.GenerateRandomString(5);
-        
-        await _userResetPasswordCodeRepository.Create(new UserResetPasswordCode(user.Id, code, DateTime.Now.AddSeconds(180).ToUniversalTime()));
-        await _messageUser.NotifyForgotPassword(user, code);
-    }
-
-    public async Task ResetPassword(ResetPasswordDto dto)
-    {
-        var user = await GetByUsername(dto.Username);
-        
-        if (user is null)
-        {
-            _logger.LogWarning("Password reset attempted for unknown username {Username}", dto.Username);
-            throw new ValidationException(_localizer["UserNotFound"]);
-        }
-
-        if (!user.VerifyResetPasswordCode(dto.Code))
-        {
-            _logger.LogWarning("Invalid or expired reset code used for user {UserId}", user.Id);
-            throw new ValidationException(_localizer["InvalidResetCode"]);
-        }
-        
-        user.UpdatePassword(dto.NewPassword);
-        
+        var user = await GetAndValidateById(userId);
+        user.UpdatePassword(newPassword);
         await _repository.Update(user);
     }
 
     public async Task Deactivate(Guid userId)
     {
         var user = await GetAndValidateById(userId);
-
         user.Deactivate();
-
         await _repository.Update(user);
+        await _refreshTokenRepository.DeleteByUserId(userId);
     }
 }
