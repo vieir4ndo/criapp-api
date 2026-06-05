@@ -10,9 +10,10 @@ using Microsoft.Extensions.Options;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using AppContext = CRIApp.Repository.AppContext;
-using OpenTelemetry.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var hasAzureMonitor = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING"));
 
 builder.Services.AddOpenTelemetry()
     .WithTracing(tracing =>
@@ -21,8 +22,8 @@ builder.Services.AddOpenTelemetry()
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddEntityFrameworkCoreInstrumentation()
-            .AddSource("Criapp")
-            .AddAzureMonitorTraceExporter();
+            .AddSource("Criapp");
+        if (hasAzureMonitor) tracing.AddAzureMonitorTraceExporter();
     })
     .WithMetrics(metrics =>
     {
@@ -31,12 +32,12 @@ builder.Services.AddOpenTelemetry()
             .AddHttpClientInstrumentation()
             .AddRuntimeInstrumentation()
             .AddProcessInstrumentation()
-            .AddMeter("Criapp")
-            .AddAzureMonitorMetricExporter();
+            .AddMeter("Criapp");
+        if (hasAzureMonitor) metrics.AddAzureMonitorMetricExporter();
     })
     .WithLogging(logging =>
     {
-        logging.AddAzureMonitorLogExporter();
+        if (hasAzureMonitor) logging.AddAzureMonitorLogExporter();
     });
 
 builder.Services.AddSettingsConfiguration(builder.Configuration);
