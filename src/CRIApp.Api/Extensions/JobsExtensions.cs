@@ -45,7 +45,7 @@ public static class JobsExtensions
         recurringJobManager.AddOrUpdate<UpdateChildBookScoreJob>(
             nameof(UpdateChildBookScoreJob),
             x => x.Run(),
-            Cron.Hourly);
+            "*/15 * * * *");
 
         recurringJobManager.RemoveIfExists(nameof(AwardChildBookJob));
         recurringJobManager.AddOrUpdate<AwardChildBookJob>(
