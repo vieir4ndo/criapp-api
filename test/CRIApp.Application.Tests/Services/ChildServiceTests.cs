@@ -77,28 +77,71 @@ public class ChildServiceTests
     public async Task GetAllById_ShouldReturnMappedChildDtos()
     {
         var prcId = Guid.NewGuid();
+        var user = BuildUser();
         var children = new List<Child>
         {
             BuildChild(prcId),
             BuildChild(prcId)
         };
+        _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
         _childRepositoryMock.Setup(r => r.GetAllById(prcId)).ReturnsAsync(children);
 
         var result = await _sut.GetAllById(prcId);
 
         Assert.Equal(2, result.Count);
         Assert.All(result, dto => Assert.Equal(prcId, dto.PrcId));
+        Assert.All(result, dto => Assert.False(dto.AnsweredToday));
     }
 
     [Fact]
     public async Task GetAllById_NoneFound_ShouldReturnEmptyList()
     {
         var prcId = Guid.NewGuid();
+        var user = BuildUser();
+        _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
         _childRepositoryMock.Setup(r => r.GetAllById(prcId)).ReturnsAsync(new List<Child>());
 
         var result = await _sut.GetAllById(prcId);
 
         Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetAllById_ChildWithFiveAnswersToday_ShouldSetAnsweredTodayTrue()
+    {
+        var prcId = Guid.NewGuid();
+        var user = BuildUser();
+        var child = BuildChild(prcId);
+
+        for (var i = 0; i < 5; i++)
+            user.Answers.Add(new Answer(3, Guid.NewGuid(), child.Id, prcId));
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
+        _childRepositoryMock.Setup(r => r.GetAllById(prcId)).ReturnsAsync(new List<Child> { child });
+
+        var result = await _sut.GetAllById(prcId);
+
+        Assert.Single(result);
+        Assert.True(result[0].AnsweredToday);
+    }
+
+    [Fact]
+    public async Task GetAllById_ChildWithLessThanFiveAnswersToday_ShouldSetAnsweredTodayFalse()
+    {
+        var prcId = Guid.NewGuid();
+        var user = BuildUser();
+        var child = BuildChild(prcId);
+
+        for (var i = 0; i < 3; i++)
+            user.Answers.Add(new Answer(3, Guid.NewGuid(), child.Id, prcId));
+
+        _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
+        _childRepositoryMock.Setup(r => r.GetAllById(prcId)).ReturnsAsync(new List<Child> { child });
+
+        var result = await _sut.GetAllById(prcId);
+
+        Assert.Single(result);
+        Assert.False(result[0].AnsweredToday);
     }
 
     [Fact]

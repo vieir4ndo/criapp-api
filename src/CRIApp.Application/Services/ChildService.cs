@@ -37,13 +37,14 @@ public class ChildService : IChildService
 
     public async Task<List<ChildDto>> GetAllById(Guid prcId)
     {
+        var today = DateTime.UtcNow.Date;
+        var user = await _userService.GetAndValidateById(prcId);
         var children = await _childRepository.GetAllById(prcId);
 
-        var childrenDto = new List<ChildDto>();
-
-        children.ForEach(x => childrenDto.Add(new ChildDto(x)));
-
-        return childrenDto;
+        return children
+            .Select(child => new ChildDto(child,
+                user.Answers.Count(a => a.ChildId == child.Id && a.CreatedAt.Date == today) >= 5))
+            .ToList();
     }
     
     public async Task<Child> GetAndValidateById(Guid id, Guid prcId)

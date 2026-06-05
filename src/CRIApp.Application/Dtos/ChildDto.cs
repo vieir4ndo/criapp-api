@@ -12,8 +12,9 @@ public class ChildDto
     public int MonthsOfBreastFeeding { get; set; }
     public Guid PrcId { get; set; }
     public bool IsPremature { get; set; }
+    public bool AnsweredToday { get; set; }
 
-    public ChildDto(Child child)
+    public ChildDto(Child child, bool answeredToday = false)
     {
         Id = child.Id;
         Name = child.Name;
@@ -22,5 +23,6 @@ public class ChildDto
         MonthsOfBreastFeeding = child.MonthsOfBreastFeeding;
         PrcId = child.PrcId;
         IsPremature = child.IsPremature;
+        AnsweredToday = answeredToday;
     }
 }
