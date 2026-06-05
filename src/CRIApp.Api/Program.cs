@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using AppContext = CRIApp.Repository.AppContext;
+using OpenTelemetry.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,10 @@ builder.Services.AddOpenTelemetry()
             .AddProcessInstrumentation()
             .AddMeter("Criapp")
             .AddAzureMonitorMetricExporter();
+    })
+    .WithLogging(logging =>
+    {
+        logging.AddAzureMonitorLogExporter();
     });
 
 builder.Services.AddSettingsConfiguration(builder.Configuration);
