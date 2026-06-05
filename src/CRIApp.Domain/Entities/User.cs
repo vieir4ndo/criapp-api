@@ -43,7 +43,7 @@ public class User : Entity
         int? numberOfChildren = null
         )
     {
-        Name = name;
+        Name = name.ToTitleCase();
         BirthDate = birthDate;
         Sex = sex;
         Username = username;
@@ -80,7 +80,7 @@ public class User : Entity
 
     public void Update(string? name, DateTime? birthDate, Sex? sex, EducationalLevel? educationalLevel, FamilyType? familyType, int? numberOfChildren)
     {
-        Name = name ?? Name;
+        Name = name?.ToTitleCase() ?? Name;
         BirthDate = birthDate ?? BirthDate;
         Sex = sex ?? Sex;
         FamilyType = familyType;

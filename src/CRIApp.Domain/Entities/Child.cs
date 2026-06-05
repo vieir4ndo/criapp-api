@@ -17,7 +17,7 @@ public class Child : Entity
 
     public Child(string name, DateTime birthDate, Sex sex, int monthsOfBreastFeeding, Guid prcId, bool isPremature)
     {
-        Name = name;
+        Name = name.ToTitleCase();
         BirthDate = birthDate;
         Sex = sex;
         MonthsOfBreastFeeding = monthsOfBreastFeeding;
@@ -33,8 +33,7 @@ public class Child : Entity
 
     public void Update(string? name, DateTime? birthDate, Sex? sex, int? monthsOfBreastFeeding, bool? isPremature)
     {
-        Name = name ?? Name;
-        BirthDate = birthDate ?? BirthDate;
+        Name = name?.ToTitleCase() ?? Name;
         Sex = sex ?? Sex;
         MonthsOfBreastFeeding = monthsOfBreastFeeding ?? MonthsOfBreastFeeding;
         IsPremature = isPremature ?? IsPremature;

@@ -12,7 +12,7 @@ public class Forum : Entity
 
     public Forum(string name, string description, Guid prcId)
     {
-        Name = name;
+        Name = name.ToTitleCase();
         Description = description;
         PrcId = prcId;
         Comments = [];
@@ -24,7 +24,7 @@ public class Forum : Entity
     
     public void Update(string? name, string? description)
     {
-        Name = name ?? Name;
+        Name = name?.ToTitleCase() ?? Name;
         Description = description ?? Description;
     }
 
