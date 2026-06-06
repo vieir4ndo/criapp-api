@@ -31,7 +31,7 @@ public class ChildBookService : IChildBookService
         _localizer = localizer;
     }
 
-    public async Task<ChildBookSummaryDto> GetSummaryByChildId(Guid childId, Guid prcId)
+    public async Task<ChildBookDto> GetSummaryByChildId(Guid childId, Guid prcId)
     {
         _ = await _childService.GetAndValidateById(childId, prcId);
 
@@ -43,7 +43,7 @@ public class ChildBookService : IChildBookService
             throw new NotFoundException(_localizer["ChildBookNotFound"]);
         }
 
-        return new ChildBookSummaryDto(childBook);
+        return new ChildBookDto(childBook);
     }
 
     public async Task<List<AwardDto>> GetAwardsByChildId(Guid childId, Guid prcId)
@@ -83,25 +83,7 @@ public class ChildBookService : IChildBookService
             return new RecommendationDto(r, todayCompleted);
         }).ToList();
     }
-
-    public async Task<ChildBookDto> GetByChildId(Guid childId, Guid prcId)
-    {
-        _ = await _childService.GetAndValidateById(childId, prcId);
-
-        var childBook = await _childBookRepository.GetByChildId(childId);
-
-        if (childBook is null)
-        {
-            _logger.LogWarning("ChildBook for child {ChildId} not found", childId);
-            throw new NotFoundException(_localizer["ChildBookNotFound"]);
-        }
-
-        var today = DateTime.UtcNow.Date;
-        var todayCheckpoints = await _checkpointRepository.GetByChildBookIdAndDate(childBook.Id, today);
-
-        return new ChildBookDto(childBook, todayCheckpoints);
-    }
-
+    
     public async Task SaveCheckpoint(Guid childId, Guid prcId, int recommendationId, bool completed)
     {
         _ = await _childService.GetAndValidateById(childId, prcId);

@@ -139,5 +139,75 @@ public class AuthServiceTests
 
         await Assert.ThrowsAsync<ValidationException>(() => _sut.ResetPassword(dto));
     }
+
+    [Fact]
+    public async Task RefreshToken_TokenNotFound_ShouldThrowValidationException()
+    {
+        _refreshTokenRepositoryMock
+            .Setup(r => r.GetByTokenHash(It.IsAny<string>()))
+            .ReturnsAsync((RefreshToken?)null);
+
+        await Assert.ThrowsAsync<ValidationException>(() => _sut.RefreshToken("sometoken"));
+    }
+
+    [Fact]
+    public async Task RefreshToken_ExpiredToken_ShouldThrowValidationException()
+    {
+        var user = BuildUser();
+        var expiredToken = BuildRefreshToken(user, expired: true);
+
+        _refreshTokenRepositoryMock
+            .Setup(r => r.GetByTokenHash(It.IsAny<string>()))
+            .ReturnsAsync(expiredToken);
+
+        await Assert.ThrowsAsync<ValidationException>(() => _sut.RefreshToken("sometoken"));
+    }
+
+    [Fact]
+    public async Task RefreshToken_InactiveUser_ShouldThrowValidationException()
+    {
+        var user = BuildUser();
+        user.Deactivate();
+        var token = BuildRefreshToken(user);
+
+        _refreshTokenRepositoryMock
+            .Setup(r => r.GetByTokenHash(It.IsAny<string>()))
+            .ReturnsAsync(token);
+
+        await Assert.ThrowsAsync<ValidationException>(() => _sut.RefreshToken("sometoken"));
+    }
+
+    [Fact]
+    public async Task RefreshToken_ValidToken_ShouldDeleteOldAndReturnNewToken()
+    {
+        var user = BuildUser();
+        var token = BuildRefreshToken(user);
+
+        _refreshTokenRepositoryMock
+            .Setup(r => r.GetByTokenHash(It.IsAny<string>()))
+            .ReturnsAsync(token);
+        _refreshTokenRepositoryMock
+            .Setup(r => r.Delete(token))
+            .Returns(Task.CompletedTask);
+        _refreshTokenRepositoryMock
+            .Setup(r => r.Create(It.IsAny<RefreshToken>()))
+            .Returns(Task.CompletedTask);
+
+        var result = await _sut.RefreshToken("sometoken");
+
+        Assert.NotNull(result);
+        Assert.NotEmpty(result.Token);
+        _refreshTokenRepositoryMock.Verify(r => r.Delete(token), Times.Once);
+    }
+
+    private static RefreshToken BuildRefreshToken(User user, bool expired = false)
+    {
+        var expiresAt = expired ? DateTime.UtcNow.AddDays(-1) : DateTime.UtcNow.AddDays(30);
+        var token = new RefreshToken(user.Id, "rawtoken_test_value_123", expiresAt);
+        typeof(RefreshToken)
+            .GetProperty(nameof(RefreshToken.User))!
+            .SetValue(token, user);
+        return token;
+    }
 }
 

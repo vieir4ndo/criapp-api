@@ -8,4 +8,5 @@ public interface IRefreshTokenRepository : IRepository<RefreshToken>
     Task<RefreshToken?> GetByTokenHash(string tokenHash);
     Task Delete(RefreshToken token);
     Task<int> DeleteByUserId(Guid userId);
+    Task<int> DeleteExpiredAsync();
 }

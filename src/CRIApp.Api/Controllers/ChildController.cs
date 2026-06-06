@@ -58,20 +58,12 @@ public class ChildController : CriAppControllerBase
         return new ApiResponse<ChildDto>(true, new ChildDto(child));
     }
 
-    [HttpGet("{childId}/book")]
-    public async Task<ApiResponse<ChildBookDto>> GetBook([FromRoute] Guid childId)
-    {
-        var childBook = await _childBookService.GetByChildId(childId, GetUserId());
-
-        return new ApiResponse<ChildBookDto>(true, childBook);
-    }
-
     [HttpGet("{childId}/book/score")]
-    public async Task<ApiResponse<ChildBookSummaryDto>> GetBookScore([FromRoute] Guid childId)
+    public async Task<ApiResponse<ChildBookDto>> GetBookScore([FromRoute] Guid childId)
     {
         var summary = await _childBookService.GetSummaryByChildId(childId, GetUserId());
 
-        return new ApiResponse<ChildBookSummaryDto>(true, summary);
+        return new ApiResponse<ChildBookDto>(true, summary);
     }
 
     [HttpGet("{childId}/book/awards")]

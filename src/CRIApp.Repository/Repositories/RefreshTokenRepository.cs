@@ -23,6 +23,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     public async Task<RefreshToken?> GetByTokenHash(string tokenHash)
     {
         return await _context.RefreshToken
+            .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.TokenHash == tokenHash);
     }
 
@@ -36,6 +37,13 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     {
         return await _context.RefreshToken
             .Where(x => x.UserId == userId)
+            .ExecuteDeleteAsync();
+    }
+
+    public async Task<int> DeleteExpiredAsync()
+    {
+        return await _context.RefreshToken
+            .Where(x => x.ExpiresAt < DateTime.UtcNow)
             .ExecuteDeleteAsync();
     }
 }

@@ -16,6 +16,7 @@ public static class JobsExtensions
         services.AddTransient<AwardChildBookJob>();
         services.AddTransient<SaveUsersRecommendations>();
         services.AddTransient<CleanUserResetPasswordCodesJob>();
+        services.AddTransient<CleanExpiredRefreshTokensJob>();
         return services;
     }
 
@@ -64,6 +65,12 @@ public static class JobsExtensions
             nameof(CleanUserResetPasswordCodesJob),
             x => x.Run(),
             "*/10 * * * *");
+
+        recurringJobManager.RemoveIfExists(nameof(CleanExpiredRefreshTokensJob));
+        recurringJobManager.AddOrUpdate<CleanExpiredRefreshTokensJob>(
+            nameof(CleanExpiredRefreshTokensJob),
+            x => x.Run(),
+            Cron.Daily);
 
         return app;
     }

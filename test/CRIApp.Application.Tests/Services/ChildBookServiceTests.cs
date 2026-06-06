@@ -60,68 +60,7 @@ public class ChildBookServiceTests
         var checkpoint = new RecommendationCheckpoint(recommendationId, childBookId, completed);
         return checkpoint;
     }
-
-    [Fact]
-    public async Task GetByChildId_WithTodayCheckpoints_ShouldReturnTodayCompleted()
-    {
-        var prcId = Guid.NewGuid();
-        var childId = Guid.NewGuid();
-        var child = BuildChild(prcId, childId);
-        var childBook = BuildChildBook(childId);
-        var recommendation = BuildRecommendation(1);
-        typeof(ChildBook).GetProperty(nameof(ChildBook.Recommendations))!
-            .SetValue(childBook, new List<Recommendation> { recommendation });
-
-        var todayCheckpoint = BuildCheckpoint(1, childBook.Id, true);
-
-        _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildId(childId)).ReturnsAsync(childBook);
-        _checkpointRepositoryMock
-            .Setup(r => r.GetByChildBookIdAndDate(childBook.Id, It.IsAny<DateTime>()))
-            .ReturnsAsync(new List<RecommendationCheckpoint> { todayCheckpoint });
-
-        var result = await _sut.GetByChildId(childId, prcId);
-
-        Assert.Single(result.Recommendations);
-        Assert.True(result.Recommendations[0].TodayCompleted);
-    }
-
-    [Fact]
-    public async Task GetByChildId_NoCheckpointsToday_ShouldReturnNullTodayCompleted()
-    {
-        var prcId = Guid.NewGuid();
-        var childId = Guid.NewGuid();
-        var child = BuildChild(prcId, childId);
-        var childBook = BuildChildBook(childId);
-        var recommendation = BuildRecommendation(1);
-        typeof(ChildBook).GetProperty(nameof(ChildBook.Recommendations))!
-            .SetValue(childBook, new List<Recommendation> { recommendation });
-
-        _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildId(childId)).ReturnsAsync(childBook);
-        _checkpointRepositoryMock
-            .Setup(r => r.GetByChildBookIdAndDate(childBook.Id, It.IsAny<DateTime>()))
-            .ReturnsAsync(new List<RecommendationCheckpoint>());
-
-        var result = await _sut.GetByChildId(childId, prcId);
-
-        Assert.Single(result.Recommendations);
-        Assert.Null(result.Recommendations[0].TodayCompleted);
-    }
-
-    [Fact]
-    public async Task GetByChildId_ChildBookNotFound_ShouldThrowNotFoundException()
-    {
-        var prcId = Guid.NewGuid();
-        var childId = Guid.NewGuid();
-        var child = BuildChild(prcId, childId);
-
-        _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildId(childId)).ReturnsAsync((ChildBook?)null);
-
-        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetByChildId(childId, prcId));
-    }
-
+    
     [Fact]
     public async Task SaveCheckpoint_HappyPath_ShouldCreateCheckpoint()
     {

@@ -65,34 +65,18 @@ public class AuthService : IAuthService
 
         if (storedToken is null || storedToken.IsExpired())
         {
-            if (storedToken is not null)
-                await _refreshTokenRepository.Delete(storedToken);
-
             _logger.LogWarning("Invalid or expired refresh token");
             throw new ValidationException(_localizer["InvalidRefreshToken"]);
         }
 
-        User user;
-        try
+        if (!storedToken.User.Active)
         {
-            user = await _userService.GetAndValidateById(storedToken.UserId);
-        }
-        catch (NotFoundException)
-        {
-            await _refreshTokenRepository.Delete(storedToken);
-            _logger.LogWarning("Refresh token used for missing user {UserId}", storedToken.UserId);
-            throw new ValidationException(_localizer["InvalidCredentials"]);
-        }
-
-        if (!user.Active)
-        {
-            await _refreshTokenRepository.Delete(storedToken);
-            _logger.LogWarning("Refresh token used for inactive user {UserId}", user.Id);
+            _logger.LogWarning("Refresh token used for inactive user {UserId}", storedToken.User.Id);
             throw new ValidationException(_localizer["InvalidCredentials"]);
         }
 
         await _refreshTokenRepository.Delete(storedToken);
-        return await GenerateAndStoreToken(user);
+        return await GenerateAndStoreToken(storedToken.User);
     }
 
     public async Task ForgotPassword(string username)
