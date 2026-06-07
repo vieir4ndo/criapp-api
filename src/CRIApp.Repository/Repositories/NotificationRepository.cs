@@ -44,16 +44,21 @@ public class NotificationRepository : INotificationRepository
             .ToListAsync();
     }
 
-    public async Task<IList<Notification>> GetHistoryByUserId(Guid userId, int page, int pageSize)
+    public async Task<(IList<Notification> Items, int TotalCount)> GetHistoryByUserId(Guid userId, int page, int pageSize)
     {
-        return await _context.Notification
+        var query = _context.Notification
             .Include(n => n.ChildBook)
                 .ThenInclude(cb => cb!.Child)
-            .Where(n => n.ChildBook!.Child.PrcId == userId && n.Delivered)
+            .Where(n => n.ChildBook!.Child.PrcId == userId && n.Delivered);
+
+        var totalCount = await query.CountAsync();
+        var items = await query
             .OrderByDescending(n => n.Date)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
+
+        return (items, totalCount);
     }
 
     public async Task<Notification?> GetById(Guid id)

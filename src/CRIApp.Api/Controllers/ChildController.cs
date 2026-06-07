@@ -58,7 +58,7 @@ public class ChildController : CriAppControllerBase
         return new ApiResponse<ChildDto>(true, new ChildDto(child));
     }
 
-    [HttpGet("{childId}/book/score")]
+    [HttpGet("{childId}/book")]
     public async Task<ApiResponse<ChildBookDto>> GetBookScore([FromRoute] Guid childId)
     {
         var summary = await _childBookService.GetSummaryByChildId(childId, GetUserId());

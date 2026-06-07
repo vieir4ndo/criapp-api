@@ -6,7 +6,7 @@ namespace CRIApp.Application.Abstractions;
 public interface INotificationService
 {
     Task<IList<NotificationDto>> GetPendingByUserId(Guid userId);
-    Task<IList<NotificationDto>> GetHistoryByUserId(Guid userId, int page, int pageSize);
+    Task<NotificationHistoryDto> GetHistoryByUserId(Guid userId, int page, int pageSize);
     Task MarkAsDelivered(Guid notificationId);
     Task MarkAsRead(Guid notificationId);
     Task CreateIfNotExists(Guid childBookId, NotificationType type);
