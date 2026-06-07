@@ -58,7 +58,8 @@ public class ChildBookService : IChildBookService
             throw new NotFoundException(_localizer["ChildBookNotFound"]);
         }
 
-        return childBook.Awards.Select(a => new AwardDto(a)).ToList();
+        return (await _childBookRepository.GetAwardsByChildBookId(childBook.Id))
+            .Select(a => new AwardDto(a)).ToList();
     }
 
     public async Task<List<RecommendationDto>> GetRecommendationsByChildId(Guid childId, Guid prcId)
@@ -75,9 +76,10 @@ public class ChildBookService : IChildBookService
 
         var today = DateTime.UtcNow.Date;
         var todayCheckpoints = await _checkpointRepository.GetByChildBookIdAndDate(childBook.Id, today);
+        var recommendations = await _childBookRepository.GetRecommendationsByChildBookId(childBook.Id);
 
         var checkpointMap = todayCheckpoints.ToDictionary(c => c.RecommendationId, c => (bool?)c.Completed);
-        return childBook.Recommendations.Select(r =>
+        return recommendations.Select(r =>
         {
             checkpointMap.TryGetValue(r.Id, out var todayCompleted);
             return new RecommendationDto(r, todayCompleted);

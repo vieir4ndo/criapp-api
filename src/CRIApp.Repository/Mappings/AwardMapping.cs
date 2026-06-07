@@ -43,6 +43,7 @@ public class AwardMapping : IEntityTypeConfiguration<Award>
                 {
                     j.ToTable("ChildBookAward");
                     j.Property(cb => cb.AwardsId).HasColumnName("AwardsId");
+                    j.Property(cb => cb.CreatedAt).IsRequired().HasDefaultValueSql("NOW()");
                 });
     }
 }

@@ -11,8 +11,10 @@ public class AppContext : DbContext
     public DbSet<Answer> Answer { get; set; }
     public DbSet<AudiovisualResource> AudiovisualResource { get; set; }
     public DbSet<Award> Award { get; set; }
+    public DbSet<ChildBookAward> ChildBookAward { get; set; }
     public DbSet<Child> Child { get; set; }
     public DbSet<ChildBook> ChildBook { get; set; }
+    public DbSet<ChildBookRecommendation> ChildBookRecommendation { get; set; }
     public DbSet<Comment> Comment { get; set; }
     public DbSet<Faq> Faq { get; set; }
     public DbSet<Forum> Forum { get; set; }

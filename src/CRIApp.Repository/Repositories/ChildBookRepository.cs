@@ -21,6 +21,24 @@ public class ChildBookRepository : IChildBookRepository
             .FirstOrDefaultAsync(x => x.ChildId == childId);
     }
 
+    public async Task<IList<Recommendation>> GetRecommendationsByChildBookId(Guid childBookId)
+    {
+        return await _context.ChildBookRecommendation
+            .Where(x => x.ChildBooksId == childBookId)
+            .OrderByDescending(x => x.CreatedAt)
+            .Select(x => x.Recommendation!)
+            .ToListAsync();
+    }
+
+    public async Task<IList<Award>> GetAwardsByChildBookId(Guid childBookId)
+    {
+        return await _context.ChildBookAward
+            .Where(x => x.ChildBooksId == childBookId)
+            .OrderByDescending(x => x.CreatedAt)
+            .Select(x => x.Award!)
+            .ToListAsync();
+    }
+
     public async Task Create(ChildBook childBook)
     {
         await _context.ChildBook.AddAsync(childBook);

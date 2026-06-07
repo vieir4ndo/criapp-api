@@ -190,6 +190,11 @@ namespace CRIApp.Repository.Migrations
                     b.Property<Guid>("ChildBooksId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW()");
+
                     b.HasKey("AwardsId", "ChildBooksId");
 
                     b.HasIndex("ChildBooksId");
@@ -205,6 +210,11 @@ namespace CRIApp.Repository.Migrations
                     b.Property<int>("RecommendationsId")
                         .HasColumnType("integer")
                         .HasColumnName("RecommendationsId");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW()");
 
                     b.HasKey("ChildBooksId", "RecommendationsId");
 
