@@ -16,7 +16,12 @@ public class ChildBookRepository : IChildBookRepository
     public async Task<ChildBook?> GetByChildId(Guid childId)
     {
         return await _context.ChildBook
-            .Include(x => x.Awards)
+            .FirstOrDefaultAsync(x => x.ChildId == childId);
+    }
+
+    public async Task<ChildBook?> GetByChildIdWithRecommendations(Guid childId)
+    {
+        return await _context.ChildBook
             .Include(x => x.Recommendations)
             .FirstOrDefaultAsync(x => x.ChildId == childId);
     }

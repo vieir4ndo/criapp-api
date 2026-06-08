@@ -5,6 +5,7 @@ namespace CRIApp.Domain.Data;
 public interface IChildBookRepository : IRepository<ChildBook>
 {
     Task<ChildBook?> GetByChildId(Guid childId);
+    Task<ChildBook?> GetByChildIdWithRecommendations(Guid childId);
     Task Create(ChildBook childBook);
     Task Update(ChildBook childBook);
     Task<IList<ChildBook>> GetAll();

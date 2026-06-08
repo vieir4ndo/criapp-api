@@ -90,7 +90,7 @@ public class ChildBookService : IChildBookService
     {
         _ = await _childService.GetAndValidateById(childId, prcId);
 
-        var childBook = await _childBookRepository.GetByChildId(childId);
+        var childBook = await _childBookRepository.GetByChildIdWithRecommendations(childId);
 
         if (childBook is null)
         {
