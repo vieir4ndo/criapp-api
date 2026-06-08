@@ -75,8 +75,9 @@ public class ChildBookService : IChildBookService
         }
 
         var today = DateTime.UtcNow.Date;
+        var windowStart = today.AddDays(-6);
         var todayCheckpoints = await _checkpointRepository.GetByChildBookIdAndDate(childBook.Id, today);
-        var completedCountMap = await _checkpointRepository.GetCompletedCountByChildBook(childBook.Id);
+        var completedCountMap = await _checkpointRepository.GetDistinctCompletedDaysInWindowByChildBook(childBook.Id, windowStart, today);
         var recommendations = await _childBookRepository.GetRecommendationsByChildBookId(childBook.Id);
 
         var checkpointMap = todayCheckpoints.ToDictionary(c => c.RecommendationId, c => (bool?)c.Completed);

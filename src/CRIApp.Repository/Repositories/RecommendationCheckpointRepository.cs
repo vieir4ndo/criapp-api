@@ -49,12 +49,12 @@ public class RecommendationCheckpointRepository : IRecommendationCheckpointRepos
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Dictionary<int, int>> GetCompletedCountByChildBook(Guid childBookId)
+    public async Task<Dictionary<int, int>> GetDistinctCompletedDaysInWindowByChildBook(Guid childBookId, DateTime from, DateTime to)
     {
         return await _context.RecommendationCheckpoint
-            .Where(x => x.ChildBookId == childBookId && x.Completed)
+            .Where(x => x.ChildBookId == childBookId && x.Completed && x.Date >= from && x.Date <= to)
             .GroupBy(x => x.RecommendationId)
-            .Select(g => new { RecommendationId = g.Key, Count = g.Count() })
-            .ToDictionaryAsync(x => x.RecommendationId, x => x.Count);
+            .Select(g => new { RecommendationId = g.Key, DistinctDays = g.Select(x => x.Date).Distinct().Count() })
+            .ToDictionaryAsync(x => x.RecommendationId, x => x.DistinctDays);
     }
 }
