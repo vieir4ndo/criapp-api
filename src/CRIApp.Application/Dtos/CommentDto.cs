@@ -8,6 +8,7 @@ public class CommentDto
     public string Text { get; set; }
     public string PrcName { get; set; }
     public string PrcId { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public CommentDto() { }
 
@@ -17,5 +18,6 @@ public class CommentDto
         Text = comment.Text;
         PrcName = comment.Prc.Name;
         PrcId = comment.Prc.Id.ToString();
+        CreatedAt = comment.CreatedAt;
     }
 }
