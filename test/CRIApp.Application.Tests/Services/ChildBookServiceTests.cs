@@ -73,7 +73,7 @@ public class ChildBookServiceTests
             .SetValue(childBook, new List<Recommendation> { recommendation });
 
         _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildId(childId)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetByChildIdWithRecommendations(childId)).ReturnsAsync(childBook);
         _checkpointRepositoryMock
             .Setup(r => r.GetByDateAndIds(5, childBook.Id, It.IsAny<DateTime>()))
             .ReturnsAsync((RecommendationCheckpoint?)null);
@@ -113,7 +113,7 @@ public class ChildBookServiceTests
             .SetValue(childBook, new List<Recommendation>());
 
         _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildId(childId)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetByChildIdWithRecommendations(childId)).ReturnsAsync(childBook);
 
         await Assert.ThrowsAsync<ValidationException>(() => _sut.SaveCheckpoint(childId, prcId, 99, true));
     }
@@ -132,7 +132,7 @@ public class ChildBookServiceTests
         var existingCheckpoint = BuildCheckpoint(3, childBook.Id, false);
 
         _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildId(childId)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetByChildIdWithRecommendations(childId)).ReturnsAsync(childBook);
         _checkpointRepositoryMock
             .Setup(r => r.GetByDateAndIds(3, childBook.Id, It.IsAny<DateTime>()))
             .ReturnsAsync(existingCheckpoint);
@@ -154,7 +154,7 @@ public class ChildBookServiceTests
             .SetValue(childBook, new List<Recommendation> { recommendation });
 
         _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildId(childId)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetByChildIdWithRecommendations(childId)).ReturnsAsync(childBook);
         _checkpointRepositoryMock
             .Setup(r => r.GetByDateAndIds(7, childBook.Id, It.IsAny<DateTime>()))
             .ReturnsAsync((RecommendationCheckpoint?)null);
@@ -182,7 +182,7 @@ public class ChildBookServiceTests
             .SetValue(childBook, new List<Recommendation> { recommendation });
 
         _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildId(childId)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetByChildIdWithRecommendations(childId)).ReturnsAsync(childBook);
         _checkpointRepositoryMock
             .Setup(r => r.GetByDateAndIds(8, childBook.Id, It.IsAny<DateTime>()))
             .ReturnsAsync((RecommendationCheckpoint?)null);

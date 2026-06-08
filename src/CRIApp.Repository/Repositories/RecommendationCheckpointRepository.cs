@@ -48,4 +48,13 @@ public class RecommendationCheckpointRepository : IRecommendationCheckpointRepos
         await _context.RecommendationCheckpoint.AddAsync(checkpoint);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Dictionary<int, int>> GetCompletedCountByChildBook(Guid childBookId)
+    {
+        return await _context.RecommendationCheckpoint
+            .Where(x => x.ChildBookId == childBookId && x.Completed)
+            .GroupBy(x => x.RecommendationId)
+            .Select(g => new { RecommendationId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.RecommendationId, x => x.Count);
+    }
 }

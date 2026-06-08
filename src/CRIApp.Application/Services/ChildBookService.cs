@@ -59,7 +59,7 @@ public class ChildBookService : IChildBookService
         }
 
         return (await _childBookRepository.GetAwardsByChildBookId(childBook.Id))
-            .Select(a => new AwardDto(a)).ToList();
+            .Select(a => new AwardDto(a.Aw, a.AssignedAt)).ToList();
     }
 
     public async Task<List<RecommendationDto>> GetRecommendationsByChildId(Guid childId, Guid prcId)
@@ -76,13 +76,15 @@ public class ChildBookService : IChildBookService
 
         var today = DateTime.UtcNow.Date;
         var todayCheckpoints = await _checkpointRepository.GetByChildBookIdAndDate(childBook.Id, today);
+        var completedCountMap = await _checkpointRepository.GetCompletedCountByChildBook(childBook.Id);
         var recommendations = await _childBookRepository.GetRecommendationsByChildBookId(childBook.Id);
 
         var checkpointMap = todayCheckpoints.ToDictionary(c => c.RecommendationId, c => (bool?)c.Completed);
-        return recommendations.Select(r =>
+        return recommendations.Select(tuple =>
         {
-            checkpointMap.TryGetValue(r.Id, out var todayCompleted);
-            return new RecommendationDto(r, todayCompleted);
+            checkpointMap.TryGetValue(tuple.Rec.Id, out var todayCompleted);
+            completedCountMap.TryGetValue(tuple.Rec.Id, out var completedCount);
+            return new RecommendationDto(tuple.Rec, todayCompleted, tuple.AssignedAt, completedCount);
         }).ToList();
     }
     

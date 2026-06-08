@@ -26,22 +26,24 @@ public class ChildBookRepository : IChildBookRepository
             .FirstOrDefaultAsync(x => x.ChildId == childId);
     }
 
-    public async Task<IList<Recommendation>> GetRecommendationsByChildBookId(Guid childBookId)
+    public async Task<IList<(Recommendation Rec, DateTime AssignedAt)>> GetRecommendationsByChildBookId(Guid childBookId)
     {
-        return await _context.ChildBookRecommendation
+        var items = await _context.ChildBookRecommendation
+            .Include(x => x.Recommendation)
             .Where(x => x.ChildBooksId == childBookId)
             .OrderByDescending(x => x.CreatedAt)
-            .Select(x => x.Recommendation!)
             .ToListAsync();
+        return items.Select(x => (x.Recommendation!, x.CreatedAt)).ToList();
     }
 
-    public async Task<IList<Award>> GetAwardsByChildBookId(Guid childBookId)
+    public async Task<IList<(Award Aw, DateTime AssignedAt)>> GetAwardsByChildBookId(Guid childBookId)
     {
-        return await _context.ChildBookAward
+        var items = await _context.ChildBookAward
+            .Include(x => x.Award)
             .Where(x => x.ChildBooksId == childBookId)
             .OrderByDescending(x => x.CreatedAt)
-            .Select(x => x.Award!)
             .ToListAsync();
+        return items.Select(x => (x.Award!, x.CreatedAt)).ToList();
     }
 
     public async Task Create(ChildBook childBook)

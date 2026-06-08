@@ -11,8 +11,9 @@ public class AwardDto
     public string Text { get; set; }
     public string? Description { get; set; }
     public string? Image { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public AwardDto(Award award)
+    public AwardDto(Award award, DateTime assignedAt)
     {
         var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         Text = lang switch
@@ -30,5 +31,6 @@ public class AwardDto
         Id = award.Id;
         Type = award.Type;
         Image = award.Image != null ? Convert.ToBase64String(award.Image) : null;
+        CreatedAt = assignedAt;
     }
 }
