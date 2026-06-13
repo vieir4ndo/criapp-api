@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CRIApp.Repository.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20260512112449_AddCreatedAtToComment")]
-    partial class AddCreatedAtToComment
+    [Migration("20260613154534_AddInitMigration")]
+    partial class AddInitMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -73,7 +73,7 @@ namespace CRIApp.Repository.Migrations
                     b.Property<string>("DescriptionPt")
                         .HasColumnType("text");
 
-                    b.Property<string>("Iframe")
+                    b.Property<string>("Link")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -193,6 +193,11 @@ namespace CRIApp.Repository.Migrations
                     b.Property<Guid>("ChildBooksId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW()");
+
                     b.HasKey("AwardsId", "ChildBooksId");
 
                     b.HasIndex("ChildBooksId");
@@ -202,14 +207,26 @@ namespace CRIApp.Repository.Migrations
 
             modelBuilder.Entity("CRIApp.Domain.Entities.ChildBookRecommendation", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
                     b.Property<Guid>("ChildBooksId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<int>("RecommendationsId")
                         .HasColumnType("integer")
                         .HasColumnName("RecommendationsId");
 
-                    b.HasKey("ChildBooksId", "RecommendationsId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChildBooksId");
 
                     b.HasIndex("RecommendationsId");
 
@@ -225,7 +242,7 @@ namespace CRIApp.Repository.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2026, 5, 12, 11, 24, 49, 477, DateTimeKind.Utc).AddTicks(8790));
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<Guid>("ForumId")
                         .HasColumnType("uuid");
@@ -383,9 +400,6 @@ namespace CRIApp.Repository.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("ReferenceNumber")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("varchar(500)");
@@ -412,23 +426,52 @@ namespace CRIApp.Repository.Migrations
                     b.Property<Guid>("ChildBookId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ChildBookRecommendationId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("Completed")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("RecommendationId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ChildBookId");
 
-                    b.HasIndex("RecommendationId", "ChildBookId", "Date")
+                    b.HasIndex("ChildBookRecommendationId", "Date")
                         .IsUnique();
 
                     b.ToTable("RecommendationCheckpoint", (string)null);
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.User", b =>
@@ -577,7 +620,7 @@ namespace CRIApp.Repository.Migrations
             modelBuilder.Entity("CRIApp.Domain.Entities.ChildBookRecommendation", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.ChildBook", "ChildBook")
-                        .WithMany()
+                        .WithMany("ChildBookRecommendations")
                         .HasForeignKey("ChildBooksId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -653,15 +696,26 @@ namespace CRIApp.Repository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CRIApp.Domain.Entities.Recommendation", "Recommendation")
-                        .WithMany()
-                        .HasForeignKey("RecommendationId")
+                    b.HasOne("CRIApp.Domain.Entities.ChildBookRecommendation", "ChildBookRecommendation")
+                        .WithMany("Checkpoints")
+                        .HasForeignKey("ChildBookRecommendationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ChildBook");
 
-                    b.Navigation("Recommendation");
+                    b.Navigation("ChildBookRecommendation");
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("CRIApp.Domain.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.UserResetPasswordCode", b =>
@@ -684,7 +738,14 @@ namespace CRIApp.Repository.Migrations
 
             modelBuilder.Entity("CRIApp.Domain.Entities.ChildBook", b =>
                 {
+                    b.Navigation("ChildBookRecommendations");
+
                     b.Navigation("RecommendationCheckpoints");
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.ChildBookRecommendation", b =>
+                {
+                    b.Navigation("Checkpoints");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Forum", b =>
@@ -708,6 +769,8 @@ namespace CRIApp.Repository.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Forums");
+
+                    b.Navigation("RefreshTokens");
 
                     b.Navigation("UserResetPasswordCodes");
                 });

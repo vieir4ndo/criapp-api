@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CRIApp.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class InitMigration : Migration
+    public partial class AddInitMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,7 @@ namespace CRIApp.Repository.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    Iframe = table.Column<string>(type: "text", nullable: false),
+                    Link = table.Column<string>(type: "text", nullable: false),
                     NameEn = table.Column<string>(type: "text", nullable: true),
                     DescriptionEn = table.Column<string>(type: "text", nullable: true),
                     NamePt = table.Column<string>(type: "text", nullable: true),
@@ -117,8 +117,7 @@ namespace CRIApp.Repository.Migrations
                     TextEn = table.Column<string>(type: "varchar(500)", nullable: true),
                     TextPt = table.Column<string>(type: "varchar(500)", nullable: true),
                     QuestionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Image = table.Column<byte[]>(type: "bytea", nullable: true),
-                    ReferenceNumber = table.Column<int>(type: "integer", nullable: false)
+                    Image = table.Column<byte[]>(type: "bytea", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -169,6 +168,27 @@ namespace CRIApp.Repository.Migrations
                     table.ForeignKey(
                         name: "FK_Forum_User_PrcId",
                         column: x => x.PrcId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefreshToken",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TokenHash = table.Column<string>(type: "text", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshToken_User_UserId",
+                        column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -256,7 +276,8 @@ namespace CRIApp.Repository.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Text = table.Column<string>(type: "text", nullable: false),
                     ForumId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PrcId = table.Column<Guid>(type: "uuid", nullable: false)
+                    PrcId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -280,7 +301,8 @@ namespace CRIApp.Repository.Migrations
                 columns: table => new
                 {
                     ChildBooksId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AwardsId = table.Column<Guid>(type: "uuid", nullable: false)
+                    AwardsId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
                 },
                 constraints: table =>
                 {
@@ -303,12 +325,14 @@ namespace CRIApp.Repository.Migrations
                 name: "ChildBookRecommendation",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     ChildBooksId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RecommendationsId = table.Column<int>(type: "integer", nullable: false)
+                    RecommendationsId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChildBookRecommendation", x => new { x.ChildBooksId, x.RecommendationsId });
+                    table.PrimaryKey("PK_ChildBookRecommendation", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ChildBookRecommendation_ChildBook_ChildBooksId",
                         column: x => x.ChildBooksId,
@@ -350,7 +374,7 @@ namespace CRIApp.Repository.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    RecommendationId = table.Column<int>(type: "integer", nullable: false),
+                    ChildBookRecommendationId = table.Column<Guid>(type: "uuid", nullable: false),
                     ChildBookId = table.Column<Guid>(type: "uuid", nullable: false),
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Completed = table.Column<bool>(type: "boolean", nullable: false)
@@ -359,15 +383,15 @@ namespace CRIApp.Repository.Migrations
                 {
                     table.PrimaryKey("PK_RecommendationCheckpoint", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RecommendationCheckpoint_ChildBook_ChildBookId",
-                        column: x => x.ChildBookId,
-                        principalTable: "ChildBook",
+                        name: "FK_RecommendationCheckpoint_ChildBookRecommendation_ChildBookR~",
+                        column: x => x.ChildBookRecommendationId,
+                        principalTable: "ChildBookRecommendation",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RecommendationCheckpoint_Recommendation_RecommendationId",
-                        column: x => x.RecommendationId,
-                        principalTable: "Recommendation",
+                        name: "FK_RecommendationCheckpoint_ChildBook_ChildBookId",
+                        column: x => x.ChildBookId,
+                        principalTable: "ChildBook",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -401,6 +425,11 @@ namespace CRIApp.Repository.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ChildBookAward_ChildBooksId",
                 table: "ChildBookAward",
+                column: "ChildBooksId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChildBookRecommendation_ChildBooksId",
+                table: "ChildBookRecommendation",
                 column: "ChildBooksId");
 
             migrationBuilder.CreateIndex(
@@ -440,10 +469,21 @@ namespace CRIApp.Repository.Migrations
                 column: "ChildBookId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RecommendationCheckpoint_RecommendationId_ChildBookId_Date",
+                name: "IX_RecommendationCheckpoint_ChildBookRecommendationId_Date",
                 table: "RecommendationCheckpoint",
-                columns: new[] { "RecommendationId", "ChildBookId", "Date" },
+                columns: new[] { "ChildBookRecommendationId", "Date" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshToken_TokenHash",
+                table: "RefreshToken",
+                column: "TokenHash",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshToken_UserId",
+                table: "RefreshToken",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_Username",
@@ -470,9 +510,6 @@ namespace CRIApp.Repository.Migrations
                 name: "ChildBookAward");
 
             migrationBuilder.DropTable(
-                name: "ChildBookRecommendation");
-
-            migrationBuilder.DropTable(
                 name: "Comment");
 
             migrationBuilder.DropTable(
@@ -485,6 +522,9 @@ namespace CRIApp.Repository.Migrations
                 name: "RecommendationCheckpoint");
 
             migrationBuilder.DropTable(
+                name: "RefreshToken");
+
+            migrationBuilder.DropTable(
                 name: "UserResetPasswordCode");
 
             migrationBuilder.DropTable(
@@ -492,6 +532,9 @@ namespace CRIApp.Repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "Forum");
+
+            migrationBuilder.DropTable(
+                name: "ChildBookRecommendation");
 
             migrationBuilder.DropTable(
                 name: "ChildBook");
