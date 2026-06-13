@@ -10,8 +10,16 @@ using Microsoft.Extensions.Options;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using AppContext = CRIApp.Repository.AppContext;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddAzureAppConfiguration(options =>
+{
+    options.Connect(
+        new Uri("https://criapp-api.azconfig.io"),
+        new DefaultAzureCredential());
+});
 
 var hasAzureMonitor = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING"));
 

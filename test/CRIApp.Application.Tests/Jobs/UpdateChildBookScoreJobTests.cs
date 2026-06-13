@@ -17,14 +17,9 @@ public class UpdateChildBookScoreJobTests
     public UpdateChildBookScoreJobTests()
     {
         _childBookRepositoryMock = new Mock<IChildBookRepository>();
-        var checkpointRepositoryMock = new Mock<IRecommendationCheckpointRepository>();
-        checkpointRepositoryMock
-            .Setup(r => r.GetByChildBookIdAndDate(It.IsAny<Guid>(), It.IsAny<DateTime>()))
-            .ReturnsAsync(new List<RecommendationCheckpoint>());
         _sut = new UpdateChildBookScoreJob(
             NullLogger<UpdateChildBookScoreJob>.Instance,
-            _childBookRepositoryMock.Object,
-            checkpointRepositoryMock.Object);
+            _childBookRepositoryMock.Object);
     }
 
     private static ChildBook BuildChildBook()
@@ -35,8 +30,6 @@ public class UpdateChildBookScoreJobTests
 
         var childBook = new ChildBook(child.Id);
         typeof(ChildBook).GetProperty(nameof(ChildBook.Child))!.SetValue(childBook, child);
-        typeof(ChildBook).GetProperty(nameof(ChildBook.RecommendationCheckpoints))!
-            .SetValue(childBook, new List<RecommendationCheckpoint>());
         return childBook;
     }
 

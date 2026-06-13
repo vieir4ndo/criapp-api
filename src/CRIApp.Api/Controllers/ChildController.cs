@@ -83,15 +83,15 @@ public class ChildController : CriAppControllerBase
     }
 
     [HttpPost("{childId}/book/recommendations/{recommendationId}/checkpoint")]
-    public async Task<ApiResponse<object>> CreateCheckpoint(
+    public async Task<ApiResponse<SaveCheckpointResultDto>> CreateCheckpoint(
         [FromRoute] Guid childId,
         [FromRoute] int recommendationId,
         [FromBody] CreateCheckpointRequest request)
     {
         ValidateAndLog(request);
 
-        await _childBookService.SaveCheckpoint(childId, GetUserId(), recommendationId, request.Completed);
+        var result = await _childBookService.SaveCheckpoint(childId, GetUserId(), recommendationId, request.Completed);
 
-        return new ApiResponse<object>(true);
+        return new ApiResponse<SaveCheckpointResultDto>(true, result);
     }
 }

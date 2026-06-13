@@ -66,7 +66,7 @@ public class ChildBookService : IChildBookService
     {
         _ = await _childService.GetAndValidateById(childId, prcId);
 
-        var childBook = await _childBookRepository.GetByChildId(childId);
+        var childBook = await _childBookRepository.GetByChildIdWithRecommendations(childId);
 
         if (childBook is null)
         {
@@ -74,22 +74,14 @@ public class ChildBookService : IChildBookService
             throw new NotFoundException(_localizer["ChildBookNotFound"]);
         }
 
-        var today = DateTime.UtcNow.Date;
-        var windowStart = today.AddDays(-6);
-        var todayCheckpoints = await _checkpointRepository.GetByChildBookIdAndDate(childBook.Id, today);
-        var completedCountMap = await _checkpointRepository.GetDistinctCompletedDaysInWindowByChildBook(childBook.Id, windowStart, today);
         var recommendations = await _childBookRepository.GetRecommendationsByChildBookId(childBook.Id);
 
-        var checkpointMap = todayCheckpoints.ToDictionary(c => c.RecommendationId, c => (bool?)c.Completed);
         return recommendations.Select(tuple =>
-        {
-            checkpointMap.TryGetValue(tuple.Rec.Id, out var todayCompleted);
-            completedCountMap.TryGetValue(tuple.Rec.Id, out var completedCount);
-            return new RecommendationDto(tuple.Rec, todayCompleted, tuple.AssignedAt, completedCount);
-        }).ToList();
+            new RecommendationDto(tuple.Rec, tuple.AssignedAt)
+        ).ToList();
     }
     
-    public async Task SaveCheckpoint(Guid childId, Guid prcId, int recommendationId, bool completed)
+    public async Task<SaveCheckpointResultDto> SaveCheckpoint(Guid childId, Guid prcId, int recommendationId, bool completed)
     {
         _ = await _childService.GetAndValidateById(childId, prcId);
 
@@ -121,18 +113,19 @@ public class ChildBookService : IChildBookService
 
         if (completed)
         {
-            var windowStart = today.AddDays(-6);
-            var distinctDays = await _checkpointRepository.CountDistinctCompletedDaysInPeriod(
-                recommendationId, childBook.Id, windowStart, today);
+            var recommendation = childBook.Recommendations.First(r => r.Id == recommendationId);
 
-            if (distinctDays >= 4)
+            if (recommendation.IsAssimilated())
             {
                 _logger.LogInformation(
                     "Recommendation {RecommendationId} assimilated for ChildBook {ChildBookId}",
                     recommendationId, childBook.Id);
                 childBook.RemoveRecommendation(recommendationId);
                 await _childBookRepository.Update(childBook);
+                return new SaveCheckpointResultDto(assimilated: true);
             }
         }
+
+        return new SaveCheckpointResultDto(assimilated: false);
     }
 }

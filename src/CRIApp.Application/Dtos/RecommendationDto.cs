@@ -13,7 +13,7 @@ public class RecommendationDto
     public DateTime CreatedAt { get; set; }
     public int CompletedCheckpoints { get; set; }
 
-    public RecommendationDto(Recommendation recommendation, bool? todayCompleted = null, DateTime assignedAt = default, int completedCheckpoints = 0)
+    public RecommendationDto(Recommendation recommendation, DateTime assignedAt = default)
     {
         var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         Text = lang switch
@@ -25,8 +25,8 @@ public class RecommendationDto
         Id = recommendation.Id;
         QuestionId = recommendation.QuestionId;
         Image = recommendation.Image != null ? Convert.ToBase64String(recommendation.Image) : null;
-        TodayCompleted = todayCompleted;
+        TodayCompleted = recommendation.IsCompletedToday();
         CreatedAt = assignedAt;
-        CompletedCheckpoints = completedCheckpoints;
+        CompletedCheckpoints = recommendation.GetCompletedCountInWindow();
     }
 }

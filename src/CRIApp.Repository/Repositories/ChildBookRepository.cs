@@ -23,6 +23,7 @@ public class ChildBookRepository : IChildBookRepository
     {
         return await _context.ChildBook
             .Include(x => x.Recommendations)
+            .Include(x => x.RecommendationCheckpoints)
             .FirstOrDefaultAsync(x => x.ChildId == childId);
     }
 
