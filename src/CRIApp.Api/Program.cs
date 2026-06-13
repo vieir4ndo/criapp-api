@@ -23,6 +23,11 @@ if (isProdOrStgEnv)
         options.Connect(
             new Uri("https://criapp-api.azconfig.io"),
             new DefaultAzureCredential());
+
+        options.Map(setting => {
+            setting.Key = setting.Key.Replace("__", ":");
+            return ValueTask.FromResult(setting);
+        });
     });
 }
 
@@ -58,8 +63,10 @@ builder.Services.AddFluentValidationLocalization();
 builder.Services.AddLocalization();
 builder.Services.AddJobServices();
 
+var connectionString = builder.Configuration.GetConnectionString("Postgres");
+
 builder.Services.AddDbContext<AppContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddAppHealthChecks();
 
