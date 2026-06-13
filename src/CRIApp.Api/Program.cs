@@ -14,14 +14,17 @@ using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddAzureAppConfiguration(options =>
-{
-    options.Connect(
-        new Uri("https://criapp-api.azconfig.io"),
-        new DefaultAzureCredential());
-});
+var isProdOrStgEnv = builder.Environment.IsProduction() || builder.Environment.IsStaging();
 
-var hasAzureMonitor = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING"));
+if (isProdOrStgEnv)
+{
+    builder.Configuration.AddAzureAppConfiguration(options =>
+    {
+        options.Connect(
+            new Uri("https://criapp-api.azconfig.io"),
+            new DefaultAzureCredential());
+    });
+}
 
 builder.Services.AddOpenTelemetry()
     .WithTracing(tracing =>
@@ -31,7 +34,7 @@ builder.Services.AddOpenTelemetry()
             .AddHttpClientInstrumentation()
             .AddEntityFrameworkCoreInstrumentation()
             .AddSource("Criapp");
-        if (hasAzureMonitor) tracing.AddAzureMonitorTraceExporter();
+        if (isProdOrStgEnv) tracing.AddAzureMonitorTraceExporter();
     })
     .WithMetrics(metrics =>
     {
@@ -41,11 +44,11 @@ builder.Services.AddOpenTelemetry()
             .AddRuntimeInstrumentation()
             .AddProcessInstrumentation()
             .AddMeter("Criapp");
-        if (hasAzureMonitor) metrics.AddAzureMonitorMetricExporter();
+        if (isProdOrStgEnv) metrics.AddAzureMonitorMetricExporter();
     })
     .WithLogging(logging =>
     {
-        if (hasAzureMonitor) logging.AddAzureMonitorLogExporter();
+        if (isProdOrStgEnv) logging.AddAzureMonitorLogExporter();
     });
 
 builder.Services.AddSettingsConfiguration(builder.Configuration);
