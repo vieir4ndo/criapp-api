@@ -31,96 +31,86 @@ public class ChildBookService : IChildBookService
         _localizer = localizer;
     }
 
-    public async Task<ChildBookDto> GetSummaryByChildId(Guid childId, Guid prcId)
+    public async Task<ChildBookDto> GetSummaryByChildBookId(Guid childBookId, Guid prcId)
     {
-        _ = await _childService.GetAndValidateById(childId, prcId);
-
-        var childBook = await _childBookRepository.GetByChildId(childId);
-
+        var childBook = await _childBookRepository.GetById(childBookId);
         if (childBook is null)
         {
-            _logger.LogWarning("ChildBook for child {ChildId} not found", childId);
+            _logger.LogWarning("ChildBook {ChildBookId} not found", childBookId);
             throw new NotFoundException(_localizer["ChildBookNotFound"]);
         }
-
+        _ = await _childService.GetAndValidateById(childBook.ChildId, prcId);
         return new ChildBookDto(childBook);
     }
 
-    public async Task<List<AwardDto>> GetAwardsByChildId(Guid childId, Guid prcId)
+    public async Task<List<AwardDto>> GetAwardsByChildBookId(Guid childBookId, Guid prcId)
     {
-        _ = await _childService.GetAndValidateById(childId, prcId);
-
-        var childBook = await _childBookRepository.GetByChildId(childId);
-
+        var childBook = await _childBookRepository.GetById(childBookId);
         if (childBook is null)
         {
-            _logger.LogWarning("ChildBook for child {ChildId} not found", childId);
+            _logger.LogWarning("ChildBook {ChildBookId} not found", childBookId);
             throw new NotFoundException(_localizer["ChildBookNotFound"]);
         }
-
-        return (await _childBookRepository.GetAwardsByChildBookId(childBook.Id))
+        _ = await _childService.GetAndValidateById(childBook.ChildId, prcId);
+        return (await _childBookRepository.GetAwardsByChildBookId(childBookId))
             .Select(a => new AwardDto(a.Aw, a.AssignedAt)).ToList();
     }
 
-    public async Task<List<RecommendationDto>> GetRecommendationsByChildId(Guid childId, Guid prcId)
+    public async Task<List<RecommendationDto>> GetRecommendationsByChildBookId(Guid childBookId, Guid prcId)
     {
-        _ = await _childService.GetAndValidateById(childId, prcId);
-
-        var childBook = await _childBookRepository.GetByChildIdWithRecommendations(childId);
-
+        var childBook = await _childBookRepository.GetById(childBookId);
         if (childBook is null)
         {
-            _logger.LogWarning("ChildBook for child {ChildId} not found", childId);
+            _logger.LogWarning("ChildBook {ChildBookId} not found", childBookId);
             throw new NotFoundException(_localizer["ChildBookNotFound"]);
         }
-
-        var recommendations = await _childBookRepository.GetRecommendationsByChildBookId(childBook.Id);
-
-        return recommendations.Select(tuple =>
-            new RecommendationDto(tuple.Rec, tuple.AssignedAt)
-        ).ToList();
+        _ = await _childService.GetAndValidateById(childBook.ChildId, prcId);
+        var recommendations = await _childBookRepository.GetRecommendationsByChildBookId(childBookId);
+        return recommendations.Select(cbr => new RecommendationDto(cbr)).ToList();
     }
-    
-    public async Task<SaveCheckpointResultDto> SaveCheckpoint(Guid childId, Guid prcId, int recommendationId, bool completed)
-    {
-        _ = await _childService.GetAndValidateById(childId, prcId);
 
-        var childBook = await _childBookRepository.GetByChildIdWithRecommendations(childId);
+    public async Task<SaveCheckpointResultDto> SaveCheckpoint(Guid childBookId, Guid prcId, Guid childBookRecommendationId, bool completed)
+    {
+        var childBook = await _childBookRepository.GetByIdWithRecommendations(childBookId);
 
         if (childBook is null)
         {
-            _logger.LogWarning("ChildBook for child {ChildId} not found", childId);
+            _logger.LogWarning("ChildBook {ChildBookId} not found", childBookId);
             throw new NotFoundException(_localizer["ChildBookNotFound"]);
         }
 
-        var isActiveRecommendation = childBook.Recommendations.Any(r => r.Id == recommendationId);
-        if (!isActiveRecommendation)
+        _ = await _childService.GetAndValidateById(childBook.ChildId, prcId);
+
+        var cbr = await _childBookRepository.GetRecommendationsByChildBookId(childBookId)
+            .ContinueWith(t => t.Result.FirstOrDefault(x => x.Id == childBookRecommendationId));
+
+        if (cbr is null)
         {
-            _logger.LogWarning("Recommendation {RecommendationId} not active for child {ChildId}", recommendationId, childId);
+            _logger.LogWarning("ChildBookRecommendation {Id} not active for ChildBook {ChildBookId}", childBookRecommendationId, childBookId);
             throw new ValidationException(_localizer["RecommendationNotInChildBook"]);
         }
 
         var today = DateTime.UtcNow.Date;
-        var existing = await _checkpointRepository.GetByDateAndIds(recommendationId, childBook.Id, today);
+        var existing = await _checkpointRepository.GetByDateAndIds(childBookRecommendationId, today);
         if (existing is not null)
         {
-            _logger.LogWarning("Checkpoint already exists for recommendation {RecommendationId} on {Date}", recommendationId, today);
+            _logger.LogWarning("Checkpoint already exists for ChildBookRecommendation {Id} on {Date}", childBookRecommendationId, today);
             throw new ValidationException(_localizer["CheckpointAlreadyExists"]);
         }
 
-        var checkpoint = new RecommendationCheckpoint(recommendationId, childBook.Id, completed);
+        var checkpoint = new RecommendationCheckpoint(childBookRecommendationId, childBook.Id, completed);
         await _checkpointRepository.Create(checkpoint);
 
         if (completed)
         {
-            var recommendation = childBook.Recommendations.First(r => r.Id == recommendationId);
+            cbr.Checkpoints.Add(checkpoint);
 
-            if (recommendation.IsAssimilated())
+            if (cbr.IsAssimilated())
             {
                 _logger.LogInformation(
-                    "Recommendation {RecommendationId} assimilated for ChildBook {ChildBookId}",
-                    recommendationId, childBook.Id);
-                childBook.RemoveRecommendation(recommendationId);
+                    "ChildBookRecommendation {Id} assimilated for ChildBook {ChildBookId}",
+                    childBookRecommendationId, childBook.Id);
+                childBook.RemoveRecommendation(cbr.RecommendationsId);
                 await _childBookRepository.Update(childBook);
                 return new SaveCheckpointResultDto(assimilated: true);
             }

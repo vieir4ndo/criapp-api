@@ -19,6 +19,7 @@ public class ForumRepository : IForumRepository
             .Include(x =>x.Prc)
             .Include(x => x.Comments)
             .ThenInclude(x=>x.Prc)
+            .AsSplitQuery()
             .FirstOrDefaultAsync();
         forum?.OrderCommentsByCreatedAt();
         return forum;

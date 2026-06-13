@@ -13,6 +13,12 @@ public class ChildBookRepository : IChildBookRepository
         _context = context;
     }
 
+    public async Task<ChildBook?> GetById(Guid id)
+    {
+        return await _context.ChildBook
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
     public async Task<ChildBook?> GetByChildId(Guid childId)
     {
         return await _context.ChildBook
@@ -28,14 +34,24 @@ public class ChildBookRepository : IChildBookRepository
             .FirstOrDefaultAsync(x => x.ChildId == childId);
     }
 
-    public async Task<IList<(Recommendation Rec, DateTime AssignedAt)>> GetRecommendationsByChildBookId(Guid childBookId)
+    public async Task<ChildBook?> GetByIdWithRecommendations(Guid id)
     {
-        var items = await _context.ChildBookRecommendation
+        return await _context.ChildBook
+            .Include(x => x.Recommendations)
+            .Include(x => x.RecommendationCheckpoints)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<IList<ChildBookRecommendation>> GetRecommendationsByChildBookId(Guid childBookId)
+    {
+        return await _context.Set<ChildBookRecommendation>()
             .Include(x => x.Recommendation)
+            .Include(x => x.Checkpoints)
+            .AsSplitQuery()
             .Where(x => x.ChildBooksId == childBookId)
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync();
-        return items.Select(x => (x.Recommendation!, x.CreatedAt)).ToList();
     }
 
     public async Task<IList<(Award Aw, DateTime AssignedAt)>> GetAwardsByChildBookId(Guid childBookId)
@@ -64,8 +80,8 @@ public class ChildBookRepository : IChildBookRepository
     {
         return await _context.ChildBook
             .Include(x => x.Awards)
-            .Include(x => x.Recommendations)
-            .Include(x => x.RecommendationCheckpoints)
+            .Include(x => x.ChildBookRecommendations)
+                .ThenInclude(cbr => cbr.Checkpoints)
             .Include(x => x.Child)
                 .ThenInclude(c => c.Answers)
                     .ThenInclude(a => a.Question)

@@ -31,6 +31,7 @@ public class UserRepository : IUserRepository
             .Include(x => x.Children)
             .Include(x => x.Answers)
             .ThenInclude(x=>x.Question)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 

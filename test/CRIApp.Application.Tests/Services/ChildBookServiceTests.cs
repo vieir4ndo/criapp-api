@@ -36,17 +36,7 @@ public class ChildBookServiceTests
     }
 
     private static ChildBook BuildChildBook(Guid childId)
-    {
-        var childBook = new ChildBook(childId);
-        return childBook;
-    }
-
-    private static Recommendation BuildRecommendation(int id)
-    {
-        var recommendation = new Recommendation("Do this.", Guid.NewGuid());
-        typeof(Recommendation).GetProperty(nameof(Recommendation.Id))!.SetValue(recommendation, id);
-        return recommendation;
-    }
+        => new ChildBook(childId);
 
     private static Child BuildChild(Guid prcId, Guid childId)
     {
@@ -55,17 +45,26 @@ public class ChildBookServiceTests
         return child;
     }
 
-    private static RecommendationCheckpoint BuildCheckpoint(int recommendationId, Guid childBookId, bool completed)
-        => new RecommendationCheckpoint(recommendationId, childBookId, completed);
-
-    private static RecommendationCheckpoint BuildCheckpointOnDate(int recommendationId, Guid childBookId, bool completed, DateTime date)
+    private static ChildBookRecommendation BuildCbr(Guid childBookId, int recommendationId)
     {
-        var checkpoint = new RecommendationCheckpoint(recommendationId, childBookId, completed);
+        var cbr = new ChildBookRecommendation
+        {
+            ChildBooksId = childBookId,
+            RecommendationsId = recommendationId,
+            Recommendation = new Recommendation("Do this.", Guid.NewGuid())
+        };
+        typeof(Recommendation).GetProperty(nameof(Recommendation.Id))!.SetValue(cbr.Recommendation, recommendationId);
+        return cbr;
+    }
+
+    private static RecommendationCheckpoint BuildCheckpointOnDate(Guid cbrId, Guid childBookId, bool completed, DateTime date)
+    {
+        var cp = new RecommendationCheckpoint(cbrId, childBookId, completed);
         typeof(RecommendationCheckpoint)
             .GetProperty(nameof(RecommendationCheckpoint.Date))!
             .GetSetMethod(nonPublic: true)!
-            .Invoke(checkpoint, new object[] { date });
-        return checkpoint;
+            .Invoke(cp, new object[] { date });
+        return cp;
     }
 
     [Fact]
@@ -75,21 +74,22 @@ public class ChildBookServiceTests
         var childId = Guid.NewGuid();
         var child = BuildChild(prcId, childId);
         var childBook = BuildChildBook(childId);
-        var recommendation = BuildRecommendation(5);
-        typeof(ChildBook).GetProperty(nameof(ChildBook.Recommendations))!
-            .SetValue(childBook, new List<Recommendation> { recommendation });
+        var cbr = BuildCbr(childBook.Id, 5);
 
         _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildIdWithRecommendations(childId)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetByIdWithRecommendations(childBook.Id)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetRecommendationsByChildBookId(childBook.Id))
+            .ReturnsAsync(new List<ChildBookRecommendation> { cbr });
         _checkpointRepositoryMock
-            .Setup(r => r.GetByDateAndIds(5, childBook.Id, It.IsAny<DateTime>()))
+            .Setup(r => r.GetByDateAndIds(cbr.Id, It.IsAny<DateTime>()))
             .ReturnsAsync((RecommendationCheckpoint?)null);
         _checkpointRepositoryMock.Setup(r => r.Create(It.IsAny<RecommendationCheckpoint>())).Returns(Task.CompletedTask);
 
-        await _sut.SaveCheckpoint(childId, prcId, 5, true);
+        var result = await _sut.SaveCheckpoint(childBook.Id, prcId, cbr.Id, true);
 
+        Assert.False(result.Assimilated);
         _checkpointRepositoryMock.Verify(r => r.Create(It.Is<RecommendationCheckpoint>(
-            c => c.RecommendationId == 5 && c.ChildBookId == childBook.Id && c.Completed == true)), Times.Once);
+            c => c.ChildBookRecommendationId == cbr.Id && c.ChildBookId == childBook.Id && c.Completed == true)), Times.Once);
         _childBookRepositoryMock.Verify(r => r.Update(It.IsAny<ChildBook>()), Times.Never);
     }
 
@@ -97,13 +97,11 @@ public class ChildBookServiceTests
     public async Task SaveCheckpoint_ChildBookNotFound_ShouldThrowNotFoundException()
     {
         var prcId = Guid.NewGuid();
-        var childId = Guid.NewGuid();
-        var child = BuildChild(prcId, childId);
+        var childBookId = Guid.NewGuid();
 
-        _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildIdWithRecommendations(childId)).ReturnsAsync((ChildBook?)null);
+        _childBookRepositoryMock.Setup(r => r.GetByIdWithRecommendations(childBookId)).ReturnsAsync((ChildBook?)null);
 
-        await Assert.ThrowsAsync<NotFoundException>(() => _sut.SaveCheckpoint(childId, prcId, 1, true));
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.SaveCheckpoint(childBookId, prcId, Guid.NewGuid(), true));
     }
 
     [Fact]
@@ -113,13 +111,13 @@ public class ChildBookServiceTests
         var childId = Guid.NewGuid();
         var child = BuildChild(prcId, childId);
         var childBook = BuildChildBook(childId);
-        typeof(ChildBook).GetProperty(nameof(ChildBook.Recommendations))!
-            .SetValue(childBook, new List<Recommendation>());
 
         _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildIdWithRecommendations(childId)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetByIdWithRecommendations(childBook.Id)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetRecommendationsByChildBookId(childBook.Id))
+            .ReturnsAsync(new List<ChildBookRecommendation>());
 
-        await Assert.ThrowsAsync<ValidationException>(() => _sut.SaveCheckpoint(childId, prcId, 99, true));
+        await Assert.ThrowsAsync<ValidationException>(() => _sut.SaveCheckpoint(childBook.Id, prcId, Guid.NewGuid(), true));
     }
 
     [Fact]
@@ -129,19 +127,18 @@ public class ChildBookServiceTests
         var childId = Guid.NewGuid();
         var child = BuildChild(prcId, childId);
         var childBook = BuildChildBook(childId);
-        var recommendation = BuildRecommendation(3);
-        typeof(ChildBook).GetProperty(nameof(ChildBook.Recommendations))!
-            .SetValue(childBook, new List<Recommendation> { recommendation });
-
-        var existingCheckpoint = BuildCheckpoint(3, childBook.Id, false);
+        var cbr = BuildCbr(childBook.Id, 3);
+        var existingCheckpoint = new RecommendationCheckpoint(cbr.Id, childBook.Id, false);
 
         _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildIdWithRecommendations(childId)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetByIdWithRecommendations(childBook.Id)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetRecommendationsByChildBookId(childBook.Id))
+            .ReturnsAsync(new List<ChildBookRecommendation> { cbr });
         _checkpointRepositoryMock
-            .Setup(r => r.GetByDateAndIds(3, childBook.Id, It.IsAny<DateTime>()))
+            .Setup(r => r.GetByDateAndIds(cbr.Id, It.IsAny<DateTime>()))
             .ReturnsAsync(existingCheckpoint);
 
-        await Assert.ThrowsAsync<ValidationException>(() => _sut.SaveCheckpoint(childId, prcId, 3, true));
+        await Assert.ThrowsAsync<ValidationException>(() => _sut.SaveCheckpoint(childBook.Id, prcId, cbr.Id, true));
 
         _checkpointRepositoryMock.Verify(r => r.Create(It.IsAny<RecommendationCheckpoint>()), Times.Never);
     }
@@ -153,24 +150,26 @@ public class ChildBookServiceTests
         var childId = Guid.NewGuid();
         var child = BuildChild(prcId, childId);
         var childBook = BuildChildBook(childId);
-        var recommendation = BuildRecommendation(7);
+        var cbr = BuildCbr(childBook.Id, 7);
         var today = DateTime.UtcNow.Date;
-        recommendation.Checkpoints.Add(BuildCheckpointOnDate(7, childBook.Id, true, today));
-        recommendation.Checkpoints.Add(BuildCheckpointOnDate(7, childBook.Id, true, today.AddDays(-1)));
-        recommendation.Checkpoints.Add(BuildCheckpointOnDate(7, childBook.Id, true, today.AddDays(-2)));
-        recommendation.Checkpoints.Add(BuildCheckpointOnDate(7, childBook.Id, true, today.AddDays(-3)));
+        cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, childBook.Id, true, today));
+        cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, childBook.Id, true, today.AddDays(-1)));
+        cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, childBook.Id, true, today.AddDays(-2)));
+        cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, childBook.Id, true, today.AddDays(-3)));
         typeof(ChildBook).GetProperty(nameof(ChildBook.Recommendations))!
-            .SetValue(childBook, new List<Recommendation> { recommendation });
+            .SetValue(childBook, new List<Recommendation> { cbr.Recommendation! });
 
         _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildIdWithRecommendations(childId)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetByIdWithRecommendations(childBook.Id)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetRecommendationsByChildBookId(childBook.Id))
+            .ReturnsAsync(new List<ChildBookRecommendation> { cbr });
         _checkpointRepositoryMock
-            .Setup(r => r.GetByDateAndIds(7, childBook.Id, It.IsAny<DateTime>()))
+            .Setup(r => r.GetByDateAndIds(cbr.Id, It.IsAny<DateTime>()))
             .ReturnsAsync((RecommendationCheckpoint?)null);
         _checkpointRepositoryMock.Setup(r => r.Create(It.IsAny<RecommendationCheckpoint>())).Returns(Task.CompletedTask);
         _childBookRepositoryMock.Setup(r => r.Update(It.IsAny<ChildBook>())).Returns(Task.CompletedTask);
 
-        var result = await _sut.SaveCheckpoint(childId, prcId, 7, true);
+        var result = await _sut.SaveCheckpoint(childBook.Id, prcId, cbr.Id, true);
 
         Assert.True(result.Assimilated);
         Assert.Empty(childBook.Recommendations);
@@ -184,18 +183,20 @@ public class ChildBookServiceTests
         var childId = Guid.NewGuid();
         var child = BuildChild(prcId, childId);
         var childBook = BuildChildBook(childId);
-        var recommendation = BuildRecommendation(8);
+        var cbr = BuildCbr(childBook.Id, 8);
         typeof(ChildBook).GetProperty(nameof(ChildBook.Recommendations))!
-            .SetValue(childBook, new List<Recommendation> { recommendation });
+            .SetValue(childBook, new List<Recommendation> { cbr.Recommendation! });
 
         _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
-        _childBookRepositoryMock.Setup(r => r.GetByChildIdWithRecommendations(childId)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetByIdWithRecommendations(childBook.Id)).ReturnsAsync(childBook);
+        _childBookRepositoryMock.Setup(r => r.GetRecommendationsByChildBookId(childBook.Id))
+            .ReturnsAsync(new List<ChildBookRecommendation> { cbr });
         _checkpointRepositoryMock
-            .Setup(r => r.GetByDateAndIds(8, childBook.Id, It.IsAny<DateTime>()))
+            .Setup(r => r.GetByDateAndIds(cbr.Id, It.IsAny<DateTime>()))
             .ReturnsAsync((RecommendationCheckpoint?)null);
         _checkpointRepositoryMock.Setup(r => r.Create(It.IsAny<RecommendationCheckpoint>())).Returns(Task.CompletedTask);
 
-        var result = await _sut.SaveCheckpoint(childId, prcId, 8, false);
+        var result = await _sut.SaveCheckpoint(childBook.Id, prcId, cbr.Id, false);
 
         Assert.False(result.Assimilated);
         Assert.Single(childBook.Recommendations);

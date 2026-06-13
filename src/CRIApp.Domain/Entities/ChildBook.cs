@@ -11,6 +11,7 @@ public class ChildBook : Entity
     public List<Award> Awards { get; private set; } = new();
     public List<Recommendation> Recommendations { get; private set; } = new();
     public List<RecommendationCheckpoint> RecommendationCheckpoints { get; private set; } = new();
+    public List<ChildBookRecommendation> ChildBookRecommendations { get; private set; } = new();
 
     protected ChildBook() { }
 
@@ -33,7 +34,7 @@ public class ChildBook : Entity
         var points = answers.Count(answer => answer.IsCorrect());
 
         var answersRatio = (double)points / answers.Count;
-        var totalActiveRecommendations = Recommendations.Count;
+        var totalActiveRecommendations = ChildBookRecommendations.Count;
 
         if (totalActiveRecommendations == 0)
         {
@@ -41,7 +42,7 @@ public class ChildBook : Entity
         }
         else
         {
-            var completedToday = Recommendations.Count(c => c.IsCompletedToday() == true);
+            var completedToday = ChildBookRecommendations.Count(cbr => cbr.IsCompletedToday() == true);
             var checkpointRatio = (double)completedToday / totalActiveRecommendations;
             Score = (int)Math.Round(answersRatio * 70 + checkpointRatio * 30);
         }

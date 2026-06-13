@@ -14,7 +14,6 @@ namespace CRIApp.Api.Tests.Controllers;
 public class ChildControllerTests
 {
     private readonly Mock<IChildService> _serviceMock;
-    private readonly Mock<IChildBookService> _childBookServiceMock;
     private readonly Mock<ILogger<ChildController>> _loggerMock;
     private readonly ChildController _sut;
     private readonly Guid _userId = Guid.NewGuid();
@@ -22,9 +21,8 @@ public class ChildControllerTests
     public ChildControllerTests()
     {
         _serviceMock = new Mock<IChildService>();
-        _childBookServiceMock = new Mock<IChildBookService>();
         _loggerMock = new Mock<ILogger<ChildController>>();
-        _sut = new ChildController(_serviceMock.Object, _childBookServiceMock.Object, _loggerMock.Object)
+        _sut = new ChildController(_serviceMock.Object, _loggerMock.Object)
         {
             ControllerContext = ControllerContextFactory.CreateAuthenticated(_userId)
         };

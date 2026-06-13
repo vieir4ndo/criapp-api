@@ -124,15 +124,19 @@ public class ChildBookTests
         Assert.True(childBook.ScoreLastUpdatedAt >= before);
     }
 
-    private static Recommendation BuildRecommendation()
+    private static ChildBookRecommendation BuildChildBookRecommendation(ChildBook childBook, Recommendation rec)
     {
-        var rec = new Recommendation("Recommendation", Guid.NewGuid());
-        typeof(Recommendation).GetProperty(nameof(Recommendation.ChildBooks))!.SetValue(rec, new List<ChildBook>());
-        return rec;
+        var cbr = new ChildBookRecommendation
+        {
+            ChildBooksId = childBook.Id,
+            RecommendationsId = rec.Id,
+            Recommendation = rec
+        };
+        return cbr;
     }
 
-    private static RecommendationCheckpoint BuildCheckpoint(int recommendationId, Guid childBookId, bool completed)
-        => new(recommendationId, childBookId, completed);
+    private static RecommendationCheckpoint BuildCheckpoint(Guid childBookRecommendationId, Guid childBookId, bool completed)
+        => new(childBookRecommendationId, childBookId, completed);
 
     [Fact]
     public void UpdateScore_NoRecommendations_ShouldApplyFullAnswersWeight()
@@ -150,7 +154,10 @@ public class ChildBookTests
     {
         var childBook = CreateChildBook();
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
-        childBook.AddRecommendationsIfNeeded([BuildRecommendation()]);
+        var rec = new Recommendation("Recommendation", Guid.NewGuid());
+        childBook.AddRecommendationsIfNeeded([rec]);
+        var cbr = BuildChildBookRecommendation(childBook, rec);
+        childBook.ChildBookRecommendations.Add(cbr);
 
         childBook.UpdateScore(childBook.Child.Answers);
 
@@ -162,9 +169,11 @@ public class ChildBookTests
     {
         var childBook = CreateChildBook();
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
-        var recommendation = BuildRecommendation();
-        recommendation.Checkpoints.Add(BuildCheckpoint(recommendation.Id, childBook.Id, completed: true));
-        childBook.AddRecommendationsIfNeeded([recommendation]);
+        var rec = new Recommendation("Recommendation", Guid.NewGuid());
+        childBook.AddRecommendationsIfNeeded([rec]);
+        var cbr = BuildChildBookRecommendation(childBook, rec);
+        cbr.Checkpoints.Add(BuildCheckpoint(cbr.Id, childBook.Id, completed: true));
+        childBook.ChildBookRecommendations.Add(cbr);
 
         childBook.UpdateScore(childBook.Child.Answers);
 
@@ -176,13 +185,15 @@ public class ChildBookTests
     {
         var childBook = CreateChildBook();
         childBook.Child.Answers.Add(BuildAnswerWithQuestion(5, QuestionScoringType.Default));
-        var recommendation1 = BuildRecommendation();
-        var recommendation2  = BuildRecommendation();
-        var completedCheckpoint = BuildCheckpoint(1, childBook.Id, completed: true);
-        var incompleteCheckpoint = BuildCheckpoint(2, childBook.Id, completed: false);
-        recommendation1.Checkpoints.Add(completedCheckpoint);
-        recommendation2.Checkpoints.Add(incompleteCheckpoint);
-        childBook.AddRecommendationsIfNeeded([recommendation1, recommendation2]);
+        var rec1 = new Recommendation("Rec1", Guid.NewGuid());
+        var rec2 = new Recommendation("Rec2", Guid.NewGuid());
+        childBook.AddRecommendationsIfNeeded([rec1, rec2]);
+        var cbr1 = BuildChildBookRecommendation(childBook, rec1);
+        var cbr2 = BuildChildBookRecommendation(childBook, rec2);
+        cbr1.Checkpoints.Add(BuildCheckpoint(cbr1.Id, childBook.Id, completed: true));
+        cbr2.Checkpoints.Add(BuildCheckpoint(cbr2.Id, childBook.Id, completed: false));
+        childBook.ChildBookRecommendations.Add(cbr1);
+        childBook.ChildBookRecommendations.Add(cbr2);
 
         childBook.UpdateScore(childBook.Child.Answers);
 

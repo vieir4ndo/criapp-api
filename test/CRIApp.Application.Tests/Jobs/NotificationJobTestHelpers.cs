@@ -30,11 +30,12 @@ public static class NotificationJobTestHelpers
 
     public static RecommendationCheckpoint BuildCheckpoint(DateTime date)
     {
-        var cp = new RecommendationCheckpoint(1, Guid.NewGuid(), true);
+        var cp = new RecommendationCheckpoint(Guid.NewGuid(), Guid.NewGuid(), true);
         typeof(RecommendationCheckpoint)
             .GetProperty(nameof(RecommendationCheckpoint.Date),
                 System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
-            .SetValue(cp, date);
+            .GetSetMethod(nonPublic: true)!
+            .Invoke(cp, new object[] { date });
         return cp;
     }
 

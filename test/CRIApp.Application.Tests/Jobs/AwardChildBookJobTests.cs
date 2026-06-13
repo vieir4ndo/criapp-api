@@ -69,10 +69,11 @@ public class AwardChildBookJobTests
 
     private static RecommendationCheckpoint BuildCheckpoint(bool completed, DateTime date)
     {
-        var checkpoint = new RecommendationCheckpoint(1, Guid.NewGuid(), completed);
+        var checkpoint = new RecommendationCheckpoint(Guid.NewGuid(), Guid.NewGuid(), completed);
         typeof(RecommendationCheckpoint)
             .GetProperty(nameof(RecommendationCheckpoint.Date), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)!
-            .SetValue(checkpoint, date);
+            .GetSetMethod(nonPublic: true)!
+            .Invoke(checkpoint, new object[] { date });
         return checkpoint;
     }
 

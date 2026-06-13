@@ -204,19 +204,26 @@ namespace CRIApp.Repository.Migrations
 
             modelBuilder.Entity("CRIApp.Domain.Entities.ChildBookRecommendation", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
                     b.Property<Guid>("ChildBooksId")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("RecommendationsId")
-                        .HasColumnType("integer")
-                        .HasColumnName("RecommendationsId");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
-                    b.HasKey("ChildBooksId", "RecommendationsId");
+                    b.Property<int>("RecommendationsId")
+                        .HasColumnType("integer")
+                        .HasColumnName("RecommendationsId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChildBooksId");
 
                     b.HasIndex("RecommendationsId");
 
@@ -416,20 +423,20 @@ namespace CRIApp.Repository.Migrations
                     b.Property<Guid>("ChildBookId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ChildBookRecommendationId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("Completed")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("RecommendationId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ChildBookId");
 
-                    b.HasIndex("RecommendationId", "ChildBookId", "Date")
+                    b.HasIndex("ChildBookRecommendationId", "Date")
                         .IsUnique();
 
                     b.ToTable("RecommendationCheckpoint", (string)null);
@@ -610,7 +617,7 @@ namespace CRIApp.Repository.Migrations
             modelBuilder.Entity("CRIApp.Domain.Entities.ChildBookRecommendation", b =>
                 {
                     b.HasOne("CRIApp.Domain.Entities.ChildBook", "ChildBook")
-                        .WithMany()
+                        .WithMany("ChildBookRecommendations")
                         .HasForeignKey("ChildBooksId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -686,15 +693,15 @@ namespace CRIApp.Repository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CRIApp.Domain.Entities.Recommendation", "Recommendation")
-                        .WithMany()
-                        .HasForeignKey("RecommendationId")
+                    b.HasOne("CRIApp.Domain.Entities.ChildBookRecommendation", "ChildBookRecommendation")
+                        .WithMany("Checkpoints")
+                        .HasForeignKey("ChildBookRecommendationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ChildBook");
 
-                    b.Navigation("Recommendation");
+                    b.Navigation("ChildBookRecommendation");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.RefreshToken", b =>
@@ -728,7 +735,14 @@ namespace CRIApp.Repository.Migrations
 
             modelBuilder.Entity("CRIApp.Domain.Entities.ChildBook", b =>
                 {
+                    b.Navigation("ChildBookRecommendations");
+
                     b.Navigation("RecommendationCheckpoints");
+                });
+
+            modelBuilder.Entity("CRIApp.Domain.Entities.ChildBookRecommendation", b =>
+                {
+                    b.Navigation("Checkpoints");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.Forum", b =>

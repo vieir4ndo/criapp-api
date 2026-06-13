@@ -26,7 +26,10 @@ public class ChildRepository : IChildRepository
 
     public async Task<List<Child>> GetAllById(Guid prcId)
     {
-        return await Context.Child.Where(x => x.PrcId == prcId).ToListAsync();
+        return await Context.Child
+            .Include(x => x.ChildBook)
+            .Where(x => x.PrcId == prcId)
+            .ToListAsync();
     }
 
     public async Task Update(Child child)
