@@ -24,7 +24,7 @@ public class RecommendationCheckpointRepository : IRecommendationCheckpointRepos
     public async Task<IList<RecommendationCheckpoint>> GetByChildBookIdAndDate(Guid childBookId, DateTime date)
     {
         return await _context.RecommendationCheckpoint
-            .Where(x => x.ChildBookId == childBookId && x.Date == date)
+            .Where(x => x.ChildBookRecommendation!.ChildBooksId == childBookId && x.Date == date)
             .ToListAsync();
     }
 
@@ -33,7 +33,7 @@ public class RecommendationCheckpointRepository : IRecommendationCheckpointRepos
         return await _context.RecommendationCheckpoint
             .Where(x =>
                 x.ChildBookRecommendation!.RecommendationsId == recommendationId &&
-                x.ChildBookId == childBookId &&
+                x.ChildBookRecommendation!.ChildBooksId == childBookId &&
                 x.Completed &&
                 x.Date >= from &&
                 x.Date <= to)
@@ -51,7 +51,7 @@ public class RecommendationCheckpointRepository : IRecommendationCheckpointRepos
     public async Task<Dictionary<int, int>> GetDistinctCompletedDaysInWindowByChildBook(Guid childBookId, DateTime from, DateTime to)
     {
         return await _context.RecommendationCheckpoint
-            .Where(x => x.ChildBookId == childBookId && x.Completed && x.Date >= from && x.Date <= to)
+            .Where(x => x.ChildBookRecommendation!.ChildBooksId == childBookId && x.Completed && x.Date >= from && x.Date <= to)
             .GroupBy(x => x.ChildBookRecommendation!.RecommendationsId)
             .Select(g => new { RecommendationId = g.Key, DistinctDays = g.Select(x => x.Date).Distinct().Count() })
             .ToDictionaryAsync(x => x.RecommendationId, x => x.DistinctDays);

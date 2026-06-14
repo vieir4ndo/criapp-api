@@ -98,7 +98,7 @@ public class ChildBookService : IChildBookService
             throw new ValidationException(_localizer["CheckpointAlreadyExists"]);
         }
 
-        var checkpoint = new RecommendationCheckpoint(childBookRecommendationId, childBook.Id, completed);
+        var checkpoint = new RecommendationCheckpoint(childBookRecommendationId, completed);
         await _checkpointRepository.Create(checkpoint);
 
         if (completed)

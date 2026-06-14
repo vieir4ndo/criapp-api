@@ -43,7 +43,7 @@ public class SendReEvaluationNotificationJob : IRecurrentJob
 
     public static bool ShouldNotify(ChildBook childBook, DateTime today)
     {
-        var lastCheckpointDate = childBook.RecommendationCheckpoints
+        var lastCheckpointDate = childBook.ChildBookRecommendations.SelectMany(cbr => cbr.Checkpoints)
             .Select(c => c.Date)
             .DefaultIfEmpty()
             .Max();

@@ -66,7 +66,7 @@ public class AwardChildBookJob : IRecurrentJob
 
     private static void EvaluateHabitBuilder(ChildBook childBook, IList<Award> awards)
     {
-        var completedDates = childBook.RecommendationCheckpoints
+        var completedDates = childBook.ChildBookRecommendations.SelectMany(cbr => cbr.Checkpoints)
             .Where(c => c.Completed)
             .Select(c => c.Date)
             .Distinct()
@@ -85,7 +85,7 @@ public class AwardChildBookJob : IRecurrentJob
 
     private static void EvaluateConsistentParent(ChildBook childBook, IList<Award> awards)
     {
-        var distinctDays = childBook.RecommendationCheckpoints
+        var distinctDays = childBook.ChildBookRecommendations.SelectMany(cbr => cbr.Checkpoints)
             .Where(c => c.Completed)
             .Select(c => c.Date)
             .Distinct()

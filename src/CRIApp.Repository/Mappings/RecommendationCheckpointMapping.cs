@@ -16,9 +16,5 @@ public class RecommendationCheckpointMapping : IEntityTypeConfiguration<Recommen
 
         builder.Property(x => x.Date).IsRequired();
         builder.Property(x => x.Completed).IsRequired();
-
-        builder.HasOne(x => x.ChildBook)
-            .WithMany(x => x.RecommendationCheckpoints)
-            .HasForeignKey(x => x.ChildBookId);
     }
 }

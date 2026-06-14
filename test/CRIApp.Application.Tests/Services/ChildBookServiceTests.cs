@@ -59,7 +59,7 @@ public class ChildBookServiceTests
 
     private static RecommendationCheckpoint BuildCheckpointOnDate(Guid cbrId, Guid childBookId, bool completed, DateTime date)
     {
-        var cp = new RecommendationCheckpoint(cbrId, childBookId, completed);
+        var cp = new RecommendationCheckpoint(cbrId, completed);
         typeof(RecommendationCheckpoint)
             .GetProperty(nameof(RecommendationCheckpoint.Date))!
             .GetSetMethod(nonPublic: true)!
@@ -89,7 +89,7 @@ public class ChildBookServiceTests
 
         Assert.False(result.Assimilated);
         _checkpointRepositoryMock.Verify(r => r.Create(It.Is<RecommendationCheckpoint>(
-            c => c.ChildBookRecommendationId == cbr.Id && c.ChildBookId == childBook.Id && c.Completed == true)), Times.Once);
+            c => c.ChildBookRecommendationId == cbr.Id && c.Completed == true)), Times.Once);
         _childBookRepositoryMock.Verify(r => r.Update(It.IsAny<ChildBook>()), Times.Never);
     }
 
@@ -128,7 +128,7 @@ public class ChildBookServiceTests
         var child = BuildChild(prcId, childId);
         var childBook = BuildChildBook(childId);
         var cbr = BuildCbr(childBook.Id, 3);
-        var existingCheckpoint = new RecommendationCheckpoint(cbr.Id, childBook.Id, false);
+        var existingCheckpoint = new RecommendationCheckpoint(cbr.Id, false);
 
         _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
         _childBookRepositoryMock.Setup(r => r.GetByIdWithRecommendations(childBook.Id)).ReturnsAsync(childBook);

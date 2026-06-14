@@ -29,7 +29,8 @@ public class ChildBookRepository : IChildBookRepository
     {
         return await _context.ChildBook
             .Include(x => x.Recommendations)
-            .Include(x => x.RecommendationCheckpoints)
+            .Include(x => x.ChildBookRecommendations)
+                .ThenInclude(cbr => cbr.Checkpoints)
             .AsSplitQuery()
             .FirstOrDefaultAsync(x => x.ChildId == childId);
     }
@@ -38,7 +39,8 @@ public class ChildBookRepository : IChildBookRepository
     {
         return await _context.ChildBook
             .Include(x => x.Recommendations)
-            .Include(x => x.RecommendationCheckpoints)
+            .Include(x => x.ChildBookRecommendations)
+                .ThenInclude(cbr => cbr.Checkpoints)
             .AsSplitQuery()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
@@ -93,7 +95,8 @@ public class ChildBookRepository : IChildBookRepository
     public async Task<IList<ChildBook>> GetAllForNotifications()
     {
         return await _context.ChildBook
-            .Include(x => x.RecommendationCheckpoints)
+            .Include(x => x.ChildBookRecommendations)
+                .ThenInclude(cbr => cbr.Checkpoints)
             .Include(x => x.Child)
                 .ThenInclude(c => c.Answers)
             .Include(x => x.Child)

@@ -19,18 +19,17 @@ public static class NotificationJobTestHelpers
         var childBook = new ChildBook(child.Id);
         typeof(ChildBook).GetProperty(nameof(ChildBook.Child))!.SetValue(childBook, child);
 
-        var checkpoints = checkpoint is not null
-            ? new List<RecommendationCheckpoint> { checkpoint }
-            : new List<RecommendationCheckpoint>();
-        typeof(ChildBook).GetProperty(nameof(ChildBook.RecommendationCheckpoints))!
-            .SetValue(childBook, checkpoints);
+        var cbr = new ChildBookRecommendation();
+        if (checkpoint is not null)
+            cbr.Checkpoints.Add(checkpoint);
+        childBook.ChildBookRecommendations.Add(cbr);
 
         return childBook;
     }
 
     public static RecommendationCheckpoint BuildCheckpoint(DateTime date)
     {
-        var cp = new RecommendationCheckpoint(Guid.NewGuid(), Guid.NewGuid(), true);
+        var cp = new RecommendationCheckpoint(Guid.NewGuid(), true);
         typeof(RecommendationCheckpoint)
             .GetProperty(nameof(RecommendationCheckpoint.Date),
                 System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!

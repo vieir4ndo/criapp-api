@@ -10,7 +10,6 @@ public class ChildBook : Entity
     public DateTime ScoreLastUpdatedAt { get; private set; }
     public List<Award> Awards { get; private set; } = new();
     public List<Recommendation> Recommendations { get; private set; } = new();
-    public List<RecommendationCheckpoint> RecommendationCheckpoints { get; private set; } = new();
     public List<ChildBookRecommendation> ChildBookRecommendations { get; private set; } = new();
 
     protected ChildBook() { }

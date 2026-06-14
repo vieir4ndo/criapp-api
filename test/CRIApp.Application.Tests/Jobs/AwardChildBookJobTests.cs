@@ -54,8 +54,7 @@ public class AwardChildBookJobTests
 
         var childBook = new ChildBook(child.Id);
         typeof(ChildBook).GetProperty(nameof(ChildBook.Child))!.SetValue(childBook, child);
-        typeof(ChildBook).GetProperty(nameof(ChildBook.RecommendationCheckpoints))!
-            .SetValue(childBook, new List<RecommendationCheckpoint>());
+        childBook.ChildBookRecommendations.Add(new ChildBookRecommendation());
         return childBook;
     }
 
@@ -69,7 +68,7 @@ public class AwardChildBookJobTests
 
     private static RecommendationCheckpoint BuildCheckpoint(bool completed, DateTime date)
     {
-        var checkpoint = new RecommendationCheckpoint(Guid.NewGuid(), Guid.NewGuid(), completed);
+        var checkpoint = new RecommendationCheckpoint(Guid.NewGuid(), completed);
         typeof(RecommendationCheckpoint)
             .GetProperty(nameof(RecommendationCheckpoint.Date), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)!
             .GetSetMethod(nonPublic: true)!
@@ -82,10 +81,11 @@ public class AwardChildBookJobTests
     {
         var childBook = BuildChildBook();
         var today = DateTime.UtcNow.Date;
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-6)));
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-5)));
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-4)));
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-3)));
+        var cbr = childBook.ChildBookRecommendations[0];
+        cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-6)));
+        cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-5)));
+        cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-4)));
+        cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-3)));
         _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
 
         await _sut.Run();
@@ -98,9 +98,10 @@ public class AwardChildBookJobTests
     {
         var childBook = BuildChildBook();
         var today = DateTime.UtcNow.Date;
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-6)));
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-4)));
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-2)));
+        var cbr = childBook.ChildBookRecommendations[0];
+        cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-6)));
+        cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-4)));
+        cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-2)));
         _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
 
         await _sut.Run();
@@ -113,10 +114,11 @@ public class AwardChildBookJobTests
     {
         var childBook = BuildChildBook();
         var today = DateTime.UtcNow.Date;
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-20)));
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-15)));
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-10)));
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-5)));
+        var cbr = childBook.ChildBookRecommendations[0];
+        cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-20)));
+        cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-15)));
+        cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-10)));
+        cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-5)));
         _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
 
         await _sut.Run();
@@ -129,10 +131,11 @@ public class AwardChildBookJobTests
     {
         var childBook = BuildChildBook();
         var today = DateTime.UtcNow.Date;
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(false, today.AddDays(-6)));
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(false, today.AddDays(-5)));
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(false, today.AddDays(-4)));
-        childBook.RecommendationCheckpoints.Add(BuildCheckpoint(false, today.AddDays(-3)));
+        var cbr = childBook.ChildBookRecommendations[0];
+        cbr.Checkpoints.Add(BuildCheckpoint(false, today.AddDays(-6)));
+        cbr.Checkpoints.Add(BuildCheckpoint(false, today.AddDays(-5)));
+        cbr.Checkpoints.Add(BuildCheckpoint(false, today.AddDays(-4)));
+        cbr.Checkpoints.Add(BuildCheckpoint(false, today.AddDays(-3)));
         _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
 
         await _sut.Run();
@@ -145,8 +148,9 @@ public class AwardChildBookJobTests
     {
         var childBook = BuildChildBook();
         var today = DateTime.UtcNow.Date;
+        var cbr = childBook.ChildBookRecommendations[0];
         for (var i = 1; i <= 7; i++)
-            childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-i)));
+            cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-i)));
         _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
 
         await _sut.Run();
@@ -159,8 +163,9 @@ public class AwardChildBookJobTests
     {
         var childBook = BuildChildBook();
         var today = DateTime.UtcNow.Date;
+        var cbr = childBook.ChildBookRecommendations[0];
         for (var i = 1; i <= 6; i++)
-            childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-i)));
+            cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-i)));
         _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
 
         await _sut.Run();
@@ -254,8 +259,9 @@ public class AwardChildBookJobTests
     {
         var childBook = BuildChildBook();
         var today = DateTime.UtcNow.Date;
+        var cbr = childBook.ChildBookRecommendations[0];
         for (var i = 1; i <= 7; i++)
-            childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-i)));
+            cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-i)));
         _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
 
         await _sut.Run();
@@ -269,8 +275,9 @@ public class AwardChildBookJobTests
     {
         var childBook = BuildChildBook();
         var today = DateTime.UtcNow.Date;
+        var cbr = childBook.ChildBookRecommendations[0];
         for (var i = 1; i <= 7; i++)
-            childBook.RecommendationCheckpoints.Add(BuildCheckpoint(true, today.AddDays(-i)));
+            cbr.Checkpoints.Add(BuildCheckpoint(true, today.AddDays(-i)));
         _childBookRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync([childBook]);
 
         await _sut.Run();
