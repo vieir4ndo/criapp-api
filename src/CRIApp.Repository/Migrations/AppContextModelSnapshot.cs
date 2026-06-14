@@ -414,9 +414,6 @@ namespace CRIApp.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ChildBookId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("ChildBookRecommendationId")
                         .HasColumnType("uuid");
 
@@ -427,8 +424,6 @@ namespace CRIApp.Repository.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ChildBookId");
 
                     b.HasIndex("ChildBookRecommendationId", "Date")
                         .IsUnique();
@@ -681,19 +676,11 @@ namespace CRIApp.Repository.Migrations
 
             modelBuilder.Entity("CRIApp.Domain.Entities.RecommendationCheckpoint", b =>
                 {
-                    b.HasOne("CRIApp.Domain.Entities.ChildBook", "ChildBook")
-                        .WithMany("RecommendationCheckpoints")
-                        .HasForeignKey("ChildBookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CRIApp.Domain.Entities.ChildBookRecommendation", "ChildBookRecommendation")
                         .WithMany("Checkpoints")
                         .HasForeignKey("ChildBookRecommendationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ChildBook");
 
                     b.Navigation("ChildBookRecommendation");
                 });
@@ -730,8 +717,6 @@ namespace CRIApp.Repository.Migrations
             modelBuilder.Entity("CRIApp.Domain.Entities.ChildBook", b =>
                 {
                     b.Navigation("ChildBookRecommendations");
-
-                    b.Navigation("RecommendationCheckpoints");
                 });
 
             modelBuilder.Entity("CRIApp.Domain.Entities.ChildBookRecommendation", b =>
