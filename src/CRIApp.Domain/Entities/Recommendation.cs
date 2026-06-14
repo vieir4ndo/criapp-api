@@ -10,7 +10,6 @@ public class Recommendation
     public string? TextPt { get; private set; }
     public Question Question { get; private set; }
     public Guid QuestionId { get; private set; }
-    public byte[]? Image { get; private set; }
     public List<ChildBook> ChildBooks { get; private set; }
 
     protected Recommendation()
@@ -29,12 +28,6 @@ public class Recommendation
     {
         TextEn = textEn;
         TextPt = textPt;
-        return this;
-    }
-
-    public Recommendation WithImage(byte[]? image)
-    {
-        Image = image;
         return this;
     }
 

@@ -104,9 +104,6 @@ namespace CRIApp.Repository.Migrations
                     b.Property<string>("DescriptionPt")
                         .HasColumnType("varchar(1000)");
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("bytea");
-
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("varchar(500)");
@@ -390,9 +387,6 @@ namespace CRIApp.Repository.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("bytea");
 
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uuid");

@@ -32,8 +32,6 @@ public class AwardMapping : IEntityTypeConfiguration<Award>
         builder.Property(x => x.DescriptionPt)
             .HasColumnType("varchar(1000)");
 
-        builder.Property(x => x.Image);
-
         builder.HasMany(x => x.ChildBooks)
             .WithMany(x => x.Awards)
             .UsingEntity<ChildBookAward>(

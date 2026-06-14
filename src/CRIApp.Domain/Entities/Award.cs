@@ -11,7 +11,6 @@ public class Award : Entity
     public string? Description { get; private set; }
     public string? DescriptionEn { get; private set; }
     public string? DescriptionPt { get; private set; }
-    public byte[]? Image { get; private set; }
     public List<ChildBook> ChildBooks { get; private set; } = new();
 
     protected Award() { }
@@ -32,9 +31,5 @@ public class Award : Entity
         return this;
     }
 
-    public Award WithImage(byte[]? image)
-    {
-        Image = image;
-        return this;
-    }
+
 }

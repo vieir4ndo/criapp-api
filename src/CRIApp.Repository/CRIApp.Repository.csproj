@@ -11,10 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="Seeders/Images/**" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Compile Remove="QuestionRepositNpgsql.EntityFrameworkCore.PostgreSQLory\**" />
     </ItemGroup>
 
