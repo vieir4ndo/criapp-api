@@ -7,7 +7,7 @@ public class ChildBookRecommendation
 
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid ChildBooksId { get; set; }
-    public int RecommendationsId { get; set; }
+    public int RecommendationId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ChildBook? ChildBook { get; set; }

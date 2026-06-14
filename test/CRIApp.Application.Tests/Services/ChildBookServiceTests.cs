@@ -50,7 +50,7 @@ public class ChildBookServiceTests
         var cbr = new ChildBookRecommendation
         {
             ChildBooksId = childBookId,
-            RecommendationsId = recommendationId,
+            RecommendationId = recommendationId,
             Recommendation = new Recommendation("Do this.", Guid.NewGuid())
         };
         typeof(Recommendation).GetProperty(nameof(Recommendation.Id))!.SetValue(cbr.Recommendation, recommendationId);

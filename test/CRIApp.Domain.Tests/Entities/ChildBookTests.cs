@@ -129,7 +129,7 @@ public class ChildBookTests
         var cbr = new ChildBookRecommendation
         {
             ChildBooksId = childBook.Id,
-            RecommendationsId = rec.Id,
+            RecommendationId = rec.Id,
             Recommendation = rec
         };
         return cbr;

@@ -32,7 +32,7 @@ public class RecommendationCheckpointRepository : IRecommendationCheckpointRepos
     {
         return await _context.RecommendationCheckpoint
             .Where(x =>
-                x.ChildBookRecommendation!.RecommendationsId == recommendationId &&
+                x.ChildBookRecommendation!.RecommendationId == recommendationId &&
                 x.ChildBookRecommendation!.ChildBooksId == childBookId &&
                 x.Completed &&
                 x.Date >= from &&
@@ -52,7 +52,7 @@ public class RecommendationCheckpointRepository : IRecommendationCheckpointRepos
     {
         return await _context.RecommendationCheckpoint
             .Where(x => x.ChildBookRecommendation!.ChildBooksId == childBookId && x.Completed && x.Date >= from && x.Date <= to)
-            .GroupBy(x => x.ChildBookRecommendation!.RecommendationsId)
+            .GroupBy(x => x.ChildBookRecommendation!.RecommendationId)
             .Select(g => new { RecommendationId = g.Key, DistinctDays = g.Select(x => x.Date).Distinct().Count() })
             .ToDictionaryAsync(x => x.RecommendationId, x => x.DistinctDays);
     }

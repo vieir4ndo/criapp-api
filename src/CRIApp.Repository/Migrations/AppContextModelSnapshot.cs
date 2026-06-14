@@ -214,15 +214,15 @@ namespace CRIApp.Repository.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
-                    b.Property<int>("RecommendationsId")
+                    b.Property<int>("RecommendationId")
                         .HasColumnType("integer")
-                        .HasColumnName("RecommendationsId");
+                        .HasColumnName("RecommendationId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ChildBooksId");
 
-                    b.HasIndex("RecommendationsId");
+                    b.HasIndex("RecommendationId");
 
                     b.ToTable("ChildBookRecommendation", (string)null);
                 });
@@ -613,7 +613,7 @@ namespace CRIApp.Repository.Migrations
 
                     b.HasOne("CRIApp.Domain.Entities.Recommendation", "Recommendation")
                         .WithMany()
-                        .HasForeignKey("RecommendationsId")
+                        .HasForeignKey("RecommendationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

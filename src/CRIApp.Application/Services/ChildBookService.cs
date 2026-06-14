@@ -110,7 +110,7 @@ public class ChildBookService : IChildBookService
                 _logger.LogInformation(
                     "ChildBookRecommendation {Id} assimilated for ChildBook {ChildBookId}",
                     childBookRecommendationId, childBook.Id);
-                childBook.RemoveRecommendation(cbr.RecommendationsId);
+                childBook.RemoveRecommendation(cbr.RecommendationId);
                 await _childBookRepository.Update(childBook);
                 return new SaveCheckpointResultDto(assimilated: true);
             }
