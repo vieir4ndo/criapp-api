@@ -201,4 +201,94 @@ public class ChildBookServiceTests
         Assert.Single(childBook.Recommendations);
         _childBookRepositoryMock.Verify(r => r.Update(It.IsAny<ChildBook>()), Times.Never);
     }
+
+    [Fact]
+    public async Task GetSummaryByChildBookId_HappyPath_ShouldReturnDto()
+    {
+        var prcId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var child = BuildChild(prcId, childId);
+        var childBook = BuildChildBook(childId);
+        typeof(ChildBook).GetProperty(nameof(ChildBook.Child))!.SetValue(childBook, child);
+
+        _childBookRepositoryMock.Setup(r => r.GetById(childBook.Id)).ReturnsAsync(childBook);
+        _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
+
+        var result = await _sut.GetSummaryByChildBookId(childBook.Id, prcId);
+
+        Assert.Equal(childBook.Id, result.Id);
+        Assert.Equal(childBook.ChildId, result.ChildId);
+    }
+
+    [Fact]
+    public async Task GetSummaryByChildBookId_NotFound_ShouldThrowNotFoundException()
+    {
+        var prcId = Guid.NewGuid();
+        var childBookId = Guid.NewGuid();
+        _childBookRepositoryMock.Setup(r => r.GetById(childBookId)).ReturnsAsync((ChildBook?)null);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetSummaryByChildBookId(childBookId, prcId));
+    }
+
+    [Fact]
+    public async Task GetAwardsByChildBookId_HappyPath_ShouldReturnAwards()
+    {
+        var prcId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var child = BuildChild(prcId, childId);
+        var childBook = BuildChildBook(childId);
+
+        var award = new Award(AwardType.HabitBuilder, "Habit Builder");
+        _childBookRepositoryMock.Setup(r => r.GetById(childBook.Id)).ReturnsAsync(childBook);
+        _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
+        _childBookRepositoryMock
+            .Setup(r => r.GetAwardsByChildBookId(childBook.Id))
+            .ReturnsAsync(new List<(Award Aw, DateTime AssignedAt)> { (award, DateTime.UtcNow) });
+
+        var result = await _sut.GetAwardsByChildBookId(childBook.Id, prcId);
+
+        Assert.Single(result);
+        Assert.Equal(AwardType.HabitBuilder, result[0].Type);
+    }
+
+    [Fact]
+    public async Task GetAwardsByChildBookId_NotFound_ShouldThrowNotFoundException()
+    {
+        var prcId = Guid.NewGuid();
+        var childBookId = Guid.NewGuid();
+        _childBookRepositoryMock.Setup(r => r.GetById(childBookId)).ReturnsAsync((ChildBook?)null);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetAwardsByChildBookId(childBookId, prcId));
+    }
+
+    [Fact]
+    public async Task GetRecommendationsByChildBookId_HappyPath_ShouldReturnRecommendations()
+    {
+        var prcId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var child = BuildChild(prcId, childId);
+        var childBook = BuildChildBook(childId);
+        var cbr = BuildCbr(childBook.Id, 1);
+
+        _childBookRepositoryMock.Setup(r => r.GetById(childBook.Id)).ReturnsAsync(childBook);
+        _childServiceMock.Setup(s => s.GetAndValidateById(childId, prcId)).ReturnsAsync(child);
+        _childBookRepositoryMock
+            .Setup(r => r.GetRecommendationsByChildBookId(childBook.Id))
+            .ReturnsAsync(new List<ChildBookRecommendation> { cbr });
+
+        var result = await _sut.GetRecommendationsByChildBookId(childBook.Id, prcId);
+
+        Assert.Single(result);
+        Assert.Equal(cbr.Id, result[0].ChildBookRecommendationId);
+    }
+
+    [Fact]
+    public async Task GetRecommendationsByChildBookId_NotFound_ShouldThrowNotFoundException()
+    {
+        var prcId = Guid.NewGuid();
+        var childBookId = Guid.NewGuid();
+        _childBookRepositoryMock.Setup(r => r.GetById(childBookId)).ReturnsAsync((ChildBook?)null);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.GetRecommendationsByChildBookId(childBookId, prcId));
+    }
 }

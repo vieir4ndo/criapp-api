@@ -64,4 +64,31 @@ public class AudiovisualResourceTests
             new AudiovisualResource("name", "description", null!, ValidAdminId));
     }
 
+    [Fact]
+    public void WithTranslations_ShouldSetTranslationFields()
+    {
+        var resource = CreateValidResource();
+
+        var result = resource.WithTranslations("Video 1 EN", "A helpful video EN", "Video 1 PT", "Um vídeo útil PT");
+
+        Assert.Same(resource, result);
+        Assert.Equal("Video 1 EN", resource.NameEn);
+        Assert.Equal("A helpful video EN", resource.DescriptionEn);
+        Assert.Equal("Video 1 PT", resource.NamePt);
+        Assert.Equal("Um vídeo útil PT", resource.DescriptionPt);
+    }
+
+    [Fact]
+    public void WithTranslations_NullValues_ShouldSetNulls()
+    {
+        var resource = CreateValidResource();
+
+        resource.WithTranslations(null, null, null, null);
+
+        Assert.Null(resource.NameEn);
+        Assert.Null(resource.DescriptionEn);
+        Assert.Null(resource.NamePt);
+        Assert.Null(resource.DescriptionPt);
+    }
+
 }

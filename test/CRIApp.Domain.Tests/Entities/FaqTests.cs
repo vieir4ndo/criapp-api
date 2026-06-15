@@ -45,4 +45,31 @@ public class FaqTests
         Assert.Throws<DomainException>(() => new Faq("question?", null!, ValidAdminId));
     }
 
+    [Fact]
+    public void WithTranslations_ShouldSetTranslationFields()
+    {
+        var faq = CreateValidFaq();
+
+        var result = faq.WithTranslations("What is CRI? (EN)", "CRI is an index. (EN)", "O que é CRI?", "CRI é um índice.");
+
+        Assert.Same(faq, result);
+        Assert.Equal("What is CRI? (EN)", faq.QuestionEn);
+        Assert.Equal("CRI is an index. (EN)", faq.AnswerEn);
+        Assert.Equal("O que é CRI?", faq.QuestionPt);
+        Assert.Equal("CRI é um índice.", faq.AnswerPt);
+    }
+
+    [Fact]
+    public void WithTranslations_NullValues_ShouldSetNulls()
+    {
+        var faq = CreateValidFaq();
+
+        faq.WithTranslations(null, null, null, null);
+
+        Assert.Null(faq.QuestionEn);
+        Assert.Null(faq.AnswerEn);
+        Assert.Null(faq.QuestionPt);
+        Assert.Null(faq.AnswerPt);
+    }
+
 }
