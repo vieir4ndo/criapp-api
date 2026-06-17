@@ -41,8 +41,7 @@ namespace CRIApp.Repository.Migrations
                     TextPt = table.Column<string>(type: "varchar(500)", nullable: true),
                     Description = table.Column<string>(type: "varchar(1000)", nullable: true),
                     DescriptionEn = table.Column<string>(type: "varchar(1000)", nullable: true),
-                    DescriptionPt = table.Column<string>(type: "varchar(1000)", nullable: true),
-                    Image = table.Column<byte[]>(type: "bytea", nullable: true)
+                    DescriptionPt = table.Column<string>(type: "varchar(1000)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -116,8 +115,7 @@ namespace CRIApp.Repository.Migrations
                     Text = table.Column<string>(type: "varchar(500)", nullable: false),
                     TextEn = table.Column<string>(type: "varchar(500)", nullable: true),
                     TextPt = table.Column<string>(type: "varchar(500)", nullable: true),
-                    QuestionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Image = table.Column<byte[]>(type: "bytea", nullable: true)
+                    QuestionId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -327,7 +325,7 @@ namespace CRIApp.Repository.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     ChildBooksId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RecommendationsId = table.Column<int>(type: "integer", nullable: false),
+                    RecommendationId = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
                 },
                 constraints: table =>
@@ -340,8 +338,8 @@ namespace CRIApp.Repository.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ChildBookRecommendation_Recommendation_RecommendationsId",
-                        column: x => x.RecommendationsId,
+                        name: "FK_ChildBookRecommendation_Recommendation_RecommendationId",
+                        column: x => x.RecommendationId,
                         principalTable: "Recommendation",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -375,7 +373,6 @@ namespace CRIApp.Repository.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ChildBookRecommendationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ChildBookId = table.Column<Guid>(type: "uuid", nullable: false),
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Completed = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -386,12 +383,6 @@ namespace CRIApp.Repository.Migrations
                         name: "FK_RecommendationCheckpoint_ChildBookRecommendation_ChildBookR~",
                         column: x => x.ChildBookRecommendationId,
                         principalTable: "ChildBookRecommendation",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RecommendationCheckpoint_ChildBook_ChildBookId",
-                        column: x => x.ChildBookId,
-                        principalTable: "ChildBook",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -433,9 +424,9 @@ namespace CRIApp.Repository.Migrations
                 column: "ChildBooksId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChildBookRecommendation_RecommendationsId",
+                name: "IX_ChildBookRecommendation_RecommendationId",
                 table: "ChildBookRecommendation",
-                column: "RecommendationsId");
+                column: "RecommendationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comment_ForumId",
@@ -462,11 +453,6 @@ namespace CRIApp.Repository.Migrations
                 name: "IX_Recommendation_QuestionId",
                 table: "Recommendation",
                 column: "QuestionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RecommendationCheckpoint_ChildBookId",
-                table: "RecommendationCheckpoint",
-                column: "ChildBookId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RecommendationCheckpoint_ChildBookRecommendationId_Date",
