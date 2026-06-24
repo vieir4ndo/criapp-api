@@ -144,7 +144,7 @@ public class ChildBookServiceTests
     }
 
     [Fact]
-    public async Task SaveCheckpoint_ThreeDistinctCompletedDays_ShouldAssimilateAndRemoveRecommendation()
+    public async Task SaveCheckpoint_FourDistinctCompletedDays_ShouldAssimilateAndRemoveRecommendation()
     {
         var prcId = Guid.NewGuid();
         var childId = Guid.NewGuid();
@@ -155,6 +155,7 @@ public class ChildBookServiceTests
         cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, childBook.Id, true, today));
         cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, childBook.Id, true, today.AddDays(-1)));
         cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, childBook.Id, true, today.AddDays(-2)));
+        cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, childBook.Id, true, today.AddDays(-3)));
         typeof(ChildBook).GetProperty(nameof(ChildBook.Recommendations))!
             .SetValue(childBook, new List<Recommendation> { cbr.Recommendation! });
 

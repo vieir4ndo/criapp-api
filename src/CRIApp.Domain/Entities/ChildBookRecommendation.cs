@@ -3,7 +3,7 @@ namespace CRIApp.Domain.Entities;
 public class ChildBookRecommendation
 {
     private const int AssimilationWindowDays = 7;
-    private const int AssimilationThreshold = 3;
+    private const int AssimilationThreshold = 4;
 
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid ChildBooksId { get; set; }

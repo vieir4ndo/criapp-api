@@ -25,13 +25,14 @@ public class ChildBookRecommendationTests
     }
 
     [Fact]
-    public void IsAssimilated_ThreeDistinctCompletedDaysInWindow_ShouldReturnTrue()
+    public void IsAssimilated_FourDistinctCompletedDaysInWindow_ShouldReturnTrue()
     {
         var cbr = new ChildBookRecommendation();
         var today = DateTime.UtcNow.Date;
         cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, true, today));
         cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, true, today.AddDays(-1)));
         cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, true, today.AddDays(-2)));
+        cbr.Checkpoints.Add(BuildCheckpointOnDate(cbr.Id, true, today.AddDays(-3)));
 
         Assert.True(cbr.IsAssimilated());
     }
