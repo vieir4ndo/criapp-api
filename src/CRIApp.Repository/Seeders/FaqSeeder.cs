@@ -4,16 +4,15 @@ namespace CRIApp.Repository.Seeders;
 
 public static class FaqSeeder
 {
-    public static void Execute(AppContext context, Guid? adminId)
+    public static void Execute(AppContext context)
     {
-        if (context.Faq.Any() || adminId is null) return;
+        if (context.Faq.Any()) return;
 
         var faqs = new List<Faq>
         {
             new Faq(
                 "¿Qué es CRIApp?",
-                "CRIApp es una aplicación diseñada para apoyar a familias y cuidadores en el seguimiento del desarrollo infantil temprano. Ofrece cuestionarios de evaluación, recomendaciones personalizadas, recursos audiovisuales y una comunidad de apoyo en los foros.",
-                adminId.Value
+                "CRIApp es una aplicación diseñada para apoyar a familias y cuidadores en el seguimiento del desarrollo infantil temprano. Ofrece cuestionarios de evaluación, recomendaciones personalizadas, recursos audiovisuales y una comunidad de apoyo en los foros."
             ).WithTranslations(
                 "What is CRIApp?",
                 "CRIApp is an application designed to support families and caregivers in monitoring early childhood development. It offers assessment questionnaires, personalized recommendations, audiovisual resources and a support community in the forums.",
@@ -23,8 +22,7 @@ public static class FaqSeeder
 
             new Faq(
                 "¿Cómo funciona el cuestionario?",
-                "El cuestionario utiliza una escala de Likert del 1 al 6, donde debes indicar con qué frecuencia ocurre cada comportamiento en tu hijo. Cuanto más completes los cuestionarios, más precisas serán las recomendaciones que recibirás.",
-                adminId.Value
+                "El cuestionario utiliza una escala de Likert del 1 al 6, donde debes indicar con qué frecuencia ocurre cada comportamiento en tu hijo. Cuanto más completes los cuestionarios, más precisas serán las recomendaciones que recibirás."
             ).WithTranslations(
                 "How does the questionnaire work?",
                 "The questionnaire uses a Likert scale from 1 to 6, where you indicate how often each behavior occurs in your child. The more questionnaires you complete, the more accurate the recommendations you will receive.",
@@ -34,8 +32,7 @@ public static class FaqSeeder
 
             new Faq(
                 "¿Qué significan las puntuaciones obtenidas?",
-                "La puntuación refleja el porcentaje de respuestas positivas en los cuestionarios completados, en una escala de 0 a 100. Una puntuación más alta indica un mayor número de comportamientos de desarrollo positivos observados.",
-                adminId.Value
+                "La puntuación refleja el porcentaje de respuestas positivas en los cuestionarios completados, en una escala de 0 a 100. Una puntuación más alta indica un mayor número de comportamientos de desarrollo positivos observados."
             ).WithTranslations(
                 "What do the scores mean?",
                 "The score reflects the percentage of positive responses in the completed questionnaires, on a scale of 0 to 100. A higher score indicates a greater number of positive developmental behaviors observed.",
@@ -45,8 +42,7 @@ public static class FaqSeeder
 
             new Faq(
                 "¿Cómo se obtienen los premios?",
-                "Los premios se otorgan automáticamente según tu actividad en la aplicación: responder 5 o más preguntas distintas, completar cuestionarios en días consecutivos, mejorar tu puntuación respecto al día anterior o alcanzar una puntuación superior a 80.",
-                adminId.Value
+                "Los premios se otorgan automáticamente según tu actividad en la aplicación: responder 5 o más preguntas distintas, completar cuestionarios en días consecutivos, mejorar tu puntuación respecto al día anterior o alcanzar una puntuación superior a 80."
             ).WithTranslations(
                 "How are awards obtained?",
                 "Awards are granted automatically based on your activity in the application: answering 5 or more different questions, completing questionnaires on consecutive days, improving your score compared to the previous day, or reaching a score above 80.",
@@ -56,8 +52,7 @@ public static class FaqSeeder
 
             new Faq(
                 "¿Para qué sirven las recomendaciones?",
-                "Las recomendaciones son sugerencias personalizadas elaboradas por especialistas, basadas en las respuestas que has dado en los cuestionarios. Su objetivo es orientarte con estrategias concretas para favorecer el desarrollo de tu hijo.",
-                adminId.Value
+                "Las recomendaciones son sugerencias personalizadas elaboradas por especialistas, basadas en las respuestas que has dado en los cuestionarios. Su objetivo es orientarte con estrategias concretas para favorecer el desarrollo de tu hijo."
             ).WithTranslations(
                 "What are recommendations for?",
                 "Recommendations are personalized suggestions developed by specialists, based on the answers you have given in the questionnaires. Their goal is to guide you with concrete strategies to support your child's development.",
@@ -67,8 +62,7 @@ public static class FaqSeeder
 
             new Faq(
                 "¿Puedo registrar más de un hijo?",
-                "Sí, puedes añadir varios hijos en la sección 'Niños'. Cada perfil de niño es independiente, lo que te permite hacer un seguimiento individual del desarrollo de cada uno.",
-                adminId.Value
+                "Sí, puedes añadir varios hijos en la sección 'Niños'. Cada perfil de niño es independiente, lo que te permite hacer un seguimiento individual del desarrollo de cada uno."
             ).WithTranslations(
                 "Can I register more than one child?",
                 "Yes, you can add multiple children in the 'Children' section. Each child's profile is independent, allowing you to individually track each child's development.",
@@ -78,8 +72,7 @@ public static class FaqSeeder
 
             new Faq(
                 "¿Qué son los recursos audiovisuales?",
-                "Los recursos audiovisuales son vídeos seleccionados por especialistas sobre temas clave del desarrollo infantil temprano, como el aprendizaje del lenguaje, la neuroplasticidad y el impacto de las experiencias tempranas en el cerebro.",
-                adminId.Value
+                "Los recursos audiovisuales son vídeos seleccionados por especialistas sobre temas clave del desarrollo infantil temprano, como el aprendizaje del lenguaje, la neuroplasticidad y el impacto de las experiencias tempranas en el cerebro."
             ).WithTranslations(
                 "What are the audiovisual resources?",
                 "The audiovisual resources are videos selected by specialists on key topics of early childhood development, such as language learning, neuroplasticity and the impact of early experiences on the brain.",
@@ -89,8 +82,7 @@ public static class FaqSeeder
 
             new Faq(
                 "¿Cómo restablezco mi contraseña?",
-                "En la pantalla de inicio de sesión, pulsa '¿Olvidaste tu contraseña?' e introduce tu correo electrónico. Recibirás un código de verificación que deberás introducir para crear una nueva contraseña. El código es válido durante 10 minutos.",
-                adminId.Value
+                "En la pantalla de inicio de sesión, pulsa '¿Olvidaste tu contraseña?' e introduce tu correo electrónico. Recibirás un código de verificación que deberás introducir para crear una nueva contraseña. El código es válido durante 10 minutos."
             ).WithTranslations(
                 "How do I reset my password?",
                 "On the login screen, tap 'Forgot your password?' and enter your email address. You will receive a verification code that you must enter to create a new password. The code is valid for 10 minutes.",
@@ -100,8 +92,7 @@ public static class FaqSeeder
 
             new Faq(
                 "¿Con qué frecuencia debo responder los cuestionarios?",
-                "Recomendamos responder los cuestionarios diariamente para obtener un seguimiento más preciso del desarrollo. La aplicación premia la constancia, por lo que responder en días consecutivos desbloquea logros adicionales.",
-                adminId.Value
+                "Recomendamos responder los cuestionarios diariamente para obtener un seguimiento más preciso del desarrollo. La aplicación premia la constancia, por lo que responder en días consecutivos desbloquea logros adicionales."
             ).WithTranslations(
                 "How often should I answer the questionnaires?",
                 "We recommend answering the questionnaires daily to get a more accurate tracking of development. The application rewards consistency, so answering on consecutive days unlocks additional achievements.",
@@ -111,8 +102,7 @@ public static class FaqSeeder
 
             new Faq(
                 "¿Cómo puedo participar en los foros?",
-                "Accede a la sección 'Fóruns' desde el menú principal. Allí puedes leer publicaciones de otros usuarios, crear nuevos temas y responder a los existentes. Es un espacio de apoyo mutuo entre familias y cuidadores.",
-                adminId.Value
+                "Accede a la sección 'Fóruns' desde el menú principal. Allí puedes leer publicaciones de otros usuarios, crear nuevos temas y responder a los existentes. Es un espacio de apoyo mutuo entre familias y cuidadores."
             ).WithTranslations(
                 "How can I participate in the forums?",
                 "Access the 'Forums' section from the main menu. There you can read posts from other users, create new topics and reply to existing ones. It is a space of mutual support between families and caregivers.",

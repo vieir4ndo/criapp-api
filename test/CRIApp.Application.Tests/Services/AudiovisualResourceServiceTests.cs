@@ -18,7 +18,7 @@ public class AudiovisualResourceServiceTests
     }
 
     private static AudiovisualResource BuildResource(string name = "Video 1")
-        => new AudiovisualResource(name, "A description", "<iframe/>", Guid.NewGuid());
+        => new AudiovisualResource(name, "A description", "<iframe/>");
 
     [Fact]
     public async Task GetAll_WithResources_ShouldReturnMappedDtos()
@@ -50,8 +50,7 @@ public class AudiovisualResourceServiceTests
     [Fact]
     public async Task GetAll_ShouldMapAllFields()
     {
-        var adminId = Guid.NewGuid();
-        var resource = new AudiovisualResource("Tutorial", "Learn CRI", "<iframe src='url'/>", adminId);
+        var resource = new AudiovisualResource("Tutorial", "Learn CRI", "<iframe src='url'/>");
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<AudiovisualResource> { resource });
 
         var result = await _sut.GetAll();

@@ -13,7 +13,7 @@ public class Faq
 
     protected Faq() {}
 
-    public Faq(string question, string answer, Guid adminId)
+    public Faq(string question, string answer)
     {
         Question = question;
         Answer = answer;

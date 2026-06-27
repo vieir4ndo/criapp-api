@@ -9,19 +9,13 @@ public class ChildBookRecommendation
     public Guid ChildBooksId { get; set; }
     public int RecommendationId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
     public ChildBook? ChildBook { get; set; }
     public Recommendation? Recommendation { get; set; }
     public IList<RecommendationCheckpoint> Checkpoints { get; private set; } = new List<RecommendationCheckpoint>();
 
     public bool IsAssimilated()
     {
-        var windowStart = DateTime.UtcNow.Date.AddDays(-(AssimilationWindowDays - 1));
-        return Checkpoints
-            .Where(c => c.Completed && c.Date >= windowStart)
-            .Select(c => c.Date)
-            .Distinct()
-            .Count() >= AssimilationThreshold;
+        return GetCompletedCountInWindow() >= AssimilationThreshold;
     }
 
     public bool? IsCompletedToday()

@@ -19,7 +19,7 @@ public class FaqServiceTests
     }
 
     private static Faq BuildFaq(string question = "What is this?", string answer = "An answer.")
-        => new Faq(question, answer, Guid.NewGuid());
+        => new Faq(question, answer);
 
     [Fact]
     public async Task GetAll_WithFaqs_ShouldReturnMappedDtos()
@@ -52,7 +52,7 @@ public class FaqServiceTests
     public async Task GetAll_ShouldMapAllFields()
     {
         var adminId = Guid.NewGuid();
-        var faq = new Faq("How does it work?", "It works like this.", adminId);
+        var faq = new Faq("How does it work?", "It works like this.");
         _repositoryMock.Setup(r => r.GetAll()).ReturnsAsync(new List<Faq> { faq });
 
         var result = await _sut.GetAll();

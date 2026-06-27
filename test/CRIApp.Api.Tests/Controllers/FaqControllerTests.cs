@@ -24,7 +24,7 @@ public class FaqControllerTests
     }
 
     private static FaqDto BuildFaqDto(string question = "Q?", string answer = "A.")
-        => new FaqDto(new Domain.Entities.Faq(question, answer, Guid.NewGuid()));
+        => new FaqDto(new Domain.Entities.Faq(question, answer));
 
     [Fact]
     public async Task GetAll_WithFaqs_ShouldReturnAllData()

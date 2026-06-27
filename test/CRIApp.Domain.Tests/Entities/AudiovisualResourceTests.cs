@@ -6,10 +6,8 @@ namespace CRIApp.Domain.Tests.Entities;
 
 public class AudiovisualResourceTests
 {
-    private static readonly Guid ValidAdminId = Guid.NewGuid();
-
     private static AudiovisualResource CreateValidResource()
-        => new AudiovisualResource("Video 1", "A helpful video", "<iframe src='...'/>", ValidAdminId);
+        => new AudiovisualResource("Video 1", "A helpful video", "<iframe src='...'/>");
 
     [Fact]
     public void Create_ValidResource_ShouldSucceed()
@@ -26,42 +24,42 @@ public class AudiovisualResourceTests
     public void Create_WithEmptyName_ShouldThrowDomainException()
     {
         Assert.Throws<DomainException>(() =>
-            new AudiovisualResource("", "description", "<iframe/>", ValidAdminId));
+            new AudiovisualResource("", "description", "<iframe/>"));
     }
 
     [Fact]
     public void Create_WithNullName_ShouldThrowDomainException()
     {
         Assert.Throws<DomainException>(() =>
-            new AudiovisualResource(null!, "description", "<iframe/>", ValidAdminId));
+            new AudiovisualResource(null!, "description", "<iframe/>"));
     }
 
     [Fact]
     public void Create_WithEmptyDescription_ShouldThrowDomainException()
     {
         Assert.Throws<DomainException>(() =>
-            new AudiovisualResource("name", "", "<iframe/>", ValidAdminId));
+            new AudiovisualResource("name", "", "<iframe/>"));
     }
 
     [Fact]
     public void Create_WithNullDescription_ShouldThrowDomainException()
     {
         Assert.Throws<DomainException>(() =>
-            new AudiovisualResource("name", null!, "<iframe/>", ValidAdminId));
+            new AudiovisualResource("name", null!, "<iframe/>"));
     }
 
     [Fact]
     public void Create_WithEmptyIframe_ShouldThrowDomainException()
     {
         Assert.Throws<DomainException>(() =>
-            new AudiovisualResource("name", "description", "", ValidAdminId));
+            new AudiovisualResource("name", "description", ""));
     }
 
     [Fact]
     public void Create_WithNullIframe_ShouldThrowDomainException()
     {
         Assert.Throws<DomainException>(() =>
-            new AudiovisualResource("name", "description", null!, ValidAdminId));
+            new AudiovisualResource("name", "description", null!));
     }
 
     [Fact]

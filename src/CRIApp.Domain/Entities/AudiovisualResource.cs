@@ -13,7 +13,7 @@ public class AudiovisualResource : Entity
 
     protected AudiovisualResource() {}
 
-    public AudiovisualResource(string name, string description, string link, Guid adminId)
+    public AudiovisualResource(string name, string description, string link)
     {
         Name = name;
         Description = description;

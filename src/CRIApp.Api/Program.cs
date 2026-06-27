@@ -85,9 +85,9 @@ using (var scope = app.Services.CreateScope())
     FeatureSettings.Initialize(featureSettings);
 
     var adminId = UserSeeder.Execute(context);
-    QuestionRecommendationSeeder.Execute(context, adminId);
-    FaqSeeder.Execute(context, adminId);
-    AudiovisualResourceSeeder.Execute(context, adminId);
+    QuestionRecommendationSeeder.Execute(context);
+    FaqSeeder.Execute(context);
+    AudiovisualResourceSeeder.Execute(context);
     AwardSeeder.Execute(context);
 }
 

@@ -25,7 +25,7 @@ public class AudiovisualResourceControllerTests
 
     private static AudiovisualResourceDto BuildDto(string name = "Video 1")
         => new AudiovisualResourceDto(
-            new Domain.Entities.AudiovisualResource(name, "Description", "<iframe/>", Guid.NewGuid()));
+            new Domain.Entities.AudiovisualResource(name, "Description", "<iframe/>"));
 
     [Fact]
     public async Task GetAll_WithResources_ShouldReturnAllData()

@@ -5,9 +5,9 @@ namespace CRIApp.Repository.Seeders;
 
 public static class QuestionRecommendationSeeder
 {
-    public static void Execute(AppContext context, Guid? adminId)
+    public static void Execute(AppContext context)
     {
-        if (context.Question.Any() || adminId is null) return;
+        if (context.Question.Any()) return;
 
         var singleParentFamilyTypes = new List<FamilyType>
         {

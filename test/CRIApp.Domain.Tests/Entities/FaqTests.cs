@@ -6,10 +6,8 @@ namespace CRIApp.Domain.Tests.Entities;
 
 public class FaqTests
 {
-    private static readonly Guid ValidAdminId = Guid.NewGuid();
-
     private static Faq CreateValidFaq()
-        => new Faq("What is CRI?", "CRI is a child rearing index.", ValidAdminId);
+        => new Faq("What is CRI?", "CRI is a child rearing index.");
 
     [Fact]
     public void Create_ValidFaq_ShouldSucceed()
@@ -24,25 +22,25 @@ public class FaqTests
     [Fact]
     public void Create_WithEmptyQuestion_ShouldThrowDomainException()
     {
-        Assert.Throws<DomainException>(() => new Faq("", "answer", ValidAdminId));
+        Assert.Throws<DomainException>(() => new Faq("", "answer"));
     }
 
     [Fact]
     public void Create_WithNullQuestion_ShouldThrowDomainException()
     {
-        Assert.Throws<DomainException>(() => new Faq(null!, "answer", ValidAdminId));
+        Assert.Throws<DomainException>(() => new Faq(null!, "answer"));
     }
 
     [Fact]
     public void Create_WithEmptyAnswer_ShouldThrowDomainException()
     {
-        Assert.Throws<DomainException>(() => new Faq("question?", "", ValidAdminId));
+        Assert.Throws<DomainException>(() => new Faq("question?", ""));
     }
 
     [Fact]
     public void Create_WithNullAnswer_ShouldThrowDomainException()
     {
-        Assert.Throws<DomainException>(() => new Faq("question?", null!, ValidAdminId));
+        Assert.Throws<DomainException>(() => new Faq("question?", null!));
     }
 
     [Fact]
@@ -71,5 +69,4 @@ public class FaqTests
         Assert.Null(faq.QuestionPt);
         Assert.Null(faq.AnswerPt);
     }
-
 }
