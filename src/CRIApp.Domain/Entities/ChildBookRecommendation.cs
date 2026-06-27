@@ -1,11 +1,10 @@
 namespace CRIApp.Domain.Entities;
 
-public class ChildBookRecommendation
+public class ChildBookRecommendation : Entity
 {
     private const int AssimilationWindowDays = 7;
     private const int AssimilationThreshold = 4;
 
-    public Guid Id { get; set; } = Guid.NewGuid();
     public Guid ChildBooksId { get; set; }
     public int RecommendationId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

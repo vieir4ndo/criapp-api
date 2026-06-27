@@ -1,4 +1,5 @@
 using CRIApp.Domain.Enums;
+using CRIApp.Domain.Extensions;
 
 namespace CRIApp.Domain.Entities;
 
@@ -18,6 +19,14 @@ public class Notification : Entity
         Date = DateTime.UtcNow.Date;
         Delivered = false;
         Read = false;
+
+        Validate();
+    }
+
+    private void Validate()
+    {
+        ChildBookId.IsEmptyGuid("A notification has to have a child book associated");
+        Type.IsInEnum("A notification has to have a valid type");
     }
 
     public void MarkAsDelivered() => Delivered = true;

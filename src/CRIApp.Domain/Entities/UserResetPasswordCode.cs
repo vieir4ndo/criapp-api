@@ -12,9 +12,21 @@ public class UserResetPasswordCode : Entity
 
     public UserResetPasswordCode(Guid userId, string code, DateTime expiresAt)
     {
+        code.IsNullOrEmpty("A reset password code cannot be null or empty");
+
         UserId = userId;
         CodeHash = HashExtensions.HashPassword(code);
         ExpiresAt = expiresAt;
         CreatedAt = DateTime.Now.ToUniversalTime();
+
+        Validate();
     }
+
+    private void Validate()
+    {
+        UserId.IsEmptyGuid("A reset password code has to have a user associated");
+        ExpiresAt.IsDateTimeMinValue("A reset password code has to have a valid expiry date");
+    }
+
+    private UserResetPasswordCode() { }
 }

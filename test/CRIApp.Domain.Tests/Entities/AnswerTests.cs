@@ -52,6 +52,13 @@ public class AnswerTests
     }
 
     [Fact]
+    public void Create_WithEmptyChildId_ShouldThrowDomainException()
+    {
+        Assert.Throws<DomainException>(() =>
+            new Answer(3, ValidQuestionId, Guid.Empty, ValidPrcId));
+    }
+
+    [Fact]
     public void Create_ShouldSetCreatedAtToUtcNow()
     {
         var before = DateTime.UtcNow.AddSeconds(-1);

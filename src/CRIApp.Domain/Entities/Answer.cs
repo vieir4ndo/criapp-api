@@ -34,8 +34,8 @@ public class Answer : Entity
     {
         Value.IsValueInRange(1, 6, "Answer is out of range");
         QuestionId.IsEmptyGuid("An answer has to refer to a question");
+        ChildId.IsEmptyGuid("An answer has to have a Child associated");
         PrcId.IsEmptyGuid("An answer has to have a Prc associated");
-        PrcId.IsEmptyGuid("An answer has to have a Child associated");
     }
 
     public bool IsCorrect()

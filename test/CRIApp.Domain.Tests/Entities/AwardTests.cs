@@ -1,5 +1,6 @@
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
+using CRIApp.Domain.Exceptions;
 using Xunit;
 
 namespace CRIApp.Domain.Tests.Entities;
@@ -16,6 +17,18 @@ public class AwardTests
         Assert.Null(award.TextEn);
         Assert.Null(award.TextPt);
         Assert.Null(award.Description);
+    }
+
+    [Fact]
+    public void Create_WithEmptyText_ShouldThrowDomainException()
+    {
+        Assert.Throws<DomainException>(() => new Award(AwardType.HabitBuilder, ""));
+    }
+
+    [Fact]
+    public void Create_WithNullText_ShouldThrowDomainException()
+    {
+        Assert.Throws<DomainException>(() => new Award(AwardType.HabitBuilder, null!));
     }
 
     [Theory]

@@ -1,11 +1,12 @@
 using CRIApp.Domain.Enums;
+using CRIApp.Domain.Extensions;
 
 namespace CRIApp.Domain.Entities;
 
 public class Award : Entity
 {
     public AwardType Type { get; private set; }
-    public string Text { get; private set; } = string.Empty;
+    public string Text { get; private set; }
     public string? TextEn { get; private set; }
     public string? TextPt { get; private set; }
     public string? Description { get; private set; }
@@ -17,6 +18,14 @@ public class Award : Entity
     {
         Type = type;
         Text = text;
+
+        Validate();
+    }
+
+    private void Validate()
+    {
+        Type.IsInEnum("An award has to have a valid type");
+        Text.IsNullOrEmpty("An award cannot have a null or empty text");
     }
 
     public Award WithTranslations(string? textEn, string? textPt, string? description = null, string? descriptionEn = null, string? descriptionPt = null)
@@ -28,6 +37,4 @@ public class Award : Entity
         DescriptionPt = descriptionPt;
         return this;
     }
-
-
 }

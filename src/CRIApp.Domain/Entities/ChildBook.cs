@@ -1,4 +1,5 @@
 using CRIApp.Domain.Enums;
+using CRIApp.Domain.Extensions;
 
 namespace CRIApp.Domain.Entities;
 
@@ -17,6 +18,13 @@ public class ChildBook : Entity
         ChildId = childId;
         Score = 0;
         ScoreLastUpdatedAt = DateTime.UtcNow;
+
+        Validate();
+    }
+
+    private void Validate()
+    {
+        ChildId.IsEmptyGuid("A child book has to have a child associated");
     }
 
     public void UpdateScore(List<Answer> answers)

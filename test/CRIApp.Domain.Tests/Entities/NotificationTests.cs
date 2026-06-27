@@ -1,5 +1,6 @@
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
+using CRIApp.Domain.Exceptions;
 using Xunit;
 
 namespace CRIApp.Domain.Tests.Entities;
@@ -18,6 +19,12 @@ public class NotificationTests
         Assert.Equal(DateTime.UtcNow.Date, notification.Date);
         Assert.False(notification.Delivered);
         Assert.False(notification.Read);
+    }
+
+    [Fact]
+    public void Create_WithEmptyChildBookId_ShouldThrowDomainException()
+    {
+        Assert.Throws<DomainException>(() => new Notification(Guid.Empty, NotificationType.Motivational));
     }
 
     [Theory]

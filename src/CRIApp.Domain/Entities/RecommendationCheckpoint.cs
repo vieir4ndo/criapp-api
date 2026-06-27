@@ -1,8 +1,8 @@
 namespace CRIApp.Domain.Entities;
+using Extensions;
 
-public class RecommendationCheckpoint
+public class RecommendationCheckpoint : Entity
 {
-    public Guid Id { get; private set; }
     public Guid ChildBookRecommendationId { get; private set; }
     public DateTime Date { get; private set; }
     public bool Completed { get; private set; }
@@ -11,9 +11,15 @@ public class RecommendationCheckpoint
 
     public RecommendationCheckpoint(Guid childBookRecommendationId, bool completed)
     {
-        Id = Guid.NewGuid();
         ChildBookRecommendationId = childBookRecommendationId;
         Date = DateTime.UtcNow.Date;
         Completed = completed;
+
+        Validate();
+    }
+
+    private void Validate()
+    {
+        ChildBookRecommendationId.IsEmptyGuid("A checkpoint has to have a child book recommendation associated");
     }
 }

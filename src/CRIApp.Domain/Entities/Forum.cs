@@ -17,6 +17,11 @@ public class Forum : Entity
         PrcId = prcId;
         Comments = [];
         
+        Validate();
+    }
+    
+    private void Validate()
+    {
         Name.IsNullOrEmpty("A forum cannot have a null or empty name");
         Description.IsNullOrEmpty("A forum cannot have a null or empty description");
         PrcId.IsEmptyGuid("A forum has to have a PRC associated");

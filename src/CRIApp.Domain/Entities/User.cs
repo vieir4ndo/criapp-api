@@ -52,6 +52,11 @@ public class User : Entity
         NumberOfChildren = numberOfChildren;
         Activate();
         
+        Validate();
+    }
+
+    private void Validate()
+    {
         Name.IsNullOrEmpty("An user cannot have a null or empty name");
         BirthDate.IsDateTimeMinValue("An user has to have a valid birth date");
         Sex.IsInEnum("An user has to have a sex according to system values");
@@ -59,6 +64,8 @@ public class User : Entity
         Active.IsActive("An user has to be active to be created");
         PasswordHash.IsNullOrEmpty("An user cannot have a null or empty password hash");
     }
+
+    private User() { }
 
     public bool VerifyPassword(string password)
     {

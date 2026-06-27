@@ -1,5 +1,6 @@
 using CRIApp.Domain.Entities;
 using CRIApp.Domain.Enums;
+using CRIApp.Domain.Exceptions;
 using Xunit;
 
 namespace CRIApp.Domain.Tests.Entities;
@@ -31,6 +32,12 @@ public class ChildBookTests
         var childBook = CreateChildBook();
 
         Assert.Equal(0, childBook.Score);
+    }
+
+    [Fact]
+    public void Create_WithEmptyChildId_ShouldThrowDomainException()
+    {
+        Assert.Throws<DomainException>(() => new ChildBook(Guid.Empty));
     }
 
     [Fact]

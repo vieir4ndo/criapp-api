@@ -24,6 +24,11 @@ public class Child : Entity
         PrcId = prcId;
         IsPremature = isPremature;
         
+        Validate();
+    }
+
+    private void Validate()
+    {
         Name.IsNullOrEmpty("A child cannot have a null or empty name");
         BirthDate.IsDateTimeMinValue("A child has to have a valid birth date");
         Sex.IsInEnum("A child has to have a sex according to system values");

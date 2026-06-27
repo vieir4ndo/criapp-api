@@ -12,11 +12,23 @@ public class RefreshToken : Entity
 
     public RefreshToken(Guid userId, string rawToken, DateTime expiresAt)
     {
+        rawToken.IsNullOrEmpty("A refresh token cannot be null or empty");
+
         UserId = userId;
         TokenHash = HashExtensions.HashPassword(rawToken);
         ExpiresAt = expiresAt;
         CreatedAt = DateTime.UtcNow;
+
+        Validate();
     }
+
+    private void Validate()
+    {
+        UserId.IsEmptyGuid("A refresh token has to have a user associated");
+        ExpiresAt.IsDateTimeMinValue("A refresh token has to have a valid expiry date");
+    }
+
+    private RefreshToken() { }
 
     public bool IsExpired() => DateTime.UtcNow > ExpiresAt;
 }

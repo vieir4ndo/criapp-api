@@ -17,6 +17,11 @@ public class Comment : Entity
         PrcId = prcId;
         CreatedAt = DateTime.UtcNow;
         
+        Validate();
+    }
+
+    private void Validate()
+    {
         Text.IsNullOrEmpty("A comment cannot have a null or empty text");
         ForumId.IsEmptyGuid("A comment has to have a Forum associated");
         PrcId.IsEmptyGuid("A comment has to have a PRC associated");
