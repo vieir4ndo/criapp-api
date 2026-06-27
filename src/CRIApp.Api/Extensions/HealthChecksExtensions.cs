@@ -14,7 +14,7 @@ public static class HealthChecksExtensions
     {
         return services.AddHealthChecks()
             .AddDbContextCheck<AppContext>(name: "database", tags: ["external"])
-            .AddCheck<SmtpHealthCheck>(name: "email", tags: ["external"])
+            .AddCheck<MailjetHealthCheck>(name: "email", tags: ["external"])
             .AddCheck<TwilioHealthCheck>(name: "sms", tags: ["external"]);
     }
 

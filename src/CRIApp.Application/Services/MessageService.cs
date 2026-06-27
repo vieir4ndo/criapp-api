@@ -42,7 +42,7 @@ public class MessageService : IMessageUser
         try
         {
             if (user.UsernameType() == UsernameType.PhoneNumber)
-                _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber, _localizer["Sms_AccountCreation"]);
+                await _smsClient.SendAsync(user.Username, _twilioSettings.SenderPhoneNumber, _localizer["Sms_AccountCreation"]);
             else
                 await _emailClient.SendAsync(
                     _mailjetSettings.SenderEmail,
@@ -59,7 +59,7 @@ public class MessageService : IMessageUser
     public async Task NotifyForgotPassword(User user, string code)
     {
         if (user.UsernameType() == UsernameType.PhoneNumber)
-            _smsClient.Send(user.Username, _twilioSettings.SenderPhoneNumber,
+            await _smsClient.SendAsync(user.Username, _twilioSettings.SenderPhoneNumber,
                 string.Format(_localizer["Sms_ForgotPassword"], code));
         else
             await _emailClient.SendAsync(

@@ -38,10 +38,9 @@ public class MessageServiceTests
         });
         var mailjetOptions = Options.Create(new MailjetSettings
         {
-            Host = "smtp.mailjet.com",
+            BaseUrl = "https://api.mailjet.com",
             ApiKey = "key",
             ApiKeySecret = "keysecret",
-            Port = 587,
             SenderEmail = senderEmail
         });
         return new MessageService(
@@ -69,7 +68,7 @@ public class MessageServiceTests
 
         await sut.NotifyAccountCreation(user);
 
-        _smsClient.Verify(s => s.Send(user.Username, "+34600000000", smsText), Times.Once);
+        _smsClient.Verify(s => s.SendAsync(user.Username, "+34600000000", smsText), Times.Once);
         _emailClient.VerifyNoOtherCalls();
     }
 
@@ -92,8 +91,8 @@ public class MessageServiceTests
     [Fact]
     public async Task NotifyAccountCreation_WhenSmsClientThrows_ShouldNotPropagateException()
     {
-        _smsClient.Setup(s => s.Send(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-            .Throws<InvalidOperationException>();
+        _smsClient.Setup(s => s.SendAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ThrowsAsync(new InvalidOperationException());
         var sut = CreateSut();
         var user = PhoneUser();
 
@@ -126,7 +125,7 @@ public class MessageServiceTests
 
         await sut.NotifyForgotPassword(user, "AB123");
 
-        _smsClient.Verify(s => s.Send(user.Username, "+34600000000", "Tu codigo de recuperacion es: AB123"), Times.Once);
+        _smsClient.Verify(s => s.SendAsync(user.Username, "+34600000000", "Tu codigo de recuperacion es: AB123"), Times.Once);
         _emailClient.VerifyNoOtherCalls();
     }
 

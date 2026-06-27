@@ -18,8 +18,8 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IAnswerService, AnswerService>();
         services.AddScoped<IChildService, ChildService>();
-        services.AddScoped<ISmsClient, TwilioSmsClient>();
-        services.AddScoped<IEmailClient, SmtpEmailClient>();
+        services.AddHttpClient<ISmsClient, TwilioSmsClient>();
+        services.AddHttpClient<IEmailClient, MailjetEmailClient>();
         services.AddScoped<IMessageUser, MessageService>();
         services.AddScoped<IFaqService, FaqService>();
         services.AddScoped<IForumService, ForumService>();
