@@ -452,6 +452,8 @@ namespace CRIApp.Repository.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExpiresAt");
+
                     b.HasIndex("TokenHash")
                         .IsUnique();
 

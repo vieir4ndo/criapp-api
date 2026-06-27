@@ -16,6 +16,8 @@ public class RefreshTokenMapping : IEntityTypeConfiguration<RefreshToken>
         builder.HasIndex(x => x.TokenHash)
             .IsUnique();
 
+        builder.HasIndex(x => x.ExpiresAt);
+
         builder.Property(x => x.ExpiresAt)
             .IsRequired();
 

@@ -24,7 +24,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     {
         return await _context.RefreshToken
             .Include(x => x.User)
-            .FirstOrDefaultAsync(x => x.TokenHash == tokenHash);
+            .FirstOrDefaultAsync(x => x.TokenHash == tokenHash && x.ExpiresAt > DateTime.UtcNow);
     }
 
     public async Task Delete(RefreshToken token)
