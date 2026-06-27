@@ -6,9 +6,9 @@ namespace CRIApp.Api.Controllers.Requests;
 
 public class ResetPasswordRequest : BaseRequest
 {
-    public string Username { get; set; }
-    public string Code { get; set; }
-    public string NewPassword { get; set; }
+    public required string Username { get; set; }
+    public required string Code { get; set; }
+    public required string NewPassword { get; set; }
     
     protected override ValidationResult Validate()
     {

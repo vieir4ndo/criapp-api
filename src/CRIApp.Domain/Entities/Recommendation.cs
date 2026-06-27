@@ -8,9 +8,9 @@ public class Recommendation
     public string Text { get; private set; }
     public string? TextEn { get; private set; }
     public string? TextPt { get; private set; }
-    public Question Question { get; private set; }
+    public Question Question { get; private set; } = null!;
     public Guid QuestionId { get; private set; }
-    public List<ChildBook> ChildBooks { get; private set; }
+    public List<ChildBook> ChildBooks { get; private set; } = null!;
 
     public Recommendation(string text, Guid questionId)
     {

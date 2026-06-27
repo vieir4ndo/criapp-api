@@ -13,16 +13,18 @@ public class EntityTests
     public void Equals_SameInstance_ShouldReturnTrue()
     {
         var user = BuildUser();
+        var same = user;
 
-        Assert.True(user.Equals(user));
+        Assert.True(user.Equals(same));
     }
 
     [Fact]
     public void Equals_DifferentInstanceSameId_ShouldReturnTrue()
     {
         var user = BuildUser();
+        object other = user;
 
-        Assert.True(user.Equals(user));
+        Assert.True(user.Equals(other));
     }
 
     [Fact]
@@ -47,7 +49,8 @@ public class EntityTests
     {
         var user = BuildUser();
 
-        Assert.False(user.Equals("not an entity"));
+        object nonEntity = "not an entity";
+        Assert.False(user.Equals(nonEntity));
     }
 
     [Fact]
@@ -56,7 +59,7 @@ public class EntityTests
         User? a = null;
         User? b = null;
 
-        Assert.True(a == b);
+        Assert.True(a! == b!);
     }
 
     [Fact]
@@ -65,7 +68,7 @@ public class EntityTests
         User? a = null;
         var b = BuildUser();
 
-        Assert.False(a == b);
+        Assert.False(a! == b);
     }
 
     [Fact]
@@ -74,15 +77,16 @@ public class EntityTests
         var a = BuildUser();
         User? b = null;
 
-        Assert.False(a == b);
+        Assert.False(a == b!);
     }
 
     [Fact]
     public void EqualityOperator_SameEntity_ShouldReturnTrue()
     {
         var user = BuildUser();
+        var same = user;
 
-        Assert.True(user == user);
+        Assert.True(user == same);
     }
 
     [Fact]

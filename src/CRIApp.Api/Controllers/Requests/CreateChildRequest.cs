@@ -8,11 +8,11 @@ namespace CRIApp.Api.Controllers.Requests;
 
 public class CreateChildRequest : BaseRequest
 {
-    public string Name { get; set; }
-    public string BirthDate { get; set; }
-    public Sex Sex { get; set; }
-    public int MonthsOfBreastFeeding { get; set; }
-    public bool IsPremature { get; set; }
+    public required string Name { get; set; }
+    public required string BirthDate { get; set; }
+    public required Sex Sex { get; set; }
+    public required int MonthsOfBreastFeeding { get; set; }
+    public required bool IsPremature { get; set; }
 
     public CreateChildDto ToDto(Guid prcId)
     {

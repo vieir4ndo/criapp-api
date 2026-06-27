@@ -5,7 +5,7 @@ namespace CRIApp.Api.Controllers.Requests;
 
 public class ForgotPasswordRequest : BaseRequest
 {
-    public string Username { get; set; }
+    public required string Username { get; set; }
     
     protected override ValidationResult Validate()
     {

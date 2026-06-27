@@ -9,14 +9,14 @@ public class Answer : Entity
     public int Value { get; private set; }
     
     public Guid QuestionId { get; private set; }
-    public Question Question { get; private set; }
-    
+    public Question Question { get; private set; } = null!;
+
     public Guid ChildId { get; private set; }
-    public Child Child { get; private set; }
-    
+    public Child Child { get; private set; } = null!;
+
     public Guid PrcId { get; private set; }
-    public User Prc { get; private set; }
-    
+    public User Prc { get; private set; } = null!;
+
     public DateTime CreatedAt { get; private set; }
 
     public Answer(int value, Guid questionId, Guid childId, Guid prcId)

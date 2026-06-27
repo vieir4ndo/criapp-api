@@ -6,8 +6,8 @@ namespace CRIApp.Api.Controllers.Requests;
 
 public class CreateForumRequest : BaseRequest
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
+    public required string Name { get; set; }
+    public required string Description { get; set; }
     protected override ValidationResult Validate()
     {
         return new CreateForumRequestValidator().Validate(this);

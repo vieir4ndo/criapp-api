@@ -8,11 +8,11 @@ namespace CRIApp.Api.Controllers.Requests;
 
 public class CreateUserRequest : BaseRequest
 {
-    public string Name { get; set; }
-    public string BirthDate { get; set; }
-    public Sex Sex { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
+    public required string Name { get; set; }
+    public required string BirthDate { get; set; }
+    public required Sex Sex { get; set; }
+    public required string Username { get; set; }
+    public required string Password { get; set; }
     public FamilyType? FamilyType { get; set; }
     public EducationalLevel? EducationalLevel { get; set; }
     public int? NumberOfChildren { get; set; }

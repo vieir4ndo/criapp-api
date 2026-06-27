@@ -5,7 +5,7 @@ namespace CRIApp.Api.Controllers.Requests;
 
 public class RefreshTokenRequest : BaseRequest
 {
-    public string RefreshToken { get; set; }
+    public required string RefreshToken { get; set; }
 
     protected override ValidationResult Validate()
     {

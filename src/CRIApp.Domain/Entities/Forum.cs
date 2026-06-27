@@ -7,7 +7,7 @@ public class Forum : Entity
     public string Name { get; private set; }
     public string Description { get; private set; }
     public Guid PrcId { get; private set; }
-    public User Prc { get; private set; }
+    public User Prc { get; private set; } = null!;
     public List<Comment> Comments { get; private set; }
 
     public Forum(string name, string description, Guid prcId)

@@ -6,8 +6,8 @@ namespace CRIApp.Api.Controllers.Requests;
 
 public class CreateCommentRequest : BaseRequest
 {
-    public string Text { get; set; }
-    public Guid ForumId { get; set; }
+    public required string Text { get; set; }
+    public required Guid ForumId { get; set; }
     
     protected override ValidationResult Validate()
     {
