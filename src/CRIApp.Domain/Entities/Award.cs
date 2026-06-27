@@ -13,8 +13,6 @@ public class Award : Entity
     public string? DescriptionPt { get; private set; }
     public List<ChildBook> ChildBooks { get; private set; } = new();
 
-    protected Award() { }
-
     public Award(AwardType type, string text)
     {
         Type = type;

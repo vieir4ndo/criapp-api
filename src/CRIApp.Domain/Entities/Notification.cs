@@ -9,10 +9,7 @@ public class Notification : Entity
     public DateTime Date { get; private set; }
     public bool Delivered { get; private set; }
     public bool Read { get; private set; }
-
     public ChildBook? ChildBook { get; private set; }
-
-    protected Notification() { }
 
     public Notification(Guid childBookId, NotificationType type)
     {

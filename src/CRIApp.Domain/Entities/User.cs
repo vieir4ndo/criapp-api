@@ -30,7 +30,6 @@ public class User : Entity
     {
         return new EmailAddressAttribute().IsValid(Username) ? Enums.UsernameType.Email : Enums.UsernameType.PhoneNumber;
     }
-    protected User() { }
     
     public User(
         string name,

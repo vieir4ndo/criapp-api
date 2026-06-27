@@ -9,8 +9,6 @@ public class RecommendationCheckpoint
 
     public ChildBookRecommendation? ChildBookRecommendation { get; private set; }
 
-    protected RecommendationCheckpoint() { }
-
     public RecommendationCheckpoint(Guid childBookRecommendationId, bool completed)
     {
         Id = Guid.NewGuid();

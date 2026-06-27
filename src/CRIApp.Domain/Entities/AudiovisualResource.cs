@@ -11,8 +11,6 @@ public class AudiovisualResource : Entity
     public string? NamePt { get; private set; }
     public string? DescriptionPt { get; private set; }
 
-    protected AudiovisualResource() {}
-
     public AudiovisualResource(string name, string description, string link)
     {
         Name = name;

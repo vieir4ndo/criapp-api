@@ -12,10 +12,6 @@ public class Recommendation
     public Guid QuestionId { get; private set; }
     public List<ChildBook> ChildBooks { get; private set; }
 
-    protected Recommendation()
-    {
-    }
-
     public Recommendation(string text, Guid questionId)
     {
         Text = text;

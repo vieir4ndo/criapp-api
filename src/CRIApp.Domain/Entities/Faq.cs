@@ -11,8 +11,6 @@ public class Faq
     public string? QuestionPt { get; private set; }
     public string? AnswerPt { get; private set; }
 
-    protected Faq() {}
-
     public Faq(string question, string answer)
     {
         Question = question;

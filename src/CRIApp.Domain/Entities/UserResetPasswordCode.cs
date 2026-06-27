@@ -10,11 +10,6 @@ public class UserResetPasswordCode : Entity
     public DateTime ExpiresAt { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    private UserResetPasswordCode()
-    {
-        
-    }
-
     public UserResetPasswordCode(Guid userId, string code, DateTime expiresAt)
     {
         UserId = userId;

@@ -6,7 +6,6 @@ public class Comment : Entity
     
     public Guid ForumId { get; private set; }
     public Forum Forum { get; private set; }
-    
     public Guid PrcId { get; private set; }
     public User Prc { get; private set; }
     public DateTime CreatedAt { get; private set; }

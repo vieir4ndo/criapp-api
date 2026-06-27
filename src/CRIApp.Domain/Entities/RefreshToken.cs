@@ -10,8 +10,6 @@ public class RefreshToken : Entity
     public DateTime ExpiresAt { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    protected RefreshToken() { }
-
     public RefreshToken(Guid userId, string rawToken, DateTime expiresAt)
     {
         UserId = userId;

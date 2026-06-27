@@ -19,8 +19,6 @@ public class Answer : Entity
     
     public DateTime CreatedAt { get; private set; }
 
-    protected Answer() {}
-
     public Answer(int value, Guid questionId, Guid childId, Guid prcId)
     {
         Value = value;

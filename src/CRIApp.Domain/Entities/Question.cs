@@ -16,8 +16,6 @@ public class Question : Entity
     public QuestionGroup Group { get; private set; }
     public IList<Recommendation> Recommendations { get; private set; } = new List<Recommendation>();
 
-    protected Question() {}
-    
     public Question(string text, QuestionType type, QuestionScoringType scoringType = QuestionScoringType.Default, IList<FamilyType>? excludedFamilyTypes = null, QuestionGroup group = QuestionGroup.CognitiveDevelopment)
     {
         Text = text;
