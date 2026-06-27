@@ -10,8 +10,6 @@ public class CommentDto
     public string PrcId { get; set; }
     public DateTime CreatedAt { get; set; }
 
-    public CommentDto() { }
-
     public CommentDto(Comment comment)
     {
         Id = comment.Id;

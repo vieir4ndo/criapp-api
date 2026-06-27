@@ -4,8 +4,8 @@ namespace CRIApp.Application.Dtos;
 
 public class CreateForumDto
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
+    public required string Name { get; set; }
+    public required string Description { get; set; }
     public Guid PrcId { get; set; }
 
     public Forum ToDomainObject()

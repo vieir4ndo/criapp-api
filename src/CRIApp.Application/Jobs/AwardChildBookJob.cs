@@ -79,7 +79,7 @@ public class AwardChildBookJob : IRecurrentJob
         if (qualifies)
         {
             var award = awards.FirstOrDefault(a => a.Type == AwardType.HabitBuilder);
-            if (award != null) childBook.AddAwardIfNeeded(award);
+            if (award is not null) childBook.AddAwardIfNeeded(award);
         }
     }
 
@@ -94,7 +94,7 @@ public class AwardChildBookJob : IRecurrentJob
         if (distinctDays >= 7)
         {
             var award = awards.FirstOrDefault(a => a.Type == AwardType.ConsistentParent);
-            if (award != null) childBook.AddAwardIfNeeded(award);
+            if (award is not null) childBook.AddAwardIfNeeded(award);
         }
     }
 
@@ -107,7 +107,7 @@ public class AwardChildBookJob : IRecurrentJob
         if (CalculateGroupScore(groupAnswers) == 100)
         {
             var award = awards.FirstOrDefault(a => a.Type == awardType);
-            if (award != null) childBook.AddAwardIfNeeded(award);
+            if (award is not null) childBook.AddAwardIfNeeded(award);
         }
     }
 
@@ -124,7 +124,7 @@ public class AwardChildBookJob : IRecurrentJob
         if (silverTypes.All(t => childBook.Awards.Any(a => a.Type == t)))
         {
             var award = awards.FirstOrDefault(a => a.Type == AwardType.GoldParent);
-            if (award != null) childBook.AddAwardIfNeeded(award);
+            if (award is not null) childBook.AddAwardIfNeeded(award);
         }
     }
 

@@ -5,7 +5,7 @@ namespace CRIApp.Application.Dtos;
 
 public class CreateChildDto
 {
-    public string Name { get; set; }
+    public required string Name { get; set; }
     public DateTime BirthDate { get; set; }
     public Sex Sex { get; set; }
     public int MonthsOfBreastFeeding { get; set; }

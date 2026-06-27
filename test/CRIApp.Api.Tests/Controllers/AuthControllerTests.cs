@@ -37,6 +37,7 @@ public class AuthControllerTests
         var tokenDto = new TokenDto
         {
             Token = "jwt.token.here",
+            RefreshToken = "refresh.token.here",
             ExpiresIn = DateTime.UtcNow.AddMinutes(5),
             User = new UserDto(user)
         };

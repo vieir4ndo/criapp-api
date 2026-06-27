@@ -3,6 +3,8 @@ using CRIApp.Api.Controllers;
 using CRIApp.Api.Controllers.Requests;
 using CRIApp.Application.Abstractions;
 using CRIApp.Application.Dtos;
+using CRIApp.Domain.Entities;
+using CRIApp.Domain.Enums;
 using CRIApp.Domain.Exceptions;
 using Moq;
 using Xunit;
@@ -27,15 +29,20 @@ public class ForumControllerTests
     }
 
     private static ForumDto BuildForumDto(string name = "Forum Title")
-        => new ForumDto
-        {
-            Id = Guid.NewGuid(),
-            Name = name,
-            Description = "Description",
-            PrcName = "Parent Name",
-            PrcId = Guid.NewGuid().ToString(),
-            Comments = new List<CommentDto>()
-        };
+    {
+        var prc = new User("Parent Name", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123");
+        var forum = new Forum(name, "Description", prc.Id);
+        typeof(Forum).GetProperty(nameof(Forum.Prc))!.SetValue(forum, prc);
+        return new ForumDto(forum);
+    }
+
+    private static CommentDto BuildCommentDto()
+    {
+        var prc = new User("User", new DateTime(1990, 1, 1), Sex.Male, "user@domain.com", "pass123");
+        var comment = new Comment("Hello", Guid.NewGuid(), prc.Id);
+        typeof(Comment).GetProperty(nameof(Comment.Prc))!.SetValue(comment, prc);
+        return new CommentDto(comment);
+    }
 
     [Fact]
     public async Task Create_ValidRequest_ShouldCallServiceAndReturnSuccess()
@@ -128,10 +135,7 @@ public class ForumControllerTests
     {
         var forumId = Guid.NewGuid();
         var forum = BuildForumDto();
-        forum.Comments = new List<CommentDto>
-        {
-            new CommentDto { Id = Guid.NewGuid(), Text = "Hello", PrcName = "User", PrcId = Guid.NewGuid().ToString() }
-        };
+        forum.Comments = new List<CommentDto> { BuildCommentDto() };
         _serviceMock.Setup(s => s.GetById(forumId)).ReturnsAsync(forum);
 
         var result = await _sut.GetCommentsById(forumId);

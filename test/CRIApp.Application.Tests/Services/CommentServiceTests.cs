@@ -35,6 +35,14 @@ public class CommentServiceTests
     private static User BuildUser()
         => new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123");
 
+    private static ForumDto BuildForumDto()
+    {
+        var prc = new User("Parent", new DateTime(1985, 1, 1), Sex.Male, "parent@domain.com", "pass123");
+        var forum = new Forum("Forum", "Desc", prc.Id);
+        typeof(Forum).GetProperty(nameof(Forum.Prc))!.SetValue(forum, prc);
+        return new ForumDto(forum);
+    }
+
     private static Comment BuildComment(Guid forumId, Guid prcId)
         => new Comment("Some text", forumId, prcId);
 
@@ -44,7 +52,7 @@ public class CommentServiceTests
         var prcId = Guid.NewGuid();
         var forumId = Guid.NewGuid();
         var user = BuildUser();
-        var forumDto = new ForumDto { Id = forumId, Name = "Forum", Description = "Desc", Comments = new() };
+        var forumDto = BuildForumDto();
         var dto = new CreateCommentDto { Text = "Hello!", PrcId = prcId, ForumId = forumId };
 
         _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
@@ -64,7 +72,7 @@ public class CommentServiceTests
         var prcId = Guid.NewGuid();
         var forumId = Guid.NewGuid();
         var user = BuildUser();
-        var forumDto = new ForumDto { Id = forumId, Name = "Forum", Description = "Desc", Comments = new() };
+        var forumDto = BuildForumDto();
         var dto = new CreateCommentDto { Text = "bad text", PrcId = prcId, ForumId = forumId };
 
         _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
@@ -81,7 +89,7 @@ public class CommentServiceTests
         var prcId = Guid.NewGuid();
         var forumId = Guid.NewGuid();
         var user = BuildUser();
-        var forumDto = new ForumDto { Id = forumId, Name = "Forum", Description = "Desc", Comments = new() };
+        var forumDto = BuildForumDto();
         var dto = new CreateCommentDto { Text = "Hello", PrcId = prcId, ForumId = forumId };
 
         _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
@@ -98,7 +106,7 @@ public class CommentServiceTests
         var prcId = Guid.NewGuid();
         var forumId = Guid.NewGuid();
         var user = BuildUser();
-        var forumDto = new ForumDto { Id = forumId, Name = "Forum", Description = "Desc", Comments = new() };
+        var forumDto = BuildForumDto();
         var dto = new CreateCommentDto { Text = "Hello", PrcId = prcId, ForumId = forumId };
 
         _userServiceMock.Setup(s => s.GetAndValidateById(prcId)).ReturnsAsync(user);
